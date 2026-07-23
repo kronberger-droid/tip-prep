@@ -1,0 +1,3 @@
+*.pdf
+*.png
+!assets/*.png

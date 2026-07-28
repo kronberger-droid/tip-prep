@@ -60,10 +60,25 @@
 // of `poster`. Only entries you actually cite with `@key` are listed; pass
 // `full: true` to list the whole file. Text size comes from the footer band,
 // so this deliberately does not set it.
-#let bib-refs(path, style: "ieee", cols: 3, full: false) = {
-  set par(justify: false)
-  show bibliography: set block(spacing: 0.3em)
-  columns(cols, bibliography(path, title: none, style: style, full: full))
+// `columns()` alone fills column 1 top-to-bottom and only spills over when it
+// runs out of vertical room — in the auto-height footer that never happens, so
+// every entry stacks in the first column. To spread them horizontally we
+// measure the single-column height, then cap the block at ~1/cols of it so the
+// entries are forced to flow across all columns (balanced).
+#let bib-refs(path, style: "ieee", cols: 3, full: false, gutter: 6mm) = {
+  let bib = {
+    set par(justify: false)
+    show bibliography: set block(spacing: 0.3em)
+    bibliography(path, title: none, style: style, full: full)
+  }
+  layout(size => {
+    let colw = (size.width - (cols - 1) * gutter) / cols
+    let h = measure(box(width: colw, bib)).height
+    // 1.15 gives each column ~1/cols of the height plus a little slack, so the
+    // greedy column fill lands ~evenly instead of dumping the remainder into
+    // the last column. Nudge up if a future entry overflows the last column.
+    block(height: h / cols * 1.15, columns(cols, gutter: gutter, bib))
+  })
 }
 
 // Stand-in for a figure you have not made yet.
@@ -83,8 +98,8 @@
   affiliations: [],
   contact: none,
   url: none,
-  logo-left: logo("assets/TU_Signet_RGB.svg", height: 90mm),
-  logo-right: logo("assets/IAP_Signet_RGB.png", height: 90mm),
+  logo-left: logo("assets/TU_Signet_RGB.svg", height: 80mm),
+  logo-right: logo("assets/IAP_Signet_RGB.png", height: 80mm),
   footer-logos: (),
   references: none,
   body,
@@ -106,23 +121,26 @@
     width: 100%,
     fill: band-bg,
     stroke: 1pt + accent,
-    inset: 0.6em,
+    inset: (x: 0.6em, top: 0.9em, bottom: 0.6em),
     radius: big-radius,
-    grid(
-      columns: (auto, 1fr, auto),
-      column-gutter: 0.7em,
-      align: horizon,
-      logo-left,
+    {
       align(center)[
-        #text(size: 2.2em, weight: "bold", fill: accent, title)
-        #if subtitle != none [ \ #text(size: 1.6em, fill: accent, subtitle) ]
-        #v(0.3em)
-        #text(size: 1.2em, authors)
-        #v(0.2em)
-        #text(size: 1em, style: "italic", affiliations)
-      ],
-      logo-right,
-    ),
+        #text(size: 2.8em, weight: "bold", fill: accent, title)
+        #if subtitle != none [\ #text(size: 1.8em, fill: accent, subtitle) ]
+      ]
+      grid(
+        columns: (auto, 1fr, auto),
+        column-gutter: 0.7em,
+        align: horizon,
+        logo-left,
+        align(center)[
+          #text(size: 1.35em, authors)
+          #v(0.2em)
+          #text(size: 1.2em, style: "italic", affiliations)
+        ],
+        logo-right,
+      )
+    },
   )
 
   // ---- contact strip ----

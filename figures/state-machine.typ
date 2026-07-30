@@ -50,9 +50,9 @@
     node((-0.48, -0.5), text(size: 0.8em, tag[$Delta f$ out of band]),
       inset: 2pt),
     edge(<blunt>, <sharp>, "-|>", tag[$Delta f$ in band], ..lbl, bend: 22deg),
-    edge(<sharp>, <stable>, "-|>", tag[quality \ metrics], ..lbl),
+    edge(<sharp>, <stable>, "-|>", tag[sweep \ survived], ..lbl),
 
-    // ---- failure: stability check fails -> reset to blunt ----
+    // ---- failure: the sweep moves the apex -> max pulse, back to blunt ----
     edge(<sharp>, <blunt>, "-|>", tag[$Delta f$ drift], ..lbl, bend: 22deg),
   )
 }

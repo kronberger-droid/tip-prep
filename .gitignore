@@ -1,3 +1,12 @@
 *.pdf
 *.png
 !assets/*.png
+
+# Raw run logs, ~111 MB, three of them truncated mid-write. The numbers that
+# reach the poster are transcribed into figures/convergence.typ with their
+# provenance, so the poster builds without this directory. See CLAUDE.md.
+experiments/
+
+# Python bytecode from scripts/
+__pycache__/
+*.pyc

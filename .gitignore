@@ -2,9 +2,9 @@
 *.png
 !assets/*.png
 
-# Raw run logs, ~111 MB, three of them truncated mid-write. The numbers that
-# reach the poster are transcribed into figures/convergence.typ with their
-# provenance, so the poster builds without this directory. See CLAUDE.md.
+# Raw run logs. The full archive lives on the DATA drive, not here; the traces
+# the poster plots are extracted into figures/traces.json with their provenance
+# by scripts/extract_trace.py, so the poster builds without either. See CLAUDE.md.
 experiments/
 
 # Python bytecode from scripts/

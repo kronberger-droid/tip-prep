@@ -81,15 +81,51 @@
   })
 }
 
-// Stand-in for a figure you have not made yet.
-#let figure-stub(caption, height: 90mm) = subbox({
-  rect(
-    width: 100%,
+// Stand-in for a figure you have not made yet. The dashed rule is the only
+// border here: a `subbox` around it would double-box the placeholder.
+//
+// `width` and `caption` exist so a stub can stand in a row beside real
+// `figure-img` figures without breaking it: pass the same `height` both take,
+// a `width` matching the real images' aspect, and the caption then sits
+// underneath on the same baseline as theirs.
+#let figure-stub(label, height: 90mm, width: 100%, caption: none) = {
+  set par(justify: false)
+  let frame = rect(
+    width: width,
     height: height,
     stroke: (dash: "dashed", paint: gray),
-    align(center + horizon, text(fill: gray, caption)),
+    align(center + horizon, text(fill: gray, label)),
   )
-})
+  if caption == none {
+    align(center, frame)
+  } else {
+    stack(
+      dir: ttb,
+      spacing: 0.35em,
+      align(center, frame),
+      align(center, text(size: 0.78em, weight: "bold", caption)),
+    )
+  }
+}
+
+// A real figure: title above, image below, no frame. An STM scan already reads
+// as a bounded object, so a box around it only adds a line to look at.
+// Size by `height`, never by width: in a row of images, equal heights keep the
+// titles on one baseline. Equal widths would not, since no two scans have
+// exactly the same aspect ratio.
+// Title goes *underneath* the image. `stack` rather than two blocks in sequence:
+// consecutive `align()` calls are separate blocks and pick up the poster's
+// paragraph spacing between them, which left a visible gulf between an image and
+// its own title. `stack` spacing is explicit and tight.
+#let figure-img(path, caption, height: 90mm) = {
+  set par(justify: false)
+  stack(
+    dir: ttb,
+    spacing: 0.35em,
+    align(center, image(path, height: height, fit: "contain")),
+    align(center, text(size: 0.78em, weight: "bold", caption)),
+  )
+}
 
 #let poster(
   title: [],

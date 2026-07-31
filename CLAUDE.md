@@ -799,11 +799,16 @@ wording change:
 - Diagram sizing: measure against the panel, do not eyeball. Panel inner width
   is **~383 mm**. Use `context { measure(...) }` on a wide scratch page to find
   the scale that fits. The FSM sat at `scale: 1.1` (276 mm, 72% of the panel)
-  and looked lost. It is now `1.47` (376 mm): `1.5` measured 383.6 mm once the
-  three phase captions were added under it, i.e. 0.6 mm over.
-  The architecture diagram is `1.75` (~379 mm) with `spacing.x` cut to 9 mm to
-  pay for the wide single `Hardware` node. **Re-measure after any node text
-  change**; both figures have been pushed over the edge by a label twice now.
+  and looked lost, then at `1.47` (376 mm), where `1.5` measured 383.6 mm once
+  the phase captions were added, i.e. 0.6 mm over. Both figures are called from
+  `main.typ`, which is where the live numbers are: the FSM at **1.38** and the
+  architecture diagram at **1.82**, the latter with `spacing` defaulting to
+  `sx: 5mm, sy: 18mm` to pay for the wide single `Instrument` node (`w: 48mm`,
+  376.7 mm measured). `sx` is the only cheap lever left there: the diagram has
+  five spine nodes and so four gaps, and each mm of `sx` costs `4 × 1.82` = 7.3 mm
+  of total width. `sx: 6mm` measures 384 mm and is already over.
+  **Re-measure after any node text change**; both figures have been pushed over
+  the edge by a label twice now.
 - **The Δf figure is a scatter with a faint connecting line, and the line must
   stay faint.** The loop repositions and re-approaches between every read, so
   consecutive points are measurements at *different places on the sample*. A
@@ -844,11 +849,11 @@ wording change:
     removed 33 of 83 reads. The rail stays out, and the giveaway is `std_dev`
     exactly 0.000.
 - **`lq.diagram(width:)` is the axes width, not the figure width.** Axis labels,
-  tick labels and padding add roughly 28 mm on top. `convergence.typ` declares
-  `300mm * scale`, so `scale: 1.2` rendered 394 mm and overflowed the 383 mm
-  panel, even though 300 × 1.2 = 360 looks safe on paper. It is now `1.1`
-  (361 mm measured). Always measure the whole figure, never reason from the
-  `width:` argument.
+  tick labels and padding add roughly 28 mm on top. `convergence.typ` used to
+  declare `300mm * scale`, and `scale: 1.2` rendered 394 mm, overflowing the
+  383 mm panel even though 300 × 1.2 = 360 looks safe on paper. It is now
+  `350mm * scale` at `scale: 0.96` from `main.typ`. Always measure the whole
+  figure, never reason from the `width:` argument.
 - **Diagram nodes should all be the same number of lines.** A node whose
   subtitle wraps to three lines while its neighbours use two makes the row look
   ragged, which reads as a layout bug rather than a design choice. Two were
@@ -862,6 +867,13 @@ wording change:
 `figures/qr.typ` generates it at compile time with `@preview/codetastic:0.2.2`.
 Vector output, so it stays crisp at A0 and there is no PNG asset to drift out of
 sync with the URL. Change `repo-url` in that file and everything follows.
+
+**The QR points at a Zenodo DOI, not at GitHub**: `repo-url` is
+`https://doi.org/10.5281/zenodo.20325230`, with `repo-short` the same string
+without the scheme. This replaced `github.com/kronberger-droid/rusty-tip`, so the
+note further up about the repo URL being one of the two sanctioned places the
+project name appears now applies to the DOI instead. A DOI is also citable, which
+a repo URL is not.
 
 Verified with OpenCV's `QRCodeDetector`, which decoded the rendered PDF back to
 the exact URL.
@@ -1099,6 +1111,113 @@ The newer format is the one that would be logged today, and it **cannot
 reproduce this figure**.
 If future runs should stay plottable, the `EventBus` file logger has to start
 serialising `ActionOutput`.
+
+## The `.typ` files carry no comments
+
+The explanatory comments were stripped from all six `.typ` files on 2026-07-31
+(1086 lines to ~500), leaving one header line each. Everything that justified a
+number now lives here. **Do not write the explanations back into the source**;
+add them to this file instead. What was only ever in a comment:
+
+- **`par.spacing` is the recurring enemy, and it has now been beaten in four
+  places.** Typst's default paragraph spacing is 1.2em, ~11.8 mm at `base-size`,
+  and it falls between any two consecutive *blocks*, not just between paragraphs.
+  Every one of these was an unrequested gap nobody chose:
+
+  | where | now | what it cost before |
+  | --- | --- | --- |
+  | `panel`, header bar to first line of body | `above: 0.4em` | 16.9 mm measured, of which only ~4.9 mm was the inset. ~11 mm per panel |
+  | `poster` header, title to author/logo row | `above: 0.8em` | the full 1.2em. Pays *both* columns, since the header sits above the `1fr` body row |
+  | `figure-img`, image to its own caption | `stack(spacing:)` | a visible gulf that read as two unrelated elements |
+  | figure rows under an intro paragraph | `above: 0.5em` / `1em` | ~7 mm each |
+
+  The header one was briefly `0.35em`, which was too tight: the author row read
+  as a third line of the title block. `0.8em` is the settled value.
+- **`width: 100%` on those blocks is load-bearing**, everywhere. A bare `block()`
+  shrinks to its content, so an `align(center, …)` inside it centres within a box
+  already hard against the left inset, and the row silently goes left-aligned. In
+  the poster header it would collapse the `1fr` author cell between the two logos.
+- **The App's figure row uses `above: 1em`, not the `0.5em` the other rows use.**
+  Its captions are *above* the images (`caption-above: true`), so the first thing
+  under the intro paragraph is a line of bold text, and at 0.5em it read as a
+  third line of that paragraph rather than as a label on the figure.
+- **`panel-column`'s overfull check has 1pt of tolerance.** `measure` and the real
+  layout disagree in the last fraction of a point, and a build that fails by
+  0.3 mm helps nobody.
+- **The page assembly is a full-page-height `block` wrapping the grid.** That is
+  what gives the grid a known region, so the `1fr` body row can soak up whatever
+  the header, contact strip and footer leave over. Row gutters are per-gap,
+  `(0.4em, col-gutter, col-gutter)`: the contact strip hugs the header, and the
+  body is then separated from contact and footer by the same 8 mm used between
+  panels.
+- **The architecture spine must sit on integer coordinates.** `fletcher`'s
+  `spacing.x` is the *gap* between adjacent columns, so integers give equal gaps
+  regardless of node width. The spine was once on 0 / 1.4 / 2.8 / 4.2 / 5.6, and
+  a fractional step is a fraction of a column pitch set by the widest node, so the
+  visible gaps came out uneven: wide after `Config`, tight before `Hardware`.
+- **`Analyzers` are deliberately off the spine, because they are not `Action`s.**
+  `Analyzer` is its own trait, `analyze(&AnalyzerInput) -> AnalyzerOutput`, with
+  no `ActionContext` and no hardware. What runs one inside a routine is a separate
+  adapter, `RunAnalyzer`, which *is* an `Action` wrapping an `Arc<dyn Analyzer>`:
+  it pulls the frame `GrabScanFrame` left in the `DataStore` and writes the
+  verdict back under the analyzer's name. That indirection is exactly why the same
+  detector serves the live loop and an archived run, which is what Framework's
+  *Pluggable analyzers* bullet claims. Drawing them as custom actions would delete
+  the reason the claim is true.
+- **The FSM's three phase captions must match the panel's bullet lead-ins
+  verbatim.** They are the only thing tying the figure to the text. The bullets
+  read *Bias pulse and reposition* / *Check* / *Stability*, and the captions are
+  positioned to sit against the edges they annotate rather than in a row along the
+  bottom, where they read as a detached caption strip.
+- **The FSM's `Sharp -> Blunt` edge is the check rejecting a promotion**, not a
+  failed sweep: a read landed in bounds and the repositioned re-read did not. It
+  used to read "Δf drift", from when the panel carried a *Recover* bullet.
+- **The Δf plot's `post-note` anchors are hand-placed, not computed.** The value
+  is read from `traces.json` and follows the data; the anchor is a coordinate
+  chosen in an empty region. With the rail reads dropped, x 36-41 is clear
+  between -6 and -30 Hz, and x 26-32 is clear between -8 and -32. Re-check both
+  if the plotted runs ever change.
+- **The sharp band is drawn as two strips.** The runs' windows share their lower
+  bound (-6.0) and differ at the top, 0.0 against 2.0, so drawing only the shared
+  part would put `124032`'s +0.43 Hz read outside a band it was actually inside.
+  The strip above 0 is drawn fainter, and both are one legend entry.
+  Legend is `top + left` because both runs spend their first two thirds deep in
+  the blunt region, leaving that corner empty. `ylim` is `(-78, 4)`.
+- **The STM captions quote current as a magnitude on purpose.**
+  `Current::Calibration` in the file metadata is itself negative (-500E-12 A/V),
+  so the sign of `Current::Current` says more about the channel convention than
+  about the tunnelling direction, which the bias already gives.
+- **`Cu(110)_good.png`'s file comment reads "SensorJ after crashed to gypsum".**
+  Worth knowing, and see the stamp warning below.
+
+## The scan stamps disagree with the panel's lead-in
+
+`figure-img` takes `stamp:`, which writes white text over the bottom-left of the
+image itself. It must be placed inside a `box` wrapped tightly around `image()`:
+`place` anchors to its enclosing block, and the enclosing block is
+`align(center, …)`, which fills the whole grid cell. Anchoring to that would put
+the stamp in the margin left of the image, since a scan at 110 mm is ~105 mm
+inside a ~127 mm cell. `place` is out of flow, so a stamp adds no height and
+cannot push a caption into the panel border.
+
+The three stamps carry a date and the sample file name:
+
+| scan | stamp |
+| --- | --- |
+| `Cu(110)_bad.png` | `24/01/04 · Cu(110)_00090` |
+| `Cu(110)_okay.png` | `25/05/11 · CaSiO3/WO14.1/Cu(110)_00157` |
+| `Cu(110)_good.png` | `26/01/22 · Gypsum_A12_0048` |
+
+**The panel's lead-in says all three are "Three apexes on partially oxidised
+Cu(110)", and two of the three stamps name something else.** The middle one is a
+Cu(110) prepared under a CaSiO3/WO session, which is arguable; the third names a
+gypsum sample outright, which matches that file's own "crashed to gypsum"
+comment. Either the lead-in has to stop claiming one surface, or the stamps have
+to be corrected, or the third scan has to be replaced. As it stands a reader who
+reads both will not believe either.
+
+Note also the date on the blunt scan, 24/01/04, is not in that file's metadata,
+which had no acquisition date. It came from the author.
 
 ## Still open
 

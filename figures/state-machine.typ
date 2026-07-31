@@ -67,11 +67,17 @@
     // when this edge stood for a failed stability sweep and the panel carried a
     // *Recover* bullet. That bullet is gone, and run 115639 shows this exact
     // rejection happening twice, so the label now describes the check.
-    edge(<sharp>, <blunt>, "-|>", tag[re-read \ out of bounds], ..lbl, bend: 22deg),
+    edge(<sharp>, <blunt>, "-|>", tag[$Delta f$ out of bounds], ..lbl, bend: 22deg),
 
     // ---- which part of the machine each bullet is about ----
-    phase((-0.28, 0.85), [bias pulse and reposition]),
-    phase((0.65, 0.85), [check]),
-    phase((1.95, 0.85), [stability]),
+    // Tucked against the edges they annotate rather than sat in a row along the
+    // bottom, where they read as a detached caption strip. `check` sits inside
+    // the lens between the two Blunt <-> Sharp arcs, which is the one spot in the
+    // figure that is both empty and unambiguously "the thing these two edges do".
+    // Inside the self-loop, which is otherwise dead space. Set over three short
+    // lines so it fits the circular interior instead of forcing the loop wider.
+    phase((-0.52, 0), [bias pulse \ & \ reposition]),
+    phase((0.65, 0), [check]),
+    phase((1.95, 0.26), [stability]),
   )
 }

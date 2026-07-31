@@ -27,9 +27,17 @@
 // A titled content panel: colored header bar + body area.
 // The fill lives on the outer block so the grey reaches the bottom of the
 // stretched row, not just the bottom of the text.
-#let panel(title, body) = block(
+//
+// **A panel is a function of its own height, not finished content.** The call
+// site is unchanged (`panel[Title][Body]`), but the result is a closure that
+// `panel-column` invokes twice: once with `h: auto` to measure what the panel
+// naturally holds, then with `h: 100%` to render it stretched to its row.
+// A panel that hardcoded `height: 100%` could not be measured, since `measure`
+// would hand it the whole region and get the region height straight back, which
+// is the number we are trying to compute in the first place.
+#let panel(title, body) = (h: 100%) => block(
   width: 100%,
-  height: 100%,
+  height: h,
   breakable: false,
   fill: panel-bg,
   stroke: 2pt + accent,
@@ -39,10 +47,25 @@
     block(
       width: 100%,
       fill: accent,
-      inset: (x: 1em, y: 1em),
-      text(size: 40pt, weight: "bold", fill: white, title),
+      // 0.55em, down from 0.8em. The bar is a label, not a band, and at 36pt
+      // the glyphs already carry their own leading. Worth ~5 mm per panel, so
+      // ~15 mm per column across three panels, which is more than any single
+      // wording change has ever bought.
+      inset: (x: 1em, y: 0.55em),
+      text(size: 36pt, weight: "bold", fill: white, title),
     )
-    block(width: 100%, inset: 0.5em, body)
+    // `above` is the lever, not the inset. The header bar and this block are two
+    // consecutive *blocks*, so without it they inherit the poster's prose
+    // paragraph spacing (`par.spacing`, 1.2em, ~11.8 mm at `base-size`) on top of
+    // the inset. Measured, the bar-to-first-line gap was 16.9 mm of which only
+    // ~4.9 mm was the inset. This takes it to ~6 mm, worth ~11 mm per panel.
+    // Same mechanism that left the App screenshots floating below their intro.
+    block(
+      width: 100%,
+      above: 0.4em,
+      inset: (x: 0.5em, top: 0.3em, bottom: 0.5em),
+      body,
+    )
   },
 )
 
@@ -108,22 +131,31 @@
   }
 }
 
-// A real figure: title above, image below, no frame. An STM scan already reads
-// as a bounded object, so a box around it only adds a line to look at.
+// A real figure: image plus a title, no frame. An STM scan already reads as a
+// bounded object, so a box around it only adds a line to look at.
 // Size by `height`, never by width: in a row of images, equal heights keep the
 // titles on one baseline. Equal widths would not, since no two scans have
 // exactly the same aspect ratio.
-// Title goes *underneath* the image. `stack` rather than two blocks in sequence:
-// consecutive `align()` calls are separate blocks and pick up the poster's
-// paragraph spacing between them, which left a visible gulf between an image and
-// its own title. `stack` spacing is explicit and tight.
-#let figure-img(path, caption, height: 90mm) = {
+// `stack` rather than two blocks in sequence: consecutive `align()` calls are
+// separate blocks and pick up the poster's paragraph spacing between them, which
+// left a visible gulf between an image and its own title. `stack` spacing is
+// explicit and tight.
+//
+// `caption-above` puts the title over the image instead of under it. The default
+// is under, which is right when the caption is *data about the image* (the STM
+// scans, whose captions are the acquisition parameters). Above is right when the
+// caption *names* the thing, as in The App, where "live event stream" and "run
+// parameters" tell you what you are about to look at: the eye reads the label
+// first and then knows what it is looking for. Mixing the two on one poster is
+// deliberate, not an oversight.
+#let figure-img(path, caption, height: 90mm, caption-above: false) = {
   set par(justify: false)
+  let img = align(center, image(path, height: height, fit: "contain"))
+  let cap = align(center, text(size: 0.78em, weight: "bold", caption))
   stack(
     dir: ttb,
-    spacing: 0.35em,
-    align(center, image(path, height: height, fit: "contain")),
-    align(center, text(size: 0.78em, weight: "bold", caption)),
+    spacing: 1em,
+    ..if caption-above { (cap, img) } else { (img, cap) },
   )
 }
 
@@ -233,23 +265,72 @@
   )
 }
 
-// One full-height column: a stack of panels that together fill the body
-// height. By default every panel gets an equal share; pass `weights` (one
-// number per panel) to make some taller, e.g. weights: (2, 3) gives the
-// second panel 3/5 of the height.
-#let panel-column(panels, weights: none) = {
+// One full-height column: a stack of panels that together fill the body height.
+//
+// **Row heights are measured, not typed.** Each panel is laid out once at its
+// natural height to find out how much it actually holds, and the column's spare
+// space is then handed out in proportion to that. A panel with twice the content
+// gets twice the padding, which is what the hand-tuned `weights` were
+// approximating: the old `(0.74, 1.55, 0.99)` is the ratio `194 : 406 : 242` in
+// disguise. Nothing has to be retuned when a bullet is added or a figure resized.
+//
+// `weights` still overrides, for the cases where the honest proportional answer
+// is not the wanted one. It skips the sizing, not the overfull check.
+//
+// **An overfull column is a hard error.** This is the point of the exercise.
+// `panel` sets `clip: true`, so without the check the bottom of a panel is cut
+// off in silence, and a `subbox` and a GUI screenshot have each been lost that
+// way. Now it fails the build and says by how much. To fix one, cut content or
+// shrink a figure; growing the weight only moves the overflow to a neighbour.
+//
+// `layout` gets the column's own width and height, which `measure` needs and
+// which nothing else here knows. Cost is one extra layout pass over the poster's
+// content, worth about 25% of the build.
+#let panel-column(panels, weights: none) = layout(size => context {
   let n = panels.len()
+  // `panel` yields a closure; anything else is taken as finished content and
+  // measured as-is, so a plain block can still sit in a column.
+  let at-height(p, h) = if type(p) == function { p(h: h) } else { p }
+
+  let natural = panels.map(p => {
+    measure(
+      at-height(p, auto),
+      width: size.width,
+    ).height
+  })
+  let total = natural.fold(0pt, (a, b) => a + b)
+  let avail = size.height - (n - 1) * col-gutter
+
+  // 1pt of tolerance: `measure` and the real layout can disagree in the last
+  // fraction of a point, and a build that fails by 0.3pt helps nobody.
+  if total > avail + 1pt {
+    panic(
+      "panel column overfull by "
+        + str(calc.round((total - avail).mm(), digits: 1))
+        + " mm (content "
+        + str(calc.round(total.mm(), digits: 1))
+        + " mm, available "
+        + str(calc.round(avail.mm(), digits: 1))
+        + " mm). Cut content or shrink a figure in this column.",
+    )
+  }
+
   let rows = if weights == none {
-    (1fr,) * n
+    natural.map(h => (h / 1pt) * 1fr)
   } else {
     weights.map(w => w * 1fr)
   }
+
   block(
     width: 100%,
     height: 100%,
-    grid(rows: rows, row-gutter: col-gutter, ..panels),
+    grid(
+      rows: rows,
+      row-gutter: col-gutter,
+      ..panels.map(p => at-height(p, 100%)),
+    ),
   )
-}
+})
 
 // Two side-by-side columns whose heights are computed independently. Each
 // column is its own full-height grid, so the left column's row splits have

@@ -41,10 +41,29 @@ in `em`.
 - `panel-columns` computes the two columns' heights **independently**.
   Panel boundaries across the two columns will not line up, and they are not
   supposed to. Do not try to force it.
-- `weights-left` / `weights-right` distribute *slack*, not content.
-  A panel with a short body just gets more whitespace. Once a column has no
-  slack left, changing weights stops helping and only moves the overflow from
-  one panel to its neighbour. That is where the left column is now.
+- **Row heights are measured, and `weights-*` are gone from `main.typ`.**
+  `panel-column` lays each panel out once at `h: auto` to find its natural
+  height, then sets `rows: h_i * 1fr`, so the column's spare space is handed out
+  in proportion to what each panel actually holds. Adding a bullet or resizing a
+  figure re-balances the column on the next build with nothing to retune.
+  The hand-tuned numbers were only ever an estimate of this: the last set,
+  `(0.74, 1.55, 0.99)`, is the measured ratio `194 : 406 : 242` rounded by eye.
+  Three things follow, and the second is the one that matters:
+  1. **A panel is a closure, not content.** `panel[Title][Body]` now returns
+     `(h: 100%) => block(...)`, and `panel-column` calls it twice, once to
+     measure and once to render. The call site did not change, but anything that
+     treats a panel as finished content will not work. `panel-column` falls back
+     to using a non-function entry as-is, so a plain block can still sit in a
+     column.
+  2. **An overfull column is a build error**, with the overflow in mm. It used
+     to be silent (see the `clip: true` note below). Expect ~3 spurious
+     "citation could not be located" errors alongside the panic, since the run
+     aborts before citations resolve; the panic is the real one.
+  3. `weights-left` / `weights-right` still work and still override, for the
+     cases where the honest proportional answer is not the wanted one. They skip
+     the sizing, not the overfull check. Prefer leaving them off.
+  Cost is one extra layout pass over the whole poster, about 25% of the build
+  (1.0 s to 1.3 s), which at this size is not worth optimising.
   `figure-stub` is in use again, three times, all inside `todo[...]`.
 - **Typst's IEEE style prints no date for `@software` / `@misc` entries.** The
   `rustytip` and `nanonis` entries carry `year`/`version`, and neither shows up
@@ -60,17 +79,19 @@ in `em`.
 - `todo[...]` renders in the blunt-red accent. Grep for it before printing.
 - `panel` fills on the *outer* block, otherwise the grey stops at the end of the
   text instead of the bottom of the stretched row.
-- **`panel` sets `clip: true`, so overflow is silent.** A panel with too much
-  body does not error and does not spill — it just cuts the bottom off, and the
-  missing content is easy to miss in a thumbnail. After adding to any panel,
-  look at the *bottom edge* of that panel in the preview. This already ate a
-  whole `subbox` once.
+- **`panel` still sets `clip: true`, but a whole column can no longer overflow in
+  silence.** `panel-column` panics with the amount, which is what that check
+  exists for: silent clipping ate a whole `subbox` once and a GUI screenshot
+  another time. What the check does *not* catch is a single panel whose row is
+  large enough but whose *content* is laid out taller than the measurement
+  predicted, so keep glancing at the bottom edge of a panel after adding to it.
 - Diagram figures need `set par(justify: false)`. The poster-wide
   `par(justify: true)` is for prose, and it stretches two-word node labels into
   word-gap canyons ("implement    the / trait").
-- **The left column is at capacity.** Adding a single wrapped line to any panel
-  clips another, and shifting weights only moves the problem along. If you add
-  content there, cut content there.
+- **Both columns are near capacity**, and the measured layout does not change
+  that: it only turns "a neighbour quietly loses its last line" into a build
+  error. Adding to a column still means cutting from the same column, since the
+  two are sized independently.
   What actually bought room, in order of how much:
   1. **Deleting a whole `subbox` and folding its content into the bullet that
      already described it.** The stress-test box repeated the `*Stress:*`
@@ -83,23 +104,20 @@ in `em`.
   Reach for 1 before 4. Trimming words to save a line is fiddly and keeps
   coming back; removing a redundant element is permanent.
 - **The two columns hold different amounts, so put new figures on the right.**
-  Left is Motivation / The Conditioning Loop / Framework and is full. Right is
-  Proof of Concept / Outlook, three panels' worth of content in two, and it is
-  where all three image slots ended up. The GUI screenshot was first drafted
-  into Framework, where it belongs semantically, and it **silently vanished**
-  under `clip: true`: the left column was already ~70 mm over, which no
-  weighting can fix. Current weights are `(0.80, 1.03, 1.26)` left and
-  `(1.86, 0.78, 0.96)` right.
-  **The right column was rebalanced so the GUI screenshot can match the scans.**
-  The two GUI screenshots are **150 mm** tall, above the 108 mm the three STM scans
-  use, which was the stated requirement. Height is capped at ~156 mm by *width*,
-  not by the column: the two aspect ratios sum to 2.42, so 2.42 x height plus the
-  gutter has to stay under ~383 mm. The height came from three places, in order of
-  how much: shifting the right weights from `(1.62, 1.0)` to `(2.1, 1.0)`, merging
-  two pairs of Outlook bullets, and shrinking the QR block from ~60 mm to ~46 mm.
-  Proof of Concept now has ~10 mm of slack under the screenshot stub and Outlook
-  ~25 mm under the QR, so a taller real screenshot has somewhere to come from.
-  The left column has almost no slack.
+  Left is Motivation / The Conditioning Loop / Framework. Right is the Δf-proxy
+  scan row / Proof of Concept / Outlook, and it is where all four image slots
+  ended up. The GUI screenshot was first drafted into Framework, where it belongs
+  semantically, and it **silently vanished** under `clip: true` because the left
+  column was already ~70 mm over. That failure mode is now a build error.
+  **The GUI screenshots and the STM scans are sized against each other**, and the
+  stated requirement is that the screenshots be the taller pair: **142 mm**
+  against the scans' **110 mm**. Width caps the screenshots at ~156 mm (the two
+  aspect ratios sum to 2.42, so 2.42 x height plus the gutter has to stay under
+  ~383 mm), but the panel's own height has always been the binding constraint.
+  With the measured layout the current slack is 12 / 15 / 18 mm left and
+  13 / 23 / 22 mm right, graded by panel size, which is the proportional split
+  doing its job. Both figure heights were raised into that slack after The App
+  was merged into Proof of Concept; if a panel is split back out, re-check them.
 - **Image titles go underneath, and the gap needs `stack`.** Titles were briefly
   above the images. More importantly, `figure-img` originally emitted the caption
   and the image as two consecutive `align()` calls, which are separate *blocks* and
@@ -107,6 +125,34 @@ in `em`.
   gulf between an image and its own title, which reads as two unrelated elements.
   It now uses `stack(dir: ttb, spacing: 0.35em, …)`, where the spacing is explicit.
   If a caption ever drifts away from its image again, this is why.
+- **An image row sized to the panel eats its own captions first.** In The App the
+  screenshots were 130 mm and the two titles underneath ended 1.7 mm above the
+  panel border, so the descenders were clipped and the row read as unlabelled.
+  This is the failure mode `clip: true` hides: the images look fine, and only the
+  caption, the last thing in the flow, is cut. **After changing any image height,
+  check the caption, not the image.**
+  Two things bought the space back, worth ~16 mm together:
+  1. `height: 130mm` -> `114mm` on both screenshots. Caption-to-border went
+     4.5 -> 12.4 mm; the response is close to 1:1 in mm once the row is no
+     longer overflowing.
+  2. `#block(width: 100%, above: 0.5em, …)` around the figure row. The poster
+     sets `par(justify: true)` for prose and inherits Typst's default paragraph
+     spacing (~1.2em, ~12 mm at `base-size`), which is far more air than a
+     figure needs under its intro sentence. Worth ~7 mm anywhere a figure
+     follows a paragraph.
+     **`width: 100%` is not optional there.** A bare `block(…)` shrinks to its
+     content and sits at the start of the line, so the `align(center, …)` inside
+     it centres the grid within a box that is itself hard against the left
+     inset, and the whole row silently goes left-aligned. It only shows up once
+     the row is narrower than the panel, which is exactly what shrinking the
+     images did.
+  `scripts/`-adjacent tooling for this lives nowhere; measuring it is a one-off.
+  Render at `--ppi 45`, find the panel's accent header band and its bottom rule,
+  then walk up for the last row carrying ink. Do not try to reason about it from
+  `measure()`: the grid's `auto` columns are fluid, so `measure()` reports the
+  images' natural combined width (~320 mm) while layout hands them the full
+  ~383 mm and letterboxes each image inside its cell. The *box* height is still
+  the `height:` you passed, which is the number that matters here.
 - **Size a row of images by `height`, never by width.** `figure-img` takes a
   `height` for this reason. The two Cu(110) scans are 609x514 and 618x514, so
   equal widths give unequal heights and the captions underneath sit on different
@@ -120,6 +166,22 @@ in `em`.
   caption buys ~23% of the width back for free. Note the two scans are also on
   **different z-scales** (+69/-56 pm and +70/-139 pm), so a side-by-side
   contrast comparison is partly a scaling artefact, not only a tip difference.
+- **The two cheapest levers on this poster are both structural, not editorial.**
+  In order of return per unit of effort:
+  1. **The panel header inset**, `panel`'s `inset: (x: 1em, y: 0.55em)`, down from
+     `0.8em`. ~5 mm per panel, so ~15-20 mm per column, for one number and no
+     content. The bar is a label, not a band; at 36pt the glyphs carry their own
+     leading. **Do not push it below ~0.5em**, the title starts to touch the rule.
+  2. **Putting a fixed-size block beside text instead of above it.** Typst has no
+     float and no `shape-outside`, so this is always a two-cell `grid`: the block
+     in one cell, everything meant to sit beside it in the other. The row is then
+     as tall as the taller cell rather than the sum. The Outlook QR moved this
+     way and paid ~30 mm.
+     **The trap: the cell holding the block must have an explicit width.** Both
+     `subbox` and `figure-img`'s `align(center, …)` are `width: 100%`, and a
+     fluid cell in an `auto` column claims the whole row, squeezing the `1fr`
+     text cell to nothing. Doing this to the QR blew the column up by 640 mm.
+     `columns: (1fr, 102mm)`, not `(1fr, auto)`.
 - **Panel count per column is a bigger lever than bullet length.** Deleting a
   panel from one column while growing the other makes the two columns lopsided
   in a way no amount of trimming fixes, and merging two panels recovers a header
@@ -128,6 +190,46 @@ in `em`.
 
 ## House style
 
+- **Paper register, not blog register.** Reviewer feedback, and it applies to
+  every panel. State the fact, drop the rhetorical framing, and prefer a short
+  clause to a memorable one. What was cut and what replaced it:
+
+  | out | in |
+  | --- | --- |
+  | "prepared with no operator at the keyboard" | "prepared without operator intervention" |
+  | "every session is an anecdote and every threshold a guess" | "records its parameters and its outcome, which is the prerequisite for optimizing either" |
+  | "move the recipe out of the operator's hands and into code" | "specify the conditioning procedure in code rather than in operator practice" |
+
+  The pattern in all three: a figure of speech was carrying the argument. Say
+  what the sentence means instead. Bullets should read closer to a slide than to
+  prose, so cut connectives (`only once`, `which is why`, `on its own`) wherever
+  they are not doing logical work.
+  **This is a standing instruction, not a one-time pass.** New text gets written
+  in this register.
+
+  A full pass on 2026-07-31 took every panel to paper register. The recurring
+  faults, worth checking against any new bullet:
+  - **Sentence fragments after a bold lead-in.** `*Pluggable analyzers:* as pure
+    functions from…` and `*Scripts:* abstracting a procedure out of…`. A lead-in
+    is a label, so what follows still has to be a clause.
+  - **Dangling participles.** "using the tracked machine state policies can be
+    defined" -> "policies are defined over the tracked machine state".
+  - **`which is what`, `at the end of which`, `so it is`.** Split the sentence
+    instead. *Traceable execution* became two sentences and reads better.
+  - **Telegraphic noun stacks.** "blunt tip to withdraw" -> "run unattended from
+    approach to withdrawal starting from a blunt tip"; "Same surface, three
+    apexes" -> "Three apexes on the same surface".
+  - **Elliptical verbs.** "the other moved" -> "the other did not".
+  - Grammar slips fixed in the same pass: `sweeped` -> `swept`, `to re-approaches`
+    -> `and re-approached`, `hardware specific` -> `hardware-specific`,
+    `a given hardware` -> `the underlying instrument`, `(mcp)` -> `(MCP)`,
+    `nanonis` -> `Nanonis`, `Q+` -> `qPlus`.
+  - **Scare quotes are informal.** `the "sharpness" of a Cu tip` -> `the sharpness
+    of a Cu tip`. If a term needs distancing, define it instead.
+  Deliberately left alone: `Try it:` on the QR block, which is a call to action
+  and not prose, and the lowercase `bias pulse and reposition` / `check` /
+  `stability` annotations under the FSM, where lowercase is what marks them as
+  annotations rather than headings.
 - **The procedures are Rust code today, not scripts.** The word `script` is gone
   from the poster: Framework says "for writing SPM procedures", Motivation's key
   idea says "into code", and *Actions as data* says a routine is "assembled from"
@@ -247,16 +349,22 @@ rather than about the framework.
   two in Proof of Concept (before / after conditioning) and one in `The App`.
   **If the images never arrive, delete the stubs and the `The App` panel** and
   rebalance, rather than printing a poster with dashed grey boxes on it.
-- **The framework is never named on the poster.** Framework opens "A Rust
-  framework for writing SPM procedures as scripts…" and now stops after the four
-  values; the closing "The loop above is one such script… Open source, linked from
-  the QR code" was cut by the author.
-  **Note this dropped the only "open source" claim from the poster.** The abstract
-  says "open-source software framework" and Jan's review specifically asked for
-  "open" -> "open-source". Outlook's QR block still carries `Try it:` with the repo
-  URL and `cargo add`, which implies it, but nothing states it. If it should come
-  back, the cheapest place is the opening phrase, "An open-source Rust framework
-  for writing SPM procedures as scripts", which costs two words and no line. The `rustytip` citation was removed from the reference list
+- **The framework is never named on the poster.** Framework opens **"Built on one
+  controller interface, a registry of parameterized actions and an event bus,
+  this open-source Rust framework for SPM procedures makes a conditioning routine
+  *reproducible, portable across hardware, shareable and extendable* rather than
+  dependent on one operator's experience."** and stops there.
+  The `Built on …` clause is the fix for a second piece of reviewer feedback: the
+  sentence used to open cold on "An open-source Rust framework for writing SPM
+  procedures, built so …", which asserted the four values before the reader knew
+  what the thing was made of. The three items named are exactly the diagram's
+  `Controller`, `Actions` and `Event bus` nodes, so the sentence now introduces
+  the figure below it. If a node is renamed, rename it here too.
+  The earlier closing line, "The loop above is one such script… Open source,
+  linked from the QR code", was cut by the author. Do not bring back "The loop
+  above" as an opener either; the `Built on …` clause does that job without
+  reaching backwards into another panel.
+  The `rustytip` citation was removed from the reference list
   for the same reason. This is deliberate and came from the author: the PI is not
   keen on the name, so the poster leans on what the thing *does* instead.
   The name is unavoidable in two places and both are fine, since they are
@@ -266,6 +374,13 @@ rather than about the framework.
   entries appear). Do not re-add the citation or a bold product name to Framework.
 - **"The Conditioning Loop"** (was "Pulse & Check").
   The panel now carries the stability check, so the old title undersold it.
+  **The intro is two sentences and must stay that way.** It used to end "When the
+  stability test is enabled, the loop terminates only once the apex has passed
+  it." That was cut on author feedback: the *Stability* bullet says the same
+  thing three lines further down, and the conditional made a configuration
+  detail sound like the headline. The cut is also what bought the left column its
+  slack back, roughly 10 mm. Do not re-add a sentence about when the stability
+  test runs; the bullet owns that.
 - **"Beyond the Frequency Shift" is gone.** It was a short analysis chapter
   (structured logs, pure-function analysers, CuOx row detector, offline
   parameter optimisation) and every part of it belonged somewhere else:
@@ -280,28 +395,38 @@ rather than about the framework.
   input to the next one") did not survive as a sentence, but its argument is now
   Motivation's *Long runs that log themselves* bullet. Do not re-add the panel;
   it duplicated Framework by the end.
-- **`The App` is its own panel again**, and the reversal was correct both times
-  because the content changed underneath the decision. When it was merged into
-  Proof of Concept it held *one sentence and one empty stub*, so a panel header
-  bought nothing. It now holds **two real screenshots at 122 mm plus three lines**,
-  which is a panel's worth, and more importantly Proof of Concept was making three
-  different claims at once. Splitting leaves each panel single-purpose:
-  - **Proof of Concept**: the tip got sharp (plot, then STM scans)
-  - **The App**: the software you would actually operate (control, configuration)
-  A GUI screenshot is not evidence that a tip was conditioned, so it did not
-  belong under that heading.
-  **The split costs ~63 mm** (panel header ~55 mm plus one gutter). The right
-  column did not have that spare: the first attempt clipped `The App`'s own text
-  and cut Outlook's QR. It was paid for by trimming the Proof of Concept intro,
-  dropping the plot from `scale: 1.1` to `1.05`, and tightening four Outlook
-  bullets. **If a third right-column panel is ever removed, that is where the
-  space should go back.**
-- **Each figure in Proof of Concept gets a short run-in signpost.** The scans had
-  no lead-in text at all, which left the panel's most persuasive figure unexplained
-  while the intro talked only about the plot. There is now
-  `*What the apex does.*` above the scans, and `The App`'s opening sentence ties
-  the interface back to the plot ("the same sharp band the plot above draws"),
-  which is a real cross-link: the config tab genuinely shows `-2.0 to 0.0`.
+- **The right column is four panels, one claim each.** It has been merged and
+  split more than once, and the rule that settles it is *one claim per panel*:
+  - **Δf as a proxy for imaging quality**: three STM scans, three apexes
+  - **Proof of Concept**: the tip got sharp (intro, then the plot)
+  - **The App**: the software you would actually operate
+  - **Outlook**: future work, with the QR boxed into the last two bullets
+  A GUI screenshot is not evidence that a tip was conditioned, so it never
+  belonged under Proof of Concept. The tell, when they were merged, was that the
+  screenshot paragraph had no bold lead-in and sat wedged between two figures,
+  reading as a caption that had outgrown its figure.
+  **The split costs ~30 mm** (one header at the reduced inset, plus insets and a
+  gutter). It was paid for twice over by two structural changes made just before
+  it, neither of which cost any content:
+  1. the panel header inset, `0.8em` -> `0.55em`, ~5 mm per panel
+  2. boxing the QR into the bottom-right of Outlook beside the last two bullets
+     instead of giving it its own row, ~30 mm
+  Right-column slack afterwards is 10 / 13 / 11 / 11 mm. **If space is ever
+  needed again, those two levers are spent; the next one is content.**
+- **`Δf as a proxy for imaging quality` leads with its title.** The panel used to
+  open with a lead-in paragraph, and the title was already saying it. It now goes
+  title -> three scans -> one conditions line at `0.85em` underneath. The
+  captions carry only what *differs* between the scans (Δf and frame size);
+  everything the three share (constant-current STM, sample bias, setpoint,
+  temperature) is stated once below the row rather than three times across the
+  captions. **"Separate sessions, not the conditioning runs below" stays in that
+  line and is still load-bearing**, and note it says *below* now that the scans
+  sit above Proof of Concept rather than under the plot.
+- **Proof of Concept no longer explains its own plot.** "Each marker is one
+  accepted Δf measurement on fresh surface" was cut: the x axis reads `Δf read`,
+  and The Conditioning Routine's *Bias pulse and reposition* bullet already says
+  the tip moves to a fresh site between reads. It was a figure caption living in
+  a paragraph.
 - **Proof of Concept has no bullet list at all any more.** It went in two steps.
   First *Session 1:* and *Session 2:* went, since they restated the start value,
   the end value and the pulse count, which are literally the axes of the plot
@@ -397,13 +522,12 @@ rather than about the framework.
 ## The GUI screenshots contradict the loop panel
 
 `assets/app_screenshot_controll.png` (1891x1001) and
-`app_screenshot_config.png` (519x986) sit side by side at the bottom of Proof of
-Concept, control left, configuration right, both scaled to the **same height**
-(150 mm) so their captions share a baseline. Aspect ratios are 1.89 and 0.53, so
-equal height means widths of ~283 mm and ~79 mm. Sizing by width instead would
-make the config tab about 2.6x taller than the panel can hold. Width is the
-binding constraint on the pair: 2.42 x height + gutter must stay under ~383 mm,
-which caps height at ~156 mm.
+`app_screenshot_config.png` (519x986) sit side by side in The App, control left,
+configuration right, both scaled to the **same height** (114 mm) so their captions
+share a baseline. Aspect ratios are 1.89 and 0.53, so equal height means widths of
+~215 mm and ~60 mm. Sizing by width instead would make the config tab about 2.6x
+taller than the panel can hold. Width caps the pair at ~156 mm (2.42 x height +
+gutter under ~383 mm), but the panel's own height binds first, at 114 mm.
 
 **The config tab is legible on the printed poster, and it disagrees with the
 `*Stability:*` bullet in The Conditioning Loop.**
@@ -452,20 +576,44 @@ Two more things visible in the control tab, both worth a decision:
   clause is **load-bearing**. Their titles are `blunt apex` / `sharp apex`, not
   "conditioned apex", since nothing shows the routine produced them.
   **All three slots are filled with real scans**, all 512x512 crops with no
-  colourbar, all at a **30 x 30 nm** frame, so magnification is controlled across
-  the set and the only variable is the apex:
+  colourbar, all at a **30 x 30 nm** frame. They are **110 mm** tall. Read out of
+  the file metadata on 2026-07-31:
 
-  | file | Δf | what it shows |
-  | --- | --- | --- |
-  | `Cu(110)_bad.png` | **-1.8 Hz** | broad, blurred rows |
-  | `Cu(110)_okay.png` | **-1.0 Hz** | narrower, better defined rows |
-  | `Cu(110)_good.png` | **-0.6 Hz** | rows internally resolved |
+  | file | Δf | bias | current | acquired | what it shows |
+  | --- | --- | --- | --- | --- | --- |
+  | `Cu(110)_bad.png` | **-1.8 Hz** | **+1.0 V** | ~100 pA | ? | broad, blurred rows |
+  | `Cu(110)_okay.png` | **-1.0 Hz** | **-0.5 V** | 105 pA | 2025-05-11, 354 s | narrower, better defined rows |
+  | `Cu(110)_good.png` | **-0.6 Hz** | **-0.2 V** | 100 pA | 2026-01-22, 498 s | rows internally resolved |
 
-  **Caption format, set by the author: the numbers only, no descriptive words.**
-  `-1.8 Hz, 30 x 30 nm`, not "blunt apex, ...". Write them in plain text with
-  Unicode `−` and `×`, not as `$...$` math: the caption is set in bold and math
-  inside it does not inherit the bold, so `$-1.8$ Hz` renders a light number
-  against a heavy unit.
+  **The apex is NOT the only variable, and the poster must not claim it is.**
+  The frame size is controlled and the current is effectively matched at
+  100-105 pA, but the bias is not: **+1.0 V, -0.5 V and -0.2 V**, so the blunt
+  scan is at the opposite polarity to the other two and at five times the
+  magnitude of the sharpest. On Cu(110)-(2x1)O that means the row is partly
+  comparing empty against filled states, and some of the apparent improvement is
+  electronic rather than a tip difference. The two useful scans are also eight
+  months apart. This is the same class of objection as the magnification one
+  answered below, and it is *not* answered.
+  What is on the poster: the per-caption parameters make the spread visible
+  rather than hiding it, which is the honest minimum. What would close it is a
+  matched-bias replacement for the blunt scan. Until then, **do not tighten the
+  lead-in into a claim of a controlled comparison**, and expect the question in
+  person.
+
+  **The acquisition conditions live in the captions, one line per scan.** They
+  were briefly a single shared sentence in the lead-in, on the reasoning that
+  conditions common to all three should be stated once. That reasoning was wrong:
+  the scans do not share a bias. Per-caption is what made the spread above
+  visible at all.
+
+  **Caption format: named quantities, no descriptive words.**
+  `Δf = −1.8 Hz, 30 × 30 nm` over `V = +1.0 V, I = 100 pA`, not "blunt apex, ...".
+  Two lines per caption, and **keep all three at the same line count** or the row
+  reads as a layout bug. Use Unicode `−` and `×` in the plain-text parts.
+  **Math must be wrapped in `bold(...)`**: the caption is set bold and math does
+  not inherit that, so a bare `$Delta f$` renders a light symbol against heavy
+  units. This is why the captions were plain text before the quantities were
+  named.
 
   Quoting the frame in every caption is not decoration. An earlier trio was at
   visibly different magnifications, roughly 3.5, 3 and 1.5 rows across the frame,
@@ -503,41 +651,57 @@ Two more things visible in the control tab, both worth a decision:
   dropped for being too good, since it resolved the rows about as well as the
   -0.6 Hz scan and gave no useful contrast.
 
-## Why the plotted runs end near -1.5, and what not to do about it
+## The stability check in the archive, and the plotted pair
 
-The scans are labelled -1.8 Hz and -0.6 Hz while the two plotted runs terminate at
--1.49 and -1.56 Hz, i.e. nearer the scan that images badly. Both scan values are
-inside the runs' sharp bounds of (-2.0, 0.0) Hz.
+**The plotted pair is now `20260129_124032` and `20260129_123152`**, both from one
+afternoon, both +/-8 V pulses, both ~8 min. They replaced `135558` / `115639` on
+author request, to get the `Sharp -> Stable` edge onto the panel:
 
-**The honest resolution, and it is a strong one: the loop stops as soon as its
-configured window is satisfied.** -1.49 Hz is inside (-2.0, 0.0), so the run
-succeeded by its own definition and had no reason to keep pulsing. Where a trace
-ends is the *target it was given*, not a limit of the method. Proof of Concept now
-says exactly that, and it is verifiable in the logs: both runs withdraw
-immediately after their confirmation reads. Context from the author: these were
-development runs aimed at debugging, on a badly degraded sensor, with no goal of
-producing the best possible apex.
+| | `124032` | `123152` |
+| --- | --- | --- |
+| pulses to reach the band | 36 (6.1 min) | 24 (4.0 min) |
+| pulses total | 36 | 35 |
+| sharp bounds | (-6.0, 2.0) | (-6.0, 0.0) |
+| tolerance | 4.0 Hz | 2.0 Hz |
+| baseline -> post-sweep | -0.836 -> **-0.109** | -1.268 -> **-5.104** |
+| verdict | **passed**, 0.727 Hz | **failed**, 3.836 Hz |
+| after | run ends | max pulse, ten more cycles, never regains the band |
 
-**Two things were considered and rejected:**
-- **Moving the plotted points closer to zero.** That is fabrication; the logs are
-  on the drive and `extract_trace.py` regenerates `traces.json` from them, so the
-  poster would not survive anyone re-running it.
-- **Narrowing the drawn sharp bounds.** The shaded band is the *configured* window
-  of the plotted runs, read out of the log. No run in the 69-run archive used
-  bounds tighter than (-2.0, 0.0), so a narrower band would describe a
-  configuration that was never run.
+**Only 9 of the 69 runs ran a stability check that executed.** Another 12 have a
+sweep configured whose Nanonis call failed ("Bias Sweep can't be started because
+some settings are bad"), so *a sweep appearing in a log does not mean it ran*.
+Check for a `TipState` result, not for the action. Of the 9, seven have 0-2
+pulses and are stability tests rather than conditioning runs; `124032` and
+`123152` are the only two that are both.
 
-**The legitimate lever, if a trace visibly reaching zero is wanted**, is to plot a
-run that actually did. Candidates that reach the band and end below -1.0 Hz:
+**No run anywhere in the archive fails a check and then passes one.** Counting
+`Check tip stability` actions per file gives a maximum of **2**, which is one
+check block run in both polarities, never two blocks. The recovery path fires in
+`123152` and the run was stopped before it got back into the band. So a
+fail-then-recover-then-pass trace does not exist yet, and the two-run pair is the
+closest the data comes. If such a run is ever recorded it would replace both.
 
-| run | pulses | wall | Δf start -> end | catch |
-| --- | --- | --- | --- | --- |
-| `20251212_152457` | 25 | 3.2 min | -4.21 -> **-0.99** | Dec 12, so no confirmation |
-| `20251212_152232` | 5 | 0.7 min | -13.77 -> **-0.85** | only 6 reads, and no confirmation |
+**The tolerance is in Hz even though the log prints a percent.** The action string
+says "200.0% change allowed" and `runner.rs` reads
+`stability.stable_tip_allowed_change` as Hz, so that is 2.0 Hz. Verified against
+all four passing/failing verdicts. Do not quote a percentage anywhere.
 
-Both are Dec 12 and exit on their **first** in-band read, so swapping either in
-reintroduces the mixed exit criterion documented above. **No long run ends below
--1.4 Hz**: the 287 and 339-pulse runs finish at -1.56 and -1.58.
+**The verdict is not in the sweep record.** Each sweep logs its own `TipState`,
+but that comes from a `CheckTipStability` action that no longer exists in
+`rusty-tip`, and its `is_stable` flag disagrees with the loop's own behaviour
+(`163859` logs `Blunt` on sweep 1 and the run then ends cleanly). Today's
+`check_stability` takes the last `confirm_sharp` read as baseline, sweeps, takes
+one more read, and compares `|final - baseline|` against the tolerance.
+`extract_trace.py` recomputes it that way and it matches what the loop then did
+in every case. Read the outcome off the loop's *behaviour*, never off the sweep's
+`TipState`.
+
+**The plotted runs' sweep parameters do not match the loop panel's source
+config.** They sweep `2.0 -> 0.2 V`, 200 steps, 100 ms, tolerance 2.0/4.0 Hz;
+`tip_prep_with_stability.toml` is `0.2 -> 2.0 V`, 1000 steps, 200 ms, 0.4 Hz.
+This is harmless *only because* the loop panel quotes no numbers (see the section
+below). If numbers ever go back into that panel they have to come from these two
+runs.
 
 ## The loop panel states no numbers, on purpose
 
@@ -640,18 +804,45 @@ wording change:
   The architecture diagram is `1.75` (~379 mm) with `spacing.x` cut to 9 mm to
   pay for the wide single `Hardware` node. **Re-measure after any node text
   change**; both figures have been pushed over the edge by a label twice now.
-- **The Δf figure is a scatter, and joining the points up would be wrong.**
-  The loop repositions and re-approaches between every read, so consecutive
-  points are measurements at *different places on the sample*. A line draws a
-  continuous trajectory of one quantity, which is not what happened; these are
-  independent samples of the apex, ordered by cycle. It was a connected line
-  first and looked more authoritative for exactly the wrong reason.
+- **The Δf figure is a scatter with a faint connecting line, and the line must
+  stay faint.** The loop repositions and re-approaches between every read, so
+  consecutive points are measurements at *different places on the sample*. A
+  solid line draws a continuous trajectory of one quantity, which is not what
+  happened; these are independent samples of the apex, ordered by cycle. It was
+  a full-strength line first and looked more authoritative for exactly the wrong
+  reason. It is now `trace-line()` in `convergence.typ`, 1pt at 72%
+  transparency, which orders the reads for the eye without asserting a path.
+  The line also bridges the reads `clean()` drops, so strengthening it would
+  draw a segment straight through excluded territory.
   A column/bar chart is worse still: bars encode magnitude from a zero baseline,
   but the meaningful reference here is the sharp *band* at (-2, 0), not zero, so
   a good outcome would render as the shortest bar. 295 bars across a 361 mm axis
   is also a 1.2 mm comb. If a bar chart is ever wanted, the version that works is
   a two-bar summary of *cycles to reach the band* (9 vs 287), which is a
   different figure making a different point.
+- **The Δf figure now colours the stability check.** `extract_trace.py` tags every
+  read with a `phase`: `loop` (follows a bias pulse), `confirm` (no pulse since
+  the previous read, which is exactly what `confirm_sharp` produces) and
+  `post_sweep` (the read after the bias sweeps). `confirm` and `post_sweep`
+  together are the check, and `convergence.typ` draws them as purple diamonds.
+  Design points that are not obvious:
+  - **Both runs' check reads are one series**, so the legend gains one entry
+    rather than one per run. They sit at different read numbers and the faint
+    line still ties each back to its own trace.
+  - **Purple, not green.** Green is the sharp band, and drawing a *failed* check
+    in the band's colour reads as a pass.
+  - **The faint connecting line is its own marker-less series** covering all of a
+    run's reads. Splitting a run into two marker series would otherwise break the
+    line exactly where the check starts.
+  - **The x axis is `Δf read`, not `pulse cycle`.** The confirmation reads take no
+    pulse, so the two counts part company precisely where the check begins, which
+    is the part of the figure the axis has to label honestly.
+  - **`clean()` now drops only the ±76.2937 Hz rail.** The old `floor` (|Δf| < 0.5)
+    and `deep-cut` (< -28 Hz) exclusions were facts about the 2025 runs and had to
+    go: these runs' sharpest reads are -0.109 to -0.275 Hz, and `-0.109` is the
+    post-sweep read that decided `124032`'s verdict, while `deep-cut` would have
+    removed 33 of 83 reads. The rail stays out, and the giveaway is `std_dev`
+    exactly 0.000.
 - **`lq.diagram(width:)` is the axes width, not the figure width.** Axis labels,
   tick labels and padding add roughly 28 mm on top. `convergence.typ` declares
   `300mm * scale`, so `scale: 1.2` rendered 394 mm and overflowed the 383 mm
@@ -698,23 +889,29 @@ The stability criterion in the loop panel is from
 - stable iff `|Δf_after - Δf_before| <= 0.4 Hz`
 - otherwise a max-voltage pulse and back to blunt
 
-Those are the shipped config values.
-**Re-check them against whichever run ends up in the Proof of Concept panel**
-before printing, since a poster that quotes one config and plots another is the
-kind of thing a reviewer will catch.
+Those are the shipped config values, and **the plotted runs do not use them**:
+`124032` and `123152` sweep `2.0 -> 0.2 V` in 200 steps of 100 ms with a 4.0 Hz
+and a 2.0 Hz tolerance. Checked, and it is safe only because the loop panel
+states no numbers. A poster that quotes one config and plots another is the kind
+of thing a reviewer will catch, so if numbers go back into that panel, take them
+from the plotted runs and not from this file.
 
 ## Data
 
 The full archive is **`/run/media/kronberger/DATA/Tip Prep/Experiments/`**:
-83 runs, 13 GB, flat directory, spanning 2025-12-12 to 2026-05-27. That is the
+69 runs, 13 GB, flat directory, spanning 2025-12-12 to 2026-05-27. That is the
 source of truth. Look there first, and mount the drive before assuming a run is
 missing.
 
+**The two plotted runs are `20260129_124032` and `20260129_123152`**, not the
+December ones inventoried below; see the stability-check section above. The
+December inventory is kept because it is still the history of how the figure got
+here, not because anything on the poster comes from it any more.
+
 `./experiments/` in this repo is gitignored and is now down to a single 30 KB
 file, `tip_prep_20251212_115127.json`, which is **demo mode** (Δf reads `-0.0`).
-The six December runs described below live on the drive, not here. The poster
-still builds without them, since the plotted numbers are transcribed into
-`figures/convergence.typ` with their provenance.
+The runs described below live on the drive, not here. The poster still builds
+without them, since `figures/traces.json` is committed and is all Typst reads.
 
 **File size tells you nothing about run length.** The bulk of every file is
 `ExperimentData.signal_frames`, the full TCP capture attached to each pulse. The
@@ -824,9 +1021,14 @@ failure rather than discarding the file. `scripts/scan_logs.py` does that.
 
 ### Picking a run
 
-All 83 runs were indexed with `scripts/index_logs.py` (100 s for the full 13 GB,
+All 69 runs were indexed with `scripts/index_logs.py` (100 s for the full 13 GB,
 disk-bound). The cache is `scripts/runs_index.json`, so re-ranking is instant and
-works with the drive unplugged:
+works with the drive unplugged. Note its `pulse_v` field **undercounts**: like
+`extract_trace.py` did until 2026-07-30, it only matches `Pulse retract -4.0V`
+and misses the 2026 wording `Bias pulse -8.000V`, which is why the index reports
+0 pulses for `124032` (really 36) and `123152` (really 35). `scan_logs.py` and
+`detail.py` count them correctly. Fix the regex in `index_logs.py` if the index
+is ever used to rank by pulse count again.
 
 ```nu
 python3 scripts/index_logs.py scan "/run/media/kronberger/DATA/Tip Prep/Experiments"
@@ -902,10 +1104,14 @@ serialising `ActionOutput`.
 
 Roughly in order of how much they cost the poster:
 
-1. **Two `todo[...]` marks left**, both in Proof of Concept: `sample system` and
-   the duplicated `third image`. Grep before printing. The GUI screenshot slot is
-   filled: two real screenshots, see the section on them above.
-2. `todo[sample system]`. The demonstration still names no surface.
+1. **No `todo[...]` marks are left.** The only hit for `todo[` in `main.typ` is
+   the word inside the comment on line 7 that documents the helper. The STM
+   acquisition parameters, the last ones open, came from the file metadata on
+   2026-07-31. Grep before printing anyway.
+   **The live risk on that panel is no longer a gap, it is the bias spread**: the
+   three scans are at +1.0, -0.5 and -0.2 V. See the scans section above. That
+   needs either a matched-bias replacement for the blunt scan or a lead-in that
+   stops implying a controlled comparison.
 3. **Stability-check data exists, and `Sharp -> Stable` is in it.** 25 of the 83
    runs carry `Check tip stability: bias sweep` actions; 16 returned a Nanonis
    `Error` ("Bias Sweep can't be started because some settings are bad"), so a

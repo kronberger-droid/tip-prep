@@ -1,0 +1,7 @@
+# Compiled output
+*.pdf
+!assets/*.pdf
+
+# Viewer / editor noise
+zathura.log
+*.swp

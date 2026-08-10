@@ -21,12 +21,52 @@ Requires Typst 0.15 or later and the `New Computer Modern` font. Packages
 
 ## Structure
 
-- `main.typ` — document content
-- `report.typ` — title page and document-wide `set` rules, applied via `#show`
-- `lib.typ` — data analysis helpers (mean, standard deviation, linear fit)
-- `refs.bib` — bibliography
-- `assets/` — figures and the TU Wien logo
-- `data/` — raw measurement data
+`main.typ` is a driver, the way `main.tex` is in the thesis: it sets the
+template options and `#include`s one file per chapter, so chapters are written
+separately and never collide.
+
+```
+main.typ                            template options + #include list
+report.typ                          title page, page style, LaTeX metrics
+lib.typ                             mean, standard deviation, linear fit
+src/00_intro/                       declaration, acknowledgements, abstract,
+                                    introduction
+src/01_scope-and-objectives/        one directory per chapter, each with a
+src/02_foundations/                 default.typ; split a long chapter across
+src/03_experimental-work/           more files and #include them from its
+src/04_discussion/                  own default.typ
+src/05_conclusion/
+src/A_appendix/
+src/B_bibliography/references.bib
+assets/                             the TU Wien logo
+data/                               raw measurement data
+```
+
+Figures belong next to the chapter that uses them (`src/02_foundations/fig_*`),
+since `#include` resolves paths relative to the including file. `assets/` is
+only for what the template itself needs.
+
+## Formalities
+
+`report()` assembles the same sequence as the thesis, in this order:
+
+1. title page, then a blank verso
+2. `front-matter` — declaration, acknowledgements, abstract. Counted but shown
+   without header or page number, as `\pagenumbering{roman}` with
+   `\pagestyle{empty}` leaves it.
+3. table of contents, unless `outline-contents: false`
+4. the body, restarting at arabic page 1 with the running header
+5. `appendix` — sections renumbered A, B, C, as `\appendix` does
+6. `back-matter` — lists of figures and tables, and the bibliography
+
+Helpers exported alongside `report`:
+
+| Helper | LaTeX equivalent |
+|---|---|
+| `unnumbered(title, outlined: true)` | `\section*` plus `\addcontentsline`; `outlined: false` to keep it out of the contents |
+| `blank-page()` | `\blankpage` |
+| `declaration(author:, place:, date:)[..]` | the declaration page layout, with the wording left to you |
+| `list-of-figures()`, `list-of-tables()` | `\listoffigures`, `\listoftables` |
 
 ## Page style
 
@@ -41,10 +81,16 @@ output matches that document:
   subsection on the right of odd ones, under a 0.4pt rule, with the page number
   in the outer bottom corner. A section clears the subsection mark, so a page
   that opens a section carries an empty header.
-- **Headings** (`titlesec`): 14pt bold sections and 11pt bold subsections, number
-  and title separated by 0.5em.
+- **Font sizes** (`size11.clo`): the 11pt article class, so 11pt body on a
+  13.6pt baseline, 12pt bold sections, 11pt bold subsections, 10pt captions.
+  Note these are the round values; the 10.95 / 11.955 / 14.4 series belongs to
+  the *10pt* class and makes every heading a little too large.
+- **Headings** (`titlesec`): number and title separated by 0.5em, with the
+  article-class `\titlespacing` around them.
 - **Paragraphs**: justified, no space between them, 17pt first-line indent
   except directly after a heading.
+- **Contents** (`\l@section`): section entries bold with no dot leaders,
+  subsections indented by 1.5em with them.
 - **Equations** (`\numberwithin`): numbered per section, `(2.1)`, `(2.2)`.
 - **Captions** (`captionsetup`): 10pt, bold label, separated by a period.
 

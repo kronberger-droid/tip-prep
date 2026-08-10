@@ -12,6 +12,46 @@
 // everywhere. Every field is optional; passing `none` omits that block rather
 // than leaving a gap.
 
+// --- LaTeX metrics ---------------------------------------------------------
+//
+// The font sizes are the size/baselineskip pairs from `size11.clo`, the 11pt
+// option of the article class. Note these are the round values: the 10.95 /
+// 11.955 / 14.4 series belongs to the 10pt class, and using it makes every
+// heading a little too large.
+#let sz = (
+  footnotesize: 9pt,
+  small: 10pt,
+  normal: 11pt,
+  large: 12pt,
+  Large: 14pt,
+  LARGE: 17pt,
+  huge: 20pt,
+  Huge: 25pt,
+)
+#let baselineskip = (
+  small: 12pt,
+  normal: 13.6pt,
+  large: 14pt,
+)
+
+// Typst spaces lines by `leading` *plus* the font's own line height, where
+// LaTeX's \baselineskip is the whole baseline-to-baseline distance. This is
+// the factor measured for New Computer Modern; it is font-specific.
+#let line-height-factor = 0.682
+#let leading-for(size, skip) = skip - line-height-factor * size
+
+// LaTeX's \titlespacing is added on top of \baselineskip, where a Typst block
+// gap replaces the paragraph spacing instead, so the article-class values
+// (3.5ex/2.3ex around a section, 3.25ex/1.5ex around a subsection) do not
+// transfer directly. These are the gaps that reproduce the baseline-to-
+// baseline distances measured in the thesis PDF: 26.2pt below a section, and
+// 28.8pt / 20.6pt around a subsection. The space above a section is derived
+// rather than measured, since every section in the thesis opens a page.
+#let heading-space = (
+  section: (above: 23.5pt, below: 17.9pt),
+  subsection: (above: 21.3pt, below: 13.1pt),
+)
+
 #let report(
   // --- Inside the rules ---------------------------------------------------
   // `document-type` is the large bold line, `title` the smaller line below it.
@@ -46,6 +86,18 @@
   logo: "assets/tuw_logo.jpg",
   logo-width: 80%,
   rule-stroke: 0.5mm,
+  // --- Document structure -------------------------------------------------
+  // Everything between the title page and the table of contents: declaration,
+  // acknowledgements, abstract. Counted but unnumbered and without a header,
+  // the way \pagenumbering{roman} with \pagestyle{empty} leaves it.
+  front-matter: none,
+  outline-contents: true,
+  outline-title: [Contents],
+  outline-depth: 2,
+  // Placed after the body with sections renumbered A, B, C, as \appendix does.
+  appendix: none,
+  // Placed last, for the bibliography and any lists of figures or tables.
+  back-matter: none,
   // Two-sided printing: alternating margins, the section name in the header of
   // even pages and the subsection name on odd ones, page number in the outer
   // corner. Set false for a single-sided report.
@@ -67,7 +119,7 @@
       (left: 3cm, right: 2.5cm, top: 2.5cm, bottom: 2.5cm)
     },
   )
-  set text(lang: language, font: "New Computer Modern", size: 11pt)
+  set text(lang: language, font: "New Computer Modern", size: sz.normal)
 
   set heading(numbering: (..nums) => {
     let level = nums.pos().len()
@@ -90,21 +142,40 @@
     if it.level == 1 {
       counter(math.equation).update(0)
     }
-    block(
-      above: if it.level == 1 { 3.5 * 4.7pt } else { 3.25 * 4.7pt },
-      below: if it.level == 1 { 2.3 * 4.7pt } else { 1.5 * 4.7pt },
-    )[
-      #set text(size: if it.level == 1 { 14pt } else { 11pt }, weight: "bold")
+    let size = if it.level == 1 { sz.large } else { sz.normal }
+    let skip = if it.level == 1 { baselineskip.large } else { baselineskip.normal }
+    let space = if it.level == 1 { heading-space.section } else { heading-space.subsection }
+    block(above: space.above, below: space.below)[
+      #set text(size: size, weight: "bold")
+      #set par(leading: leading-for(size, skip))
       #if numbered [#context counter(heading).display(it.numbering)#h(0.5em)]
       #it.body
     ]
   }
 
+  // The article class's \l@section and \@dottedtocline: section entries bold
+  // with no dot leaders and a little air above, subsections indented by 1.5em
+  // with the usual dotted leader.
+  set outline.entry(fill: repeat[.#h(0.3em)])
+  show outline.entry.where(level: 1): it => {
+    v(1em, weak: true)
+    strong(it.indented(it.prefix(), it.body() + h(1fr) + it.page()))
+  }
+  // \@dottedtocline{2}{1.5em}{..}
+  show outline.entry.where(level: 2): it => pad(
+    left: 1.5em,
+    it.indented(it.prefix(), it.inner()),
+  )
+
   // \captionsetup{font=small, labelfont=bf, labelsep=period}
   set figure.caption(separator: [.#h(0.5em)])
   show figure.caption: it => block(width: 100%)[
-    #set text(size: 10pt)
-    #set par(justify: true, first-line-indent: 0pt)
+    #set text(size: sz.small)
+    #set par(
+      justify: true,
+      first-line-indent: 0pt,
+      leading: leading-for(sz.small, baselineskip.small),
+    )
     #set align(left)
     #text(weight: "bold")[
       #it.supplement #context it.counter.display(it.numbering)#it.separator
@@ -143,23 +214,23 @@
     line(length: 100%, stroke: rule-stroke)
     v(0.4cm)
     if document-type != none {
-      text(size: 24pt, weight: "bold")[#document-type]
+      text(size: sz.Huge, weight: "bold")[#document-type]
       v(0.5cm)
     }
-    text(size: 14pt)[#title]
+    text(size: sz.Large)[#title]
     v(0.4cm)
     line(length: 100%, stroke: rule-stroke)
 
     v(2cm)
 
-    text(size: 17pt)[#smallcaps[#institution]]
+    text(size: sz.LARGE)[#smallcaps[#institution]]
     if faculty != none {
       v(0.5cm)
-      text(size: 14pt)[#smallcaps[#faculty]]
+      text(size: sz.Large)[#smallcaps[#faculty]]
     }
     if institute != none {
       v(0.5cm)
-      text(size: 14pt)[#smallcaps[#institute]]
+      text(size: sz.Large)[#smallcaps[#institute]]
     }
 
     if advisors.len() > 0 {
@@ -203,7 +274,7 @@
       v(1cm)
     }
 
-    text(size: 12pt)[
+    text(size: sz.large)[
       #if type(date) == datetime {
         date.display(date-format)
       } else {
@@ -225,16 +296,22 @@
   // `leading` is what removes the gap Typst would otherwise insert.
   set par(
     justify: true,
-    leading: 0.65em,
-    spacing: 0.65em,
+    leading: leading-for(sz.normal, baselineskip.normal),
+    spacing: leading-for(sz.normal, baselineskip.normal),
     first-line-indent: (amount: 17pt, all: false),
   )
 
   // Named `hd`, not `h`: the parameter would otherwise shadow the `h()`
   // spacing function used for the \quad between number and title.
   let show-mark(hd) = {
-    let nums = counter(heading).at(hd.location())
-    [#numbering("1.1", ..nums)#h(1em)#hd.body]
+    // The heading's own numbering, not a hardcoded "1.1": in the appendix the
+    // same mark has to come out as A, B, C.
+    if hd.numbering == none {
+      hd.body
+    } else {
+      let nums = counter(heading).at(hd.location())
+      [#numbering(hd.numbering, ..nums)#h(1em)#hd.body]
+    }
   }
 
   // fancyhdr's \leftmark: the left component of \botmark, so the last section
@@ -262,6 +339,19 @@
     if first-mark != none and first-mark.level == 2 { show-mark(first-mark) }
   }
 
+  // \pagenumbering{roman} \pagestyle{empty}: the front matter is counted but
+  // shows neither header nor page number, so nothing needs displaying here.
+  if front-matter != none {
+    front-matter
+    if two-sided { pagebreak(to: "odd") } else { pagebreak() }
+  }
+
+  if outline-contents {
+    outline(title: outline-title, depth: outline-depth)
+    if two-sided { pagebreak(to: "odd") } else { pagebreak() }
+  }
+
+  // \pagenumbering{arabic} \pagestyle{fancy}
   counter(page).update(1)
   set page(
     // [LE]{\leftmark}: the section, on the left of even pages.
@@ -291,4 +381,96 @@
   )
 
   doc
+
+  // \appendix: sections renumbered A, B, C, with the counter restarted.
+  if appendix != none {
+    if two-sided { pagebreak(to: "odd") } else { pagebreak() }
+    counter(heading).update(0)
+    set heading(numbering: (..nums) => {
+      let level = nums.pos().len()
+      if level == 1 {
+        numbering("A", ..nums)
+      } else if level == 2 {
+        numbering("A.1", ..nums)
+      }
+    })
+    appendix
+  }
+
+  if back-matter != none {
+    if two-sided { pagebreak(to: "odd") } else { pagebreak() }
+    back-matter
+  }
 }
+
+// --- Helpers for the document body -----------------------------------------
+
+// \section*{..}: a heading with no number. Outlined, and so the equivalent of
+// following it with \addcontentsline{toc}{section}{..}; pass `outlined: false`
+// for the ones the thesis leaves out of the table of contents.
+#let unnumbered(title, level: 1, outlined: true) = heading(
+  level: level,
+  numbering: none,
+  outlined: outlined,
+)[#title]
+
+// \blankpage: a page with nothing on it, not even a header or page number.
+#let blank-page() = page(header: none, footer: none)[]
+
+// The declaration page from `src/00_intro/declaration.tex`: a centred \LARGE
+// bold title, the author in bold, the declaration itself, and a signature rule
+// pushed to the foot. The text is a parameter, since it is yours to word.
+#let declaration(
+  title: [Declaration of Authorship],
+  author: none,
+  place: none,
+  date: datetime.today(),
+  date-format: "[day] [month repr:long] [year]",
+  signature-width: 6cm,
+  body,
+) = {
+  // Nothing on this page is running prose, so nothing is indented.
+  set par(first-line-indent: 0pt)
+
+  // \vspace*{1cm}, plus the offset \topskip puts before the first line of a
+  // page. Measured against the thesis PDF, which puts the title top at 121.8pt.
+  v(1cm + 24.6pt)
+  align(center, text(size: sz.LARGE, weight: "bold")[#title])
+  v(2cm)
+
+  if author != none {
+    text(weight: "bold")[#author]
+    v(0.5cm + leading-for(sz.normal, baselineskip.normal))
+  }
+
+  // Scoped, so the wider paragraph spacing does not also land between the
+  // title and the author above.
+  {
+    // \\[0.3cm] between the two statements. As with the headings, a LaTeX skip
+    // is added to \baselineskip where a Typst gap replaces the leading.
+    set par(spacing: leading-for(sz.normal, baselineskip.normal) + 0.3cm)
+    body
+  }
+
+  v(1fr)
+
+  block(width: signature-width)[
+    #line(length: 100%, stroke: 0.5pt)
+    #author \
+    #{
+      if place != none [#place, ]
+      if type(date) == datetime { date.display(date-format) } else { date }
+    }
+  ]
+  v(1fr)
+}
+
+// \listoffigures and \listoftables.
+#let list-of-figures(title: [List of Figures]) = outline(
+  title: title,
+  target: figure.where(kind: image),
+)
+#let list-of-tables(title: [List of Tables]) = outline(
+  title: title,
+  target: figure.where(kind: table),
+)

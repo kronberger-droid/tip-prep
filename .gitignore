@@ -1,6 +1,8 @@
 # Compiled output
 *.pdf
+# ...but figures live next to the chapter that uses them, as in the thesis
 !assets/*.pdf
+!src/**/*.pdf
 
 # Viewer / editor noise
 zathura.log

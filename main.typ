@@ -5,8 +5,13 @@
 
 #show: report.with(
   title: [ Automated, Reproducible Conditioning of SPM Tips ],
-  authors: ("Martin Kronberger",),
-  supervisor: [ Jiri Pavelec ],
+  advisors: (
+    [ Ing. Adam Lagin ],
+    [ Dr.techn. Jiri Pavelec ],
+  ),
+  authors: ([ Martin Kronberger ],),
+  matriculation: [ Matr.-Nr.: 12202316 ],
+  supervisor: [ Dr.techn. Jiri Pavelec ],
   date: datetime.today(),
 )
 

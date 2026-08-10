@@ -1,7 +1,7 @@
 #import "report.typ": report
 #import "lib.typ": *
-#import "@preview/lilaq:0.5.0" as lq
-#import "@preview/unify:0.7.1": num, qty
+#import "@preview/lilaq:0.6.0" as lq
+#import "@preview/unify:0.8.1": num, qty
 
 #show: report.with(
   title: "Tip Preparation",

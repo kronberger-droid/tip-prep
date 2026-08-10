@@ -93,7 +93,7 @@
   front-matter: none,
   outline-contents: true,
   outline-title: [Contents],
-  outline-depth: 2,
+  outline-depth: 3,
   // Placed after the body with sections renumbered A, B, C, as \appendix does.
   appendix: none,
   // Placed last, for the bibliography and any lists of figures or tables.
@@ -121,10 +121,11 @@
   )
   set text(lang: language, font: "New Computer Modern", size: sz.normal)
 
+  // \secnumdepth is 3 in the article class, so subsubsections are numbered too.
   set heading(numbering: (..nums) => {
     let level = nums.pos().len()
-    if level <= 2 {
-      numbering("1.1", ..nums)
+    if level <= 3 {
+      numbering("1.1.1", ..nums)
     }
   })
 
@@ -138,7 +139,7 @@
   // subsections, number and title separated by 0.5em. Spacing is the article
   // class default that titlesec leaves alone, in ex at 11pt.
   show heading: it => {
-    let numbered = it.level <= 2 and it.numbering != none
+    let numbered = it.level <= 3 and it.numbering != none
     if it.level == 1 {
       counter(math.equation).update(0)
     }
@@ -153,19 +154,47 @@
     ]
   }
 
-  // The article class's \l@section and \@dottedtocline: section entries bold
-  // with no dot leaders and a little air above, subsections indented by 1.5em
-  // with the usual dotted leader.
-  set outline.entry(fill: repeat[.#h(0.3em)])
-  show outline.entry.where(level: 1): it => {
-    v(1em, weak: true)
-    strong(it.indented(it.prefix(), it.body() + h(1fr) + it.page()))
-  }
-  // \@dottedtocline{2}{1.5em}{..}
-  show outline.entry.where(level: 2): it => pad(
-    left: 1.5em,
-    it.indented(it.prefix(), it.inner()),
+  // \l@section and \@dottedtocline{level}{indent}{numwidth}: the article class
+  // uses {0em}{1.5em} for sections, {1.5em}{2.3em} for subsections and
+  // {3.8em}{3.2em} below that. The number sits in a fixed column so the titles
+  // line up, and the page number is right-aligned in a \@pnumwidth box, which
+  // is what leaves the gap between the leaders and the number. Sections are
+  // bold and take \hfil instead of dot leaders.
+  let pnumwidth = 1.55em
+  // One block per entry, or consecutive entries join into a single paragraph
+  // and wrap into each other. The indent is the entry's own, so the body's
+  // \parindent has to be switched off here.
+  let toc-entry(it, indent, numwidth, dots: true) = block(
+    width: 100%,
+    spacing: leading-for(sz.normal, baselineskip.normal),
+    {
+      set par(first-line-indent: 0pt)
+      link(it.element.location(), {
+        h(indent)
+        // Unnumbered entries reserve no column, so a \section* sits flush left.
+        if it.prefix() != none {
+          box(width: numwidth)[#it.prefix()]
+        }
+        it.body()
+        if dots {
+          // \@dotsep is 4.5mu either side of the dot, so 0.5em between them,
+          // which measures as an 8.5pt pitch at 11pt.
+          box(width: 1fr, inset: (x: 0.4em), repeat[.#h(0.5em)])
+        } else {
+          h(1fr)
+        }
+        box(width: pnumwidth, align(right, it.page()))
+      })
+    },
   )
+
+  show outline.entry.where(level: 1): it => {
+    // \addvspace{1.0em}, on top of the line spacing rather than replacing it.
+    v(1em)
+    strong(toc-entry(it, 0em, 1.5em, dots: false))
+  }
+  show outline.entry.where(level: 2): it => toc-entry(it, 1.5em, 2.3em)
+  show outline.entry.where(level: 3): it => toc-entry(it, 3.8em, 3.2em)
 
   // \captionsetup{font=small, labelfont=bf, labelsep=period}
   set figure.caption(separator: [.#h(0.5em)])
@@ -390,8 +419,8 @@
       let level = nums.pos().len()
       if level == 1 {
         numbering("A", ..nums)
-      } else if level == 2 {
-        numbering("A.1", ..nums)
+      } else if level <= 3 {
+        numbering("A.1.1", ..nums)
       }
     })
     appendix

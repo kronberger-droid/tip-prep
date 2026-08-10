@@ -89,8 +89,13 @@ output matches that document:
   article-class `\titlespacing` around them.
 - **Paragraphs**: justified, no space between them, 17pt first-line indent
   except directly after a heading.
-- **Contents** (`\l@section`): section entries bold with no dot leaders,
-  subsections indented by 1.5em with them.
+- **Contents** (`\l@section`, `\@dottedtocline`): section entries bold with no
+  dot leaders, subsections indented 1.5em and sub-subsections 3.8em, both with
+  leaders on an 8.5pt pitch. Numbers sit in a fixed column so titles line up,
+  and page numbers are right-aligned in a `\@pnumwidth` box. Unnumbered entries
+  reserve no column and sit flush left.
+- **Numbering depth** (`\secnumdepth`, `\tocdepth`): three levels, so
+  sub-subsections are numbered and reach the contents.
 - **Equations** (`\numberwithin`): numbered per section, `(2.1)`, `(2.2)`.
 - **Captions** (`captionsetup`): 10pt, bold label, separated by a period.
 

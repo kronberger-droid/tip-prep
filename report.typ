@@ -1,14 +1,15 @@
 // Report template, generalized from the labor-III lab-report template.
 //
 // Applied from main.typ as:
-//   #show: report.with(title: "...", authors: (...), ...)
+//   #show: report.with(title: [...], authors: (...), ...)
 //
-// Every field on the title page is optional; a `none` field is simply omitted.
+// Every text field takes either a string or content, so `[ ... ]` works
+// everywhere. Every field on the title page is optional; passing `none` omits
+// that block rather than leaving a gap.
 
 #let report(
   title: none,
-  // The three smallcaps lines above the title rule. Set `course` to none to
-  // drop the third line entirely.
+  // The three smallcaps lines above the title rule.
   institution: [Vienna University of Technology],
   faculty: [Faculty of Physics],
   course: [Institute of Applied Physics],
@@ -17,7 +18,10 @@
   authors: (),
   supervisor: none,
   groupnumber: none,
+  // A datetime is formatted with `date-format`; anything else is shown as-is,
+  // so `date: [Summer term 2026]` is also valid.
   date: datetime.today(),
+  date-format: "[day] [month repr:long] [year]",
   // Text of the running header on every page after the title. Defaults to the
   // title alone; pass e.g. [Tip Preparation - #title] for a course prefix.
   running-header: auto,
@@ -51,7 +55,10 @@
 
   v(2cm)
   line(length: 100%)
-  text(size: 24pt, weight: "bold")[#document-type #v(0.2cm)]
+  if document-type != none {
+    text(size: 24pt, weight: "bold")[#document-type]
+    v(0.2cm)
+  }
   text(size: 18pt)[#title]
   line(length: 100%)
   v(1fr)
@@ -64,7 +71,7 @@
     #text(weight: "bold")[
       #if authors.len() > 1 [Authors:] else [Author:] \
     ]
-    #authors.join("\n")\
+    #authors.map(a => [#a]).join(linebreak())\
     #if groupnumber != none {
       text(weight: "bold")[Group #groupnumber]
     }
@@ -80,8 +87,11 @@
   ]
   v(1cm)
 
-  text[conducted on:\ ]
-  date.display("[day] [month repr:long] [year]")
+  if type(date) == datetime {
+    date.display(date-format)
+  } else {
+    date
+  }
 
   pagebreak()
 

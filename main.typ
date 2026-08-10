@@ -4,9 +4,9 @@
 #import "@preview/unify:0.8.1": num, qty
 
 #show: report.with(
-  title: "Tip Preparation",
+  title: [ Automated, Reproducible Conditioning of SPM Tips ],
   authors: ("Martin Kronberger",),
-  supervisor: none,
+  supervisor: [ Jiri Pavelec ],
   date: datetime.today(),
 )
 

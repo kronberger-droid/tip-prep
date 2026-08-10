@@ -1,29 +1,53 @@
-// Report template, generalized from the labor-III lab-report template.
+// Report template. The title page follows the LaTeX front page from
+// kronberger-droid/thesis-bachelor (`src/00_intro/title.tex`):
+//
+//   left-aligned logo, rules bracketing the document type and title, the
+//   institution below them, then the advisor list, the submitting author, and
+//   signature lines pushed to the foot of the page.
 //
 // Applied from main.typ as:
 //   #show: report.with(title: [...], authors: (...), ...)
 //
 // Every text field takes either a string or content, so `[ ... ]` works
-// everywhere. Every field on the title page is optional; passing `none` omits
-// that block rather than leaving a gap.
+// everywhere. Every field is optional; passing `none` omits that block rather
+// than leaving a gap.
 
 #let report(
-  title: none,
-  // The three smallcaps lines above the title rule.
-  institution: [Vienna University of Technology],
-  faculty: [Faculty of Physics],
-  course: [Institute of Applied Physics],
-  // The bold line inside the rules, above the title.
+  // --- Inside the rules ---------------------------------------------------
+  // `document-type` is the large bold line, `title` the smaller line below it.
   document-type: [Report],
+  title: none,
+  // --- Below the rules ----------------------------------------------------
+  institution: [Vienna University of Technology],
+  faculty: none,
+  institute: [Institute of Applied Physics],
+  // --- Attribution --------------------------------------------------------
+  // Names listed under `advisors-label`, in bold, one per line.
+  advisors: (),
+  advisors-label: [under guidance of],
+  // Names listed under `authors-label`, in bold, one per line, with
+  // `matriculation` as a plain line underneath.
   authors: (),
-  supervisor: none,
+  authors-label: [submitted by],
+  matriculation: none,
   groupnumber: none,
+  // Used for the signature line only; `advisors` is the printed list above.
+  supervisor: none,
+  // --- Signature lines at the foot ----------------------------------------
+  // `auto` derives (Author: first author) and (Supervisor: supervisor).
+  // `none` omits the block. Otherwise an array of (label: .., name: ..).
+  signatures: auto,
+  signature-width: 6cm,
+  // --- Misc ---------------------------------------------------------------
   // A datetime is formatted with `date-format`; anything else is shown as-is,
   // so `date: [Summer term 2026]` is also valid.
   date: datetime.today(),
   date-format: "[day] [month repr:long] [year]",
+  logo: "assets/tuw_logo.jpg",
+  logo-width: 80%,
+  rule-stroke: 0.5mm,
   // Text of the running header on every page after the title. Defaults to the
-  // title alone; pass e.g. [Tip Preparation - #title] for a course prefix.
+  // title alone; pass e.g. [Tip Preparation - #title] for a section prefix.
   running-header: auto,
   language: "en",
   doc,
@@ -39,58 +63,106 @@
   })
 
   set math.equation(numbering: "(1)")
-  set align(center)
 
-  image(width: 10cm, "assets/tuw_logo.jpg")
+  // A bold name per line, as used for both the advisor and author lists.
+  let name-list(names) = names.map(n => text(weight: "bold")[#n]).join(linebreak())
 
-  v(3cm)
-
-  text(size: 18pt)[#smallcaps[#institution]]
-  v(0.2cm)
-  text(size: 16pt)[#smallcaps[#faculty]]
-  if course != none {
-    v(0.2cm)
-    text(size: 14pt)[#smallcaps[#course]]
+  let signature-lines = if signatures == auto {
+    (
+      if authors.len() > 0 { ((label: [Author:], name: authors.first()),) } else { () }
+        + if supervisor != none { ((label: [Supervisor:], name: supervisor),) } else { () }
+    )
+  } else if signatures == none {
+    ()
+  } else {
+    signatures
   }
 
-  v(2cm)
-  line(length: 100%)
-  if document-type != none {
-    text(size: 24pt, weight: "bold")[#document-type]
-    v(0.2cm)
-  }
-  text(size: 18pt)[#title]
-  line(length: 100%)
-  v(1fr)
+  // A bare code block, not a `block()` element: set rules are scoped to it,
+  // while the content still joins into the page flow so `v(1fr)` can expand.
+  {
+    // Every gap on this page is an explicit `v()`, so the automatic spacing
+    // between paragraphs would otherwise be added on top of each one.
+    set par(spacing: 0pt)
 
-  grid(
-    columns: (1fr, 1fr),
-  )[
-    #set align(left)
-    #set text(size: 12pt)
-    #text(weight: "bold")[
-      #if authors.len() > 1 [Authors:] else [Author:] \
-    ]
-    #authors.map(a => [#a]).join(linebreak())\
-    #if groupnumber != none {
+    if logo != none {
+      image(width: logo-width, logo)
+    }
+
+    v(2cm)
+
+    set align(center)
+
+    line(length: 100%, stroke: rule-stroke)
+    v(0.4cm)
+    if document-type != none {
+      text(size: 24pt, weight: "bold")[#document-type]
+      v(0.5cm)
+    }
+    text(size: 14pt)[#title]
+    v(0.4cm)
+    line(length: 100%, stroke: rule-stroke)
+
+    v(2cm)
+
+    text(size: 17pt)[#smallcaps[#institution]]
+    if faculty != none {
+      v(0.5cm)
+      text(size: 14pt)[#smallcaps[#faculty]]
+    }
+    if institute != none {
+      v(0.5cm)
+      text(size: 14pt)[#smallcaps[#institute]]
+    }
+
+    if advisors.len() > 0 {
+      v(1cm)
+      advisors-label
+      v(0.3cm)
+      name-list(advisors)
+    }
+
+    if authors.len() > 0 {
+      v(0.5cm)
+      authors-label
+      v(0.3cm)
+      name-list(authors)
+      if matriculation != none {
+        linebreak()
+        matriculation
+      }
+    }
+
+    if groupnumber != none {
+      v(0.3cm)
       text(weight: "bold")[Group #groupnumber]
     }
-  ][
-    #set align(right)
-    #set text(size: 12pt)
-    #if supervisor != none [
-      #text(weight: "bold")[
-        Supervisor:\
-      ]
-      #supervisor
-    ]
-  ]
-  v(1cm)
 
-  if type(date) == datetime {
-    date.display(date-format)
-  } else {
-    date
+    v(1fr)
+
+    // Fixed-width cells with expanding gutters, so the first sits flush left
+    // and the last flush right however many there are.
+    if signature-lines.len() > 0 {
+      grid(
+        columns: (signature-width,) * signature-lines.len(),
+        column-gutter: 1fr,
+        ..signature-lines.map(s => {
+          set align(left)
+          line(length: 100%, stroke: 0.4pt)
+          v(0.2cm)
+          [#s.label \ #s.name]
+        })
+      )
+      v(1cm)
+    }
+
+    text(size: 12pt)[
+      #if type(date) == datetime {
+        date.display(date-format)
+      } else {
+        date
+      }
+    ]
   }
 
   pagebreak()

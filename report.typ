@@ -46,13 +46,27 @@
   logo: "assets/tuw_logo.jpg",
   logo-width: 80%,
   rule-stroke: 0.5mm,
-  // Text of the running header on every page after the title. Defaults to the
-  // title alone; pass e.g. [Tip Preparation - #title] for a section prefix.
-  running-header: auto,
+  // Two-sided printing: alternating margins, the section name in the header of
+  // even pages and the subsection name on odd ones, page number in the outer
+  // corner. Set false for a single-sided report.
+  two-sided: true,
+  // `auto` uses the thesis geometry; otherwise any `page.margin` value.
+  margin: auto,
   language: "en",
   doc,
 ) = {
-  set page(paper: "a4")
+  // `geometry` in the LaTeX preamble: inner 3cm plus a 1cm binding offset,
+  // outer 2.5cm, 2.5cm top and bottom. `inside`/`outside` alternate by page
+  // parity, so they are only right for a two-sided document.
+  set page(
+    paper: "a4",
+    binding: left,
+    margin: if margin != auto { margin } else if two-sided {
+      (inside: 4cm, outside: 2.5cm, top: 2.5cm, bottom: 2.5cm)
+    } else {
+      (left: 3cm, right: 2.5cm, top: 2.5cm, bottom: 2.5cm)
+    },
+  )
   set text(lang: language, font: "New Computer Modern", size: 11pt)
 
   set heading(numbering: (..nums) => {
@@ -62,7 +76,40 @@
     }
   })
 
-  set math.equation(numbering: "(1)")
+  // \numberwithin{equation}{section}: (2.1), (2.2), restarting each section.
+  set math.equation(numbering: n => {
+    let sec = counter(heading).get()
+    numbering("(1.1)", if sec.len() > 0 { sec.first() } else { 0 }, n)
+  })
+
+  // \titleformat: \large\bfseries for sections, \normalsize\bfseries for
+  // subsections, number and title separated by 0.5em. Spacing is the article
+  // class default that titlesec leaves alone, in ex at 11pt.
+  show heading: it => {
+    let numbered = it.level <= 2 and it.numbering != none
+    if it.level == 1 {
+      counter(math.equation).update(0)
+    }
+    block(
+      above: if it.level == 1 { 3.5 * 4.7pt } else { 3.25 * 4.7pt },
+      below: if it.level == 1 { 2.3 * 4.7pt } else { 1.5 * 4.7pt },
+    )[
+      #set text(size: if it.level == 1 { 14pt } else { 11pt }, weight: "bold")
+      #if numbered [#context counter(heading).display(it.numbering)#h(0.5em)]
+      #it.body
+    ]
+  }
+
+  // \captionsetup{font=small, labelfont=bf, labelsep=period}
+  set figure.caption(separator: [.#h(0.5em)])
+  show figure.caption: it => block(width: 100%)[
+    #set text(size: 10pt)
+    #set par(justify: true, first-line-indent: 0pt)
+    #set align(left)
+    #text(weight: "bold")[
+      #it.supplement #context it.counter.display(it.numbering)#it.separator
+    ]#it.body
+  ]
 
   // A bold name per line, as used for both the advisor and author lists.
   let name-list(names) = names.map(n => text(weight: "bold")[#n]).join(linebreak())
@@ -165,18 +212,82 @@
     ]
   }
 
-  pagebreak()
+  // The thesis puts a \blankpage verso after the title page, which is also
+  // what keeps the printed page numbers in step with the physical ones: Typst
+  // alternates the inside/outside margins by physical page, while the header
+  // and footer follow the counter. Starting the body on a physical odd page
+  // makes the two agree.
+  if two-sided { pagebreak(to: "odd") } else { pagebreak() }
 
   set align(left)
-  set par(justify: true)
+  // \parskip is 0 in the article class, so paragraphs run on with only the
+  // first line indented by \parindent (17pt at 11pt). Matching `spacing` to
+  // `leading` is what removes the gap Typst would otherwise insert.
+  set par(
+    justify: true,
+    leading: 0.65em,
+    spacing: 0.65em,
+    first-line-indent: (amount: 17pt, all: false),
+  )
+
+  // Named `hd`, not `h`: the parameter would otherwise shadow the `h()`
+  // spacing function used for the \quad between number and title.
+  let show-mark(hd) = {
+    let nums = counter(heading).at(hd.location())
+    [#numbering("1.1", ..nums)#h(1em)#hd.body]
+  }
+
+  // fancyhdr's \leftmark: the left component of \botmark, so the last section
+  // in effect at the foot of the page.
+  let left-mark = context {
+    let secs = query(heading.where(level: 1))
+      .filter(h => h.location().page() <= here().page())
+    if secs.len() > 0 { show-mark(secs.last()) }
+  }
+
+  // fancyhdr's \rightmark: the right component of \firstmark, so whichever
+  // mark the first heading on the page left behind. \subsectionmark sets it;
+  // \sectionmark clears it, via \markboth{..}{} in the article class. With no
+  // heading on the page at all, the mark carries over from the one before.
+  let right-mark = context {
+    let page-now = here().page()
+    let marks = query(heading).filter(h => h.level <= 2)
+    let on-page = marks.filter(h => h.location().page() == page-now)
+    let carried = marks.filter(h => h.location().page() < page-now)
+    let first-mark = if on-page.len() > 0 {
+      on-page.first()
+    } else if carried.len() > 0 {
+      carried.last()
+    }
+    if first-mark != none and first-mark.level == 2 { show-mark(first-mark) }
+  }
 
   counter(page).update(1)
   set page(
-    numbering: "1",
-    header: [
-      #set align(center)
-      #if running-header == auto { title } else { running-header }
-    ],
+    // [LE]{\leftmark}: the section, on the left of even pages.
+    // [RO]{\rightmark}: the subsection, on the right of odd ones.
+    header: context {
+      // Parity follows the printed page number, which the reset after the
+      // title page puts out of step with the physical page index.
+      let even = two-sided and calc.even(counter(page).get().first())
+      block(
+        width: 100%,
+        stroke: (bottom: 0.4pt),
+        inset: (bottom: 0.4em),
+        // The zero-width strut keeps the rule at a fixed height on pages whose
+        // mark is empty, such as a section opening before its first subsection.
+        align(if even or not two-sided { left } else { right })[
+          #box(width: 0pt, height: 1em)#if two-sided and not even { right-mark } else { left-mark }
+        ],
+      )
+    },
+    // \fancyfoot[LE,RO]{\thepage}: the outer bottom corner.
+    footer: context {
+      // Parity follows the printed page number, which the reset after the
+      // title page puts out of step with the physical page index.
+      let even = two-sided and calc.even(counter(page).get().first())
+      align(if even { left } else { right })[#counter(page).display("1")]
+    },
   )
 
   doc

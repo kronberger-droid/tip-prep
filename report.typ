@@ -230,49 +230,63 @@
   {
     // Every gap on this page is an explicit `v()`, so the automatic spacing
     // between paragraphs would otherwise be added on top of each one.
-    set par(spacing: 0pt)
+    set par(spacing: 0pt, leading: leading-for(sz.normal, baselineskip.normal))
+
+    // The title page is one \\-separated paragraph in the LaTeX, so each
+    // \\[x] puts x *on top of* \baselineskip. A Typst `v(x)` is the whole gap,
+    // so the leading has to be added back. Between lines of different sizes
+    // TeX falls back to \lineskip and the extra comes out smaller, so those
+    // gaps are measured against the thesis title page rather than derived.
+    let gap = leading-for(sz.normal, baselineskip.normal)
 
     if logo != none {
       image(width: logo-width, logo)
     }
 
-    v(2cm)
+    // \vspace{2cm}, plus the \topsep the `center` environment opens with and
+    // the line box the \HRule sits in. Measured: the thesis rule is at 247.5pt.
+    v(2cm + 24.5pt)
 
     set align(center)
 
     line(length: 100%, stroke: rule-stroke)
-    v(0.4cm)
+    v(0.4cm + 2.3pt)
     if document-type != none {
       text(size: sz.Huge, weight: "bold")[#document-type]
-      v(0.5cm)
+      v(0.5cm + 3.5pt)
     }
-    text(size: sz.Large)[#title]
-    v(0.4cm)
+    text(size: sz.Large)[
+      // `{\Large ..}\\` closes the group before \par, so the two title lines
+      // are set on the 11pt \baselineskip rather than \Large's 18pt.
+      #set par(leading: baselineskip.normal - line-height-factor * sz.Large)
+      #title
+    ]
+    v(0.4cm + 1.7pt)
     line(length: 100%, stroke: rule-stroke)
 
-    v(2cm)
+    v(2cm + 2.5pt)
 
     text(size: sz.LARGE)[#smallcaps[#institution]]
     if faculty != none {
-      v(0.5cm)
+      v(0.5cm + 4pt)
       text(size: sz.Large)[#smallcaps[#faculty]]
     }
     if institute != none {
-      v(0.5cm)
+      v(0.5cm + 4pt)
       text(size: sz.Large)[#smallcaps[#institute]]
     }
 
     if advisors.len() > 0 {
-      v(1cm)
+      v(1cm + 6.3pt)
       advisors-label
-      v(0.3cm)
+      v(0.3cm + gap)
       name-list(advisors)
     }
 
     if authors.len() > 0 {
-      v(0.5cm)
+      v(0.5cm + gap)
       authors-label
-      v(0.3cm)
+      v(0.3cm + gap)
       name-list(authors)
       if matriculation != none {
         linebreak()
@@ -281,7 +295,7 @@
     }
 
     if groupnumber != none {
-      v(0.3cm)
+      v(0.3cm + gap)
       text(weight: "bold")[Group #groupnumber]
     }
 
@@ -296,11 +310,11 @@
         ..signature-lines.map(s => {
           set align(left)
           line(length: 100%, stroke: 0.4pt)
-          v(0.2cm)
+          v(0.2cm + gap)
           [#s.label \ #s.name]
         })
       )
-      v(1cm)
+      v(1cm + 3.1pt)
     }
 
     text(size: sz.large)[
@@ -310,6 +324,10 @@
         date
       }
     ]
+    // The \topsep that closes the `center` environment. Fixed space rather
+    // than trailing padding: the `v(1fr)` above shrinks by it, so the whole
+    // signature-and-date group rises instead of the space being dropped.
+    v(12pt)
   }
 
   // The thesis puts a \blankpage verso after the title page, which is also

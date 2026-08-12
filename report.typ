@@ -55,7 +55,7 @@
 #let report(
   // --- Inside the rules ---------------------------------------------------
   // `document-type` is the large bold line, `title` the smaller line below it.
-  document-type: [Report],
+  document-type: [Project Work],
   title: none,
   // --- Below the rules ----------------------------------------------------
   institution: [Vienna University of Technology],
@@ -144,8 +144,12 @@
       counter(math.equation).update(0)
     }
     let size = if it.level == 1 { sz.large } else { sz.normal }
-    let skip = if it.level == 1 { baselineskip.large } else { baselineskip.normal }
-    let space = if it.level == 1 { heading-space.section } else { heading-space.subsection }
+    let skip = if it.level == 1 { baselineskip.large } else {
+      baselineskip.normal
+    }
+    let space = if it.level == 1 { heading-space.section } else {
+      heading-space.subsection
+    }
     block(above: space.above, below: space.below)[
       #set text(size: size, weight: "bold")
       #set par(leading: leading-for(size, skip))
@@ -212,12 +216,18 @@
   ]
 
   // A bold name per line, as used for both the advisor and author lists.
-  let name-list(names) = names.map(n => text(weight: "bold")[#n]).join(linebreak())
+  let name-list(names) = names
+    .map(n => text(weight: "bold")[#n])
+    .join(linebreak())
 
   let signature-lines = if signatures == auto {
     (
-      if authors.len() > 0 { ((label: [Author:], name: authors.first()),) } else { () }
-        + if supervisor != none { ((label: [Supervisor:], name: supervisor),) } else { () }
+      if authors.len() > 0 {
+        ((label: [Author:], name: authors.first()),)
+      } else { () }
+        + if supervisor != none {
+          ((label: [Supervisor:], name: supervisor),)
+        } else { () }
     )
   } else if signatures == none {
     ()
@@ -364,8 +374,9 @@
   // fancyhdr's \leftmark: the left component of \botmark, so the last section
   // in effect at the foot of the page.
   let left-mark = context {
-    let secs = query(heading.where(level: 1))
-      .filter(h => h.location().page() <= here().page())
+    let secs = query(heading.where(level: 1)).filter(h => (
+      h.location().page() <= here().page()
+    ))
     if secs.len() > 0 { show-mark(secs.last()) }
   }
 
@@ -414,7 +425,9 @@
         // The zero-width strut keeps the rule at a fixed height on pages whose
         // mark is empty, such as a section opening before its first subsection.
         align(if even or not two-sided { left } else { right })[
-          #box(width: 0pt, height: 1em)#if two-sided and not even { right-mark } else { left-mark }
+          #box(width: 0pt, height: 1em)#if two-sided and not even {
+            right-mark
+          } else { left-mark }
         ],
       )
     },

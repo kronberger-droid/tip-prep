@@ -29,13 +29,16 @@ separately and never collide.
 main.typ                            template options + #include list
 report.typ                          title page, page style, LaTeX metrics
 lib.typ                             mean, standard deviation, linear fit
-src/00_intro/                       declaration, acknowledgements, abstract,
-                                    introduction
+src/00_intro/                       declaration, abstract, introduction
 src/01_scope-and-objectives/        one directory per chapter, each with a
 src/02_foundations/                 default.typ; split a long chapter across
-src/03_experimental-work/           more files and #include them from its
-src/04_discussion/                  own default.typ
-src/05_conclusion/
+src/03_instrument-interface/        more files and #include them from its
+src/04_framework/                   own default.typ
+src/05_routine/
+src/06_validation/
+src/07_discussion/
+src/08_outlook/
+src/09_conclusion/
 src/A_appendix/
 src/B_bibliography/references.bib
 assets/                             the TU Wien logo
@@ -50,10 +53,10 @@ only for what the template itself needs.
 
 `report()` assembles the same sequence as the thesis, in this order:
 
-1. title page, then a blank verso
-2. `front-matter` — declaration, acknowledgements, abstract. Counted but shown
-   without header or page number, as `\pagenumbering{roman}` with
-   `\pagestyle{empty}` leaves it.
+1. title page (followed by a blank verso only when `two-sided`)
+2. `front-matter` — declaration and abstract. Counted but shown without header
+   or page number, as `\pagenumbering{roman}` with `\pagestyle{empty}` leaves
+   it.
 3. table of contents, unless `outline-contents: false`
 4. the body, restarting at arabic page 1 with the running header
 5. `appendix` — sections renumbered A, B, C, as `\appendix` does
@@ -100,7 +103,9 @@ output matches that document:
 - **Captions** (`captionsetup`): 10pt, bold label, separated by a period.
 
 Set `two-sided: false` for symmetric margins, no blank verso, and a fixed
-header. `margin` overrides the geometry outright.
+header. This report sets it, since it is read on screen rather than printed, so
+the geometry above describes the template's default and not this document.
+`margin` overrides the geometry outright.
 
 ## Template parameters
 

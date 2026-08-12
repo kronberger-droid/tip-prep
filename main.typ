@@ -1,4 +1,4 @@
-#import "report.typ": report, blank-page, list-of-figures, list-of-tables
+#import "report.typ": list-of-figures, list-of-tables, report
 #import "lib.typ": *
 #import "@preview/lilaq:0.6.0" as lq
 #import "@preview/unify:0.8.1": num, qty
@@ -6,7 +6,9 @@
 #show: report.with(
   title: [ Automated, Reproducible Conditioning of SPM Tips ],
   advisors: (
-    [ Ing. Adam Lagin ],
+    [ Ing. David Kugler ],
+    [ Dipl.-Ing. Luca Lezuo ],
+    [ Dr.techn. Jan Balajka ],
     [ Dr.techn. Jiri Pavelec ],
   ),
   authors: ([ Martin Kronberger ],),
@@ -14,15 +16,14 @@
   supervisor: [ Dr.techn. Jiri Pavelec ],
   date: datetime.today(),
 
-  // Each piece is followed by a blank verso, the way every front-matter file
-  // in the thesis ends with \blankpage, so each one opens on a recto.
+  // Read on screen, not printed: symmetric margins, no blank versos, and a
+  // fixed header.
+  two-sided: false,
+
   front-matter: [
     #include "src/00_intro/declaration.typ"
-    #blank-page()
-    #include "src/00_intro/acknowledgements.typ"
-    #blank-page()
+    #pagebreak()
     #include "src/00_intro/abstract.typ"
-    #blank-page()
   ],
 
   appendix: [
@@ -42,8 +43,21 @@
 )
 
 #include "src/00_intro/introduction.typ"
+#pagebreak()
 #include "src/01_scope-and-objectives/default.typ"
+#pagebreak()
 #include "src/02_foundations/default.typ"
-#include "src/03_experimental-work/default.typ"
-#include "src/04_discussion/default.typ"
-#include "src/05_conclusion/default.typ"
+#pagebreak()
+#include "src/03_instrument-interface/default.typ"
+#pagebreak()
+#include "src/04_framework/default.typ"
+#pagebreak()
+#include "src/05_routine/default.typ"
+#pagebreak()
+#include "src/06_validation/default.typ"
+#pagebreak()
+#include "src/07_discussion/default.typ"
+#pagebreak()
+#include "src/08_outlook/default.typ"
+#pagebreak()
+#include "src/09_conclusion/default.typ"

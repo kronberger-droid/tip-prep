@@ -1,3 +1,8 @@
+% Carried over from the poster's refs.bib, which is the maintained copy. Keep
+% the two in step rather than editing them apart.
+
+% --- General AFM/SPM background (kept for optional use) ---
+
 @article{binnig1982,
   author  = {Binnig, G. and Rohrer, H. and Gerber, Ch. and Weibel, E.},
   title   = {Surface Studies by Scanning Tunneling Microscopy},
@@ -6,5 +11,104 @@
   number  = {1},
   pages   = {57--61},
   year    = {1982},
-  doi     = {10.1103/PhysRevLett.49.57},
+}
+
+@article{binnig1986,
+  author  = {Binnig, G. and Quate, C. F. and Gerber, Ch.},
+  title   = {Atomic Force Microscope},
+  journal = {Physical Review Letters},
+  volume  = {56},
+  number  = {9},
+  pages   = {930--933},
+  year    = {1986},
+}
+
+@article{giessibl2003,
+  author  = {Giessibl, Franz J.},
+  title   = {Advances in atomic force microscopy},
+  journal = {Reviews of Modern Physics},
+  volume  = {75},
+  number  = {3},
+  pages   = {949--983},
+  year    = {2003},
+}
+
+% --- Why tip state matters (motivation / terminations) ---
+
+@article{gross2009,
+  author  = {Gross, Leo and Mohn, Fabian and Moll, Nikolaj and Liljeroth, Peter and Meyer, Gerhard},
+  title   = {The Chemical Structure of a Molecule Resolved by Atomic Force Microscopy},
+  journal = {Science},
+  volume  = {325},
+  number  = {5944},
+  pages   = {1110--1114},
+  year    = {2009},
+}
+
+% TODO verify exact title before submission
+@article{wiesener2024,
+  author  = {Wiesener, P. and F{\"o}rster, S. and Merkel, M. and Schulze Lammers, B. and Fuchs, H. and Amirjalayer, S. and M{\"o}nig, H.},
+  title   = {Chemically Selective Imaging with a CuOx-Terminated Tip},
+  journal = {ACS Nano},
+  volume  = {18},
+  pages   = {21948},
+  year    = {2024},
+}
+
+% --- Prior art on making tip prep systematic ---
+
+@article{tewari2017,
+  author  = {Tewari, Sumit and Bastiaans, Koen M. and Allan, Milan P. and van Ruitenbeek, Jan M.},
+  title   = {Robust procedure for creating and characterizing the atomic structure of scanning tunneling microscope tips},
+  journal = {Beilstein Journal of Nanotechnology},
+  volume  = {8},
+  pages   = {2389--2395},
+  year    = {2017},
+}
+
+@article{alldritt2022,
+  author  = {Alldritt, Benjamin and Urtev, Fedor and Oinonen, Niko and Aapro, Markus and Kannala, Juho and Liljeroth, Peter and Foster, Adam S.},
+  title   = {Automated tip functionalization via machine learning in scanning probe microscopy},
+  journal = {Computer Physics Communications},
+  volume  = {273},
+  pages   = {108258},
+  year    = {2022},
+}
+
+% Alternative / additional prior art on automated tip conditioning
+@article{rashidi2018,
+  author  = {Rashidi, Mohammad and Wolkow, Robert A.},
+  title   = {Autonomous Scanning Probe Microscopy in Situ Tip Conditioning through Machine Learning},
+  journal = {ACS Nano},
+  volume  = {12},
+  number  = {6},
+  pages   = {5185--5189},
+  year    = {2018},
+}
+
+% --- This work ---
+
+% Concept DOI (all versions), the one on the repo's README badge. It always
+% resolves to the newest release, so it does not need updating per version.
+% The version-specific DOI for v0.2.3 is 10.5281/zenodo.20415875.
+% Typst's IEEE style prints no date for software/misc entries, so the year and
+% version below do not appear in the rendered list. Left in for correctness.
+@software{rustytip,
+  author    = {Kronberger, Martin},
+  title     = {rusty-tip: automated tip conditioning for scanning probe microscopy},
+  year      = {2026},
+  publisher = {Zenodo},
+  version   = {v0.2.3},
+  doi       = {10.5281/zenodo.20325230},
+  url       = {https://doi.org/10.5281/zenodo.20325230},
+}
+
+% --- Instrument (methods / setup) ---
+
+% TODO add exact product-page URL before submission
+@misc{nanonis,
+  author       = {{SPECS Zurich GmbH}},
+  title        = {Nanonis SPM Control System},
+  howpublished = {Z\"urich, Switzerland},
+  note         = {\url{https://www.specs-group.com/nanonis/}},
 }

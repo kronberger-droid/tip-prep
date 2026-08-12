@@ -1,3 +1,7 @@
 = Conclusion <sec:conclusion>
 
-The short version, and what comes next.
+What is known now that was not before: the interface, the framework, the
+routine, and the evidence behind each.
+
+What remains open, in one paragraph, pointing at @sec:outlook rather than
+repeating it.

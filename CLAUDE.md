@@ -6,10 +6,10 @@ written. The `scientific-writing` skill carries the editing conventions.
 
 ## Commits
 
-No `Co-Authored-By` trailers here, overriding the global default. The
-declaration page states the LLM use for the whole work, which is where a reader
-looks for it; a trailer on every commit adds nothing and clutters the log. The
-older template commits still carry theirs and keep them.
+No `Co-Authored-By` trailers here. The declaration page states the LLM use for
+the whole work, which is where a reader looks for it; a trailer on every commit
+adds nothing and clutters the log. The older template commits still carry
+theirs and keep them.
 
 ## Claims
 

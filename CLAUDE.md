@@ -2,24 +2,7 @@
 
 Project report on automated SPM tip conditioning. `README.md` covers the build,
 the file layout and the template parameters. This file covers how the text gets
-written.
-
-## How we write
-
-Martin drafts a section by feel, in one pass, building it up without stopping
-to get it right. Then we go over it together: refine the prose, cut what does
-not earn its place, add figures and cross-references.
-
-Two rules fall out of that:
-
-- A section that is still a placeholder stays a placeholder. Sketch structure,
-  answer questions, pull facts out of the code — but the first draft of the
-  prose is Martin's.
-- A section that has a draft is open for editing. Say which pass you are
-  running, a line pass (sentences) or a structure pass (what sits where), and
-  run one at a time.
-
-The `scientific-writing` skill carries the editing conventions.
+written. The `scientific-writing` skill carries the editing conventions.
 
 ## Commits
 

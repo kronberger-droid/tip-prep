@@ -7,3 +7,4 @@
 # Viewer / editor noise
 zathura.log
 *.swp
+.claude/

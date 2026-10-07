@@ -1,0 +1,9 @@
+# Compiled output
+*.pdf
+*.svg
+*.png
+
+# Viewer / editor noise
+zathura.log
+*.swp
+.claude/

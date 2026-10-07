@@ -1,0 +1,2 @@
+# Per-project ignores live in each folder's own .gitignore.
+.claude/

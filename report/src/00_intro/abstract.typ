@@ -3,7 +3,7 @@
 #unnumbered([Abstract], outlined: false)
 
 // Merged from the two reviewed sources: the motivation and the results follow
-// the poster (`~/Projects/typst/tip-prep-poster/main.typ`), which is the later
+// the poster (`../../../poster/main.typ`), which is the later
 // and PI-reviewed wording; the framework, outlook and closing sentences follow
 // the abstract submitted to NC-AFM 2026. Bracketed numbers became citations.
 // Keep the three in step rather than editing them apart.

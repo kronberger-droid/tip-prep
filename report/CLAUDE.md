@@ -24,9 +24,9 @@ here, because it reads exactly like a checked one.
 |---|---|
 | `~/Projects/rust/rusty-tip` | the framework and the routine, as they are now |
 | `~/Projects/rust/nanonis-rs` | the protocol client, `src/protocol.rs` for the wire format |
-| `../tip-prep-poster/main.typ` | PI-reviewed prose, and the figures worth reusing |
+| `../poster/main.typ` | PI-reviewed prose, and the figures worth reusing |
 | `~/Documents/work/university/seminars/2026_nc_afm/abstract/` | the submitted NC-AFM 2026 abstract |
-| `../tip-prep-poster/refs.bib` | the maintained bibliography |
+| `../poster/refs.bib` | the maintained bibliography |
 
 `src/B_bibliography/references.bib` is a copy of the poster's; keep the two in
 step. Where the poster and the abstract disagree, the poster is later and

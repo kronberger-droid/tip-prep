@@ -1,0 +1,12 @@
+*.pdf
+*.png
+!assets/*.png
+
+# Raw run logs. The full archive lives on the DATA drive, not here; the traces
+# the poster plots are extracted into figures/traces.json with their provenance
+# by scripts/extract_trace.py, so the poster builds without either. See CLAUDE.md.
+experiments/
+
+# Python bytecode from scripts/
+__pycache__/
+*.pyc

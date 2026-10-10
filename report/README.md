@@ -28,13 +28,12 @@ separately and never collide.
 ```
 main.typ                            template options + #include list
 report.typ                          title page, page style, LaTeX metrics
-lib.typ                             mean, standard deviation, linear fit
+lib.typ                             mean, standard deviation, linear fit, todo
 src/00_intro/                       declaration, abstract, introduction
-src/01_scope-and-objectives/        one directory per chapter, each with a
-src/02_foundations/                 default.typ; split a long chapter across
-src/03_instrument-interface/        more files and #include them from its
-src/04_framework/                   own default.typ
-src/05_routine/
+src/02_foundations/                 one directory per chapter, each with a
+src/03_instrument-interface/        default.typ; split a long chapter across
+src/04_framework/                   more files and #include them from its
+src/05_routine/                     own default.typ
 src/06_validation/
 src/07_discussion/
 src/08_outlook/

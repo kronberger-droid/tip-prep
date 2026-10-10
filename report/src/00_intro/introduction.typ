@@ -4,16 +4,41 @@
 // \addcontentsline in the thesis.
 #unnumbered([Introduction])
 
-// The abstract's spine, at length: stakes, problem, prior-art gap, what this
-// work does about it. Reusing that arc keeps the report and the NC-AFM
-// abstract from drifting apart.
+// The motivation follows the poster's PI-reviewed panel; the prior art is the
+// set checked for @sec:conditioning (Zotero). The former chapter "Scope and
+// objectives" is folded into the last two paragraphs: the deliverables, what
+// "worked" means, and what is out of scope.
 
-Why the tip decides what an SPM experiment can resolve @binnig1982 @gross2009.
+The quality and interpretability of scanning probe microscopy data critically
+depend on the tip termination. The geometry and composition of the apex set
+what the probe resolves @ceddia2024. A controlled termination, such as a single
+CO molecule, can resolve the chemical structure of a molecule @gross2009.
+Preparing a good tip is nevertheless time-consuming and strongly dependent on
+operator experience, limiting the reproducibility and throughput of SPM
+experiments. An operator judges every change to the tip by inspecting the next
+image, which makes tip preparation one of the most tedious steps of
+atomic-resolution work @barker2024.
 
-Why conditioning it is still a craft: tacit recipes, operator-to-operator
-variation, and what that costs in reproducibility and throughput.
+Efforts to systematize tip preparation range from defined procedures
+@tewari2017 to machine-learning-driven automation @rashidi2018 @krull2020
+@wang2021 @alldritt2022. Others classify without machine learning @barker2024
+or provide open automation tools for one controller family @ceddia2024. Yet
+operator-independent conditioning remains the exception. Each of these judges
+the tip from an image, a spectrum or an imprint. Most are tied to the surface
+they were trained or calibrated on, or to the setup they were written for.
 
-What has been tried: standardized manual protocols @tewari2017 and
-machine-learning-driven automation @alldritt2022, and the gap they leave.
+This work builds the conditioning loop around a signal available at every
+landing: the frequency shift $Delta f$ of a qPlus force sensor, read without
+scanning. It delivers nanonis-rs, a typed client for the instrument's TCP
+protocol, and rusty-tip @rustytip, a framework for writing SPM routines against
+it. Built on both, a tip-preparation routine conditions a tip by bias pulses
+until $Delta f$ shows it sharp and stable. The routine counts as working if it
+reaches a confirmed sharp tip unattended and ends every run with the tip
+withdrawn, however it stops. It must also leave a log from which the run can be reconstructed. Tip
+functionalization, instrument backends other than Nanonis, and learned pulse
+strategies are deliberately out of scope.
 
-What this work contributes, and how the report is laid out.
+@sec:foundations gives the physics and prior art the work builds on.
+@sec:interface, @sec:framework and @sec:routine describe the client, the
+framework and the routine. @sec:validation reports the runs on the instrument,
+and @sec:discussion and @sec:outlook assess them and say what comes next.

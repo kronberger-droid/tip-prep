@@ -3,6 +3,10 @@
 
 #import calc: pow, sqrt
 
+// An open question or missing source in the draft, in the poster's
+// blunt-red. Grep for `todo[` before handing the report in.
+#let todo(body) = text(fill: rgb("B0533A"), weight: "semibold")[[#body]]
+
 #let mean(xs) = xs.sum() / xs.len()
 
 // Sample standard deviation (Bessel-corrected).

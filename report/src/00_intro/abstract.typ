@@ -15,7 +15,7 @@ computational modeling, and copper-oxide surfaces are among the best-defined
 systems for it. Preparing a well-functionalized tip is nevertheless
 time-consuming and strongly dependent on operator experience, limiting the
 reproducibility and throughput of SPM experiments. Efforts to systematize tip
-preparation range from standardized manual protocols @tewari2017 to
+preparation range from standardized procedures @tewari2017 to
 machine-learning-assisted automation @alldritt2022, yet operator-independent
 conditioning remains the exception.
 

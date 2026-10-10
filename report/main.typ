@@ -43,21 +43,11 @@
 )
 
 #include "src/00_intro/introduction.typ"
-#pagebreak()
-#include "src/01_scope-and-objectives/default.typ"
-#pagebreak()
 #include "src/02_foundations/default.typ"
-#pagebreak()
 #include "src/03_instrument-interface/default.typ"
-#pagebreak()
 #include "src/04_framework/default.typ"
-#pagebreak()
 #include "src/05_routine/default.typ"
-#pagebreak()
 #include "src/06_validation/default.typ"
-#pagebreak()
 #include "src/07_discussion/default.typ"
-#pagebreak()
 #include "src/08_outlook/default.typ"
-#pagebreak()
 #include "src/09_conclusion/default.typ"

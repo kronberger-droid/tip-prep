@@ -29,7 +29,7 @@
     panel[Motivation][
       The quality and interpretability of scanning probe microscopy (SPM) data critically depend on the tip termination. Controlled functionalization provides reproducible contrast and makes surface structures comparable with computational modeling, and copper-oxide surfaces are among the best-defined systems for it.
       Preparing a well-functionalized tip is nevertheless time-consuming and strongly dependent on operator experience, limiting reproducibility and throughput.
-      Efforts to systematize it range from standardized manual protocols @tewari2017 to machine-learning-assisted automation @alldritt2022, yet operator-independent conditioning remains the exception. Here, we present the first steps towards autonomous functionalization of SPM tips.
+      Efforts to systematize it range from standardized preparation procedures @tewari2017 to machine-learning-assisted automation @alldritt2022, yet operator-independent conditioning remains the exception. Here, we present the first steps towards autonomous functionalization of SPM tips.
 
       #text(rgb("0267A5"), weight: "bold")[Initial objectives], for a Nanonis-controlled STM/nc-AFM @nanonis operated with a qPlus sensor:
 

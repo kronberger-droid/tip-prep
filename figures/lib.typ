@@ -52,7 +52,7 @@
 
 // One figure per run: frequency-shift reads above the pulse sequence.
 // `path` is root-relative (leading `/`) since `csv` resolves against this file.
-#let run-figure(path, trim-front: 0, trim-back: 0) = {
+#let run-figure(path, trim-front: 0, trim-back: 0, yscale: auto) = {
   assert(
     type(trim-front) == int
       and type(trim-back) == int
@@ -111,6 +111,7 @@
       xlim: xlim,
       xaxis: (format-ticks: none),
       ylabel: [frequency shift (Hz)],
+      yscale: yscale,
       legend: none,
       lq.rect(
         0%,

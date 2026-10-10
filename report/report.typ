@@ -168,7 +168,7 @@
   // One block per entry, or consecutive entries join into a single paragraph
   // and wrap into each other. The indent is the entry's own, so the body's
   // \parindent has to be switched off here.
-  let toc-entry(it, indent, numwidth, dots: true) = block(
+  let toc-entry(it, indent, numwidth, dots: true, prefix: auto) = block(
     width: 100%,
     spacing: leading-for(sz.normal, baselineskip.normal),
     {
@@ -176,8 +176,9 @@
       link(it.element.location(), {
         h(indent)
         // Unnumbered entries reserve no column, so a \section* sits flush left.
-        if it.prefix() != none {
-          box(width: numwidth)[#it.prefix()]
+        let prefix = if prefix == auto { it.prefix() } else { prefix }
+        if prefix != none {
+          box(width: numwidth)[#prefix]
         }
         it.body()
         if dots {
@@ -193,6 +194,13 @@
   )
 
   show outline.entry.where(level: 1): it => {
+    if it.element.func() == figure {
+      // \l@figure is \@dottedtocline{1}{1.5em}{2.3em}: the bare number in its
+      // column, dot leaders, regular weight, and no extra space above.
+      let fig = it.element
+      let number = numbering(fig.numbering, ..fig.counter.at(fig.location()))
+      return toc-entry(it, 1.5em, 2.3em, prefix: number)
+    }
     // \addvspace{1.0em}, on top of the line spacing rather than replacing it.
     v(1em)
     strong(toc-entry(it, 0em, 1.5em, dots: false))
@@ -526,11 +534,17 @@
 }
 
 // \listoffigures and \listoftables.
-#let list-of-figures(title: [List of Figures]) = outline(
-  title: title,
-  target: figure.where(kind: image),
-)
-#let list-of-tables(title: [List of Tables]) = outline(
-  title: title,
-  target: figure.where(kind: table),
-)
+// \caption[short]{long}: the figure shows `long`, the lists show `short`.
+#let in-outline = state("in-outline", false)
+#let flex-caption(long, short) = context if in-outline.get() { short } else { long }
+
+#let list-of-figures(title: [List of Figures]) = {
+  in-outline.update(true)
+  outline(title: title, target: figure.where(kind: image))
+  in-outline.update(false)
+}
+#let list-of-tables(title: [List of Tables]) = {
+  in-outline.update(true)
+  outline(title: title, target: figure.where(kind: table))
+  in-outline.update(false)
+}

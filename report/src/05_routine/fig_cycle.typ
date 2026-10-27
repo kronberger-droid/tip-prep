@@ -44,19 +44,22 @@
   let x(i, f) = label-w + (cum.at(i) + f * phases.at(i).at(2)) / total * plot-w
 
   let head-h = 9mm
-  let lane-h = 7mm
   let gap = 1.5mm
   let lanes = ([Bias], [Tip height], [Z-controller], [Safe-tip], [$Delta f$])
-  let lane-y(k) = head-h + 2.5mm + k * (lane-h + gap)
+  // Tip height gets twice the room: it carries three heights of very
+  // different size.
+  let lane-hs = (7mm, 14mm, 7mm, 7mm, 7mm)
+  let lane-h(k) = lane-hs.at(k)
+  let lane-y(k) = head-h + 2.5mm + lane-hs.slice(0, k).sum(default: 0mm) + k * gap
   let height = lane-y(lanes.len())
 
   // A trace through (phase, fraction, level) points; level 0 is the lane's
   // bottom, 1 its top.
-  let trace(k, pts) = {
-    let y0 = lane-y(k) + lane-h
-    let pt(p) = (x(p.at(0), p.at(1)), y0 - p.at(2) * lane-h)
+  let trace(k, pts, dash: none) = {
+    let y0 = lane-y(k) + lane-h(k)
+    let pt(p) = (x(p.at(0), p.at(1)), y0 - p.at(2) * lane-h(k))
     place(curve(
-      stroke: 1pt + accent,
+      stroke: (paint: accent, thickness: 1pt, dash: dash),
       curve.move(pt(pts.first())),
       ..pts.slice(1).map(p => curve.line(pt(p))),
     ))
@@ -68,7 +71,7 @@
     dy: lane-y(k),
     box(
       width: x(b, 1) - x(a, 0),
-      height: lane-h,
+      height: lane-h(k),
       fill: fill,
       stroke: 0.4pt + white,
       align(center + horizon, body),
@@ -94,7 +97,7 @@
     for (k, l) in lanes.enumerate() {
       place(dx: 0pt, dy: lane-y(k), box(
         width: label-w - 2mm,
-        height: lane-h,
+        height: lane-h(k),
         align(right + horizon, l),
       ))
     }
@@ -105,15 +108,46 @@
       (7, 1, 0.3),
     ))
 
-    // Tip height: 0 is the surface, 0.3 Z-home, 0.7 the piezo withdrawn, 1
-    // after the coarse step's Z retract (`z_retract`, -3 by default).
+    // Tip height: 0 is the surface, 0.08 Z-home (50 nm), 0.5 the piezo
+    // withdrawn, 0.95 after the coarse step's Z retract (`z_retract`, -3 by
+    // default). The coarse retract is far larger than the rest, so the two
+    // transitions to and from it break in the middle, not to scale.
+    let (home, withdrawn, coarse) = (0.08, 0.5, 0.95)
+    // Where the approach, from the coarse height to the surface over 0.8 of
+    // its phase, passes the withdrawn level.
+    let rejoin = 0.8 * (coarse - withdrawn) / coarse
+    // A transition from a to b, solid with a dotted stretch in its middle.
+    let broken(k, a, b) = {
+      let y0 = lane-y(k) + lane-h(k)
+      let pt(p) = (x(p.at(0), p.at(1)), y0 - p.at(2) * lane-h(k))
+      let (pa, pb) = (pt(a), pt(b))
+      let at(t) = (pa.at(0) + t * (pb.at(0) - pa.at(0)), pa.at(1) + t * (pb.at(1) - pa.at(1)))
+      let seg(t0, t1, dash) = place(line(
+        start: at(t0),
+        end: at(t1),
+        stroke: (paint: accent, thickness: 1pt, dash: dash, cap: "round"),
+      ))
+      seg(0, 0.38, none)
+      seg(0.38, 0.62, (0pt, 2.2pt))
+      seg(0.62, 1, none)
+    }
     trace(1, (
       (0, 0, 0), (1, 1, 0),
-      (2, 0.8, 0.7), (3, 0.2, 0.7), (3, 0.8, 1), (3, 1, 1),
-      (4, 0.8, 0), (5, 0.2, 0),
-      (5, 0.4, 0.3), (5, 1, 0.3),
+      (2, 0.8, withdrawn), (3, 0.2, withdrawn),
+    ))
+    broken(1, (3, 0.2, withdrawn), (3, 0.8, coarse))
+    trace(1, ((3, 0.8, coarse), (3, 1, coarse)))
+    broken(1, (3, 1, coarse), (4, rejoin, withdrawn))
+    trace(1, (
+      (4, rejoin, withdrawn), (4, 0.8, 0), (5, 0.2, 0),
+      (5, 0.4, home), (5, 1, home),
       (6, 0.6, 0), (7, 1, 0),
     ))
+    place(
+      dx: x(5, 0.4),
+      dy: lane-y(1) + lane-h(1) * (1 - home) - 8pt,
+      box(width: x(5, 1) - x(5, 0.4), align(center, text(size: 6pt, fill: luma(90))[50 nm])),
+    )
 
     state(2, 0, 0, [hold], warn-fill)
     state(2, 1, 1, [on], on-fill)

@@ -23,9 +23,10 @@ parts and how a routine reaches the instrument through them.
 #figure(
   architecture-diagram(),
   caption: flex-caption([
-    Structure of the framework. A routine owns the control flow and reaches
-    the instrument only through capability-checked handles; every operation
-    on the way is reported to the event bus.
+    Structure of the framework. The harness runs a routine, which owns the
+    control flow and reaches the controller interface only through subsystem
+    handles that check the backend's capabilities. Routine and handles report
+    to the event bus. Dark: hardware; dashed: not used by tip preparation.
   ], [Structure of the framework]),
 ) <fig:architecture>
 

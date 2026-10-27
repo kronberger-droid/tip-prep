@@ -2,6 +2,7 @@
 #import "/lib.typ": todo
 #import "fig_state-machine.typ": tip-prep-fsm
 #import "fig_cycle.typ": cycle-timeline
+#import "fig_linear.typ": strategies-figure
 
 // Sources, unless a comment says otherwise: rusty-tip
 // src/tip_prep/runner.rs (the routine), src/tip_prep/pulse_state.rs (voltage
@@ -61,25 +62,38 @@ land on.
 ) <fig:cycle>
 
 One of three pulse strategies, set in the run's configuration, chooses the next
-pulse voltage:
+pulse voltage. They encode operating experience, not a model of the apex. A
+large pulse reshapes the apex unpredictably and often strongly, while a small
+one often changes it little or not at all.
+// Rationale: Martin, 2026-10-27. Linear mapping: rusty-tip
+// src/tip_prep/pulse_state.rs `linear_voltage`, as fixed in #54.
 
-- *Fixed.* The same voltage every cycle. The reading decides only whether to
-  keep pulsing, never how hard.
+- *Fixed.* The same voltage every cycle, one known to work on the surface at
+  hand. The reading decides only whether to keep pulsing, never how hard.
 - *Stepping.* The voltage starts at the lower end of a configured range,
   steps up while $Delta f$ stops rising and drops back once it rises again. It
-  was not used on the instrument (@sec:hardware-results).
+  suits a run with time to spare that should change the tip as little as
+  possible (@fig:strategies). It was not used on the instrument
+  (@sec:hardware-results).
   // Rise: more than a threshold over the mean since the last change; stall: a
   // configured number of cycles; step: a fixed fraction of the range, capped.
-- *Linear.* Within a configured $Delta f$ interval, the measured $Delta f$
-  maps linearly onto the voltage range. The interval's lower end gives the
-  lower voltage. Outside the interval the maximum voltage applies.
-  #todo[The mapping gives the gentlest pulse to the most negative $Delta f$
-    in the interval and the hardest near $0$ Hz. Is that the intent, and what
-    is the reasoning?]
+- *Linear.* Within a configured $Delta f$ interval, the clamp, the voltage
+  rises linearly with the distance from the sharp window: the gentlest pulse
+  at the clamp's end next to the window, the hardest at its far end
+  (@fig:strategies). Outside the clamp, below it or above the window, the
+  hardest pulse applies. A tip close to sharp is thus only nudged.
 
-#todo[The scaffold asks what each strategy assumes about how the apex
-  responds. I have the behaviour from the code but no source for the physical
-  rationale.]
+#figure(
+  strategies-figure(),
+  caption: flex-caption([
+    Pulse voltage of two strategies, both between $4$ and $8$ V. (a) Linear,
+    against the preceding reading, for a clamp from $-5$ to $-1.5$ Hz; inside
+    the sharp window, shaded, the tip is not pulsed. (b) Stepping, over the
+    cycles of a scripted run: one step of four after two cycles without a rise
+    of more than $0.5$ Hz, and back to the start when the reading rises. The
+    values of (b) are illustrative.
+  ], [Pulse voltage of the linear and stepping strategies]),
+) <fig:strategies>
 
 Each strategy fixes a polarity. Optionally, every $n$-th pulse fires at the
 opposite polarity, on a fixed period.
@@ -109,8 +123,11 @@ leaves the blind spot of @sec:limitations.
 
 A tip counts as sharp when $Delta f$ lies inside the configured sharp window,
 bounds included. The window is a run parameter, not a routine constant.
-@tab:run-params lists the values used.
-#todo[How the window bounds were arrived at: no source yet.]
+@tab:run-params lists the values used. Its lower bound follows the use case and
+the tip at hand. A tip too sharp can suit picking up material from the surface
+poorly, and some tips do not get better than about $-1$ Hz, so the bound is
+widened for them.
+// Martin, 2026-10-27.
 
 One reading inside the window could be luck: a favourable site or a metastable
 apex. The routine therefore repositions and measures three more times. Any

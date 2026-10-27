@@ -108,12 +108,19 @@ pulse of @sec:criteria-applied never fired on the instrument.
 ) <tab:run-params>
 
 Not every accepted reading was a measurement. Of 4430 accepted readings, 520
-($11.7 %$) sat at $plus.minus 76.29$ Hz. This is most likely the limit of the
-PLL's frequency range, where the PLL has lost lock. Of these readings, 509
-passed both gates of @sec:measurement. A further 290 readings failed the gates
-on every retry and were used anyway.
-// 76.29 Hz = 5 MHz / 2^16; "most likely the PLL range" is the hedge from the
+($11.7 %$) lay beyond $plus.minus 76$ Hz, 494 of them at exactly
+$plus.minus 76.29$ Hz and one at $152.59$ Hz. These are limits of the PLL
+controller's range. A reading there marks a frequency shift beyond what the
+PLL follows, possibly from a tip tapping the surface. Of the 494, 446 were
+negative and 48 positive, and a positive frequency shift of that size
+indicates an insulating tip. All 494 passed both gates of @sec:measurement. A
+further 290 readings failed the gates on every retry and were used anyway.
+// 76.29 Hz = 5 MHz / 2^16. Range limits, tapping and the insulating tip:
+// Martin, 2026-10-27, replacing the "most likely the PLL range" hedge of the
 // 2026-10-07 handover note, which also traces most rail reads to landings.
+// Recounted 2026-10-27 from the same 106 logs: 494 at |Δf| = 76.29 Hz (446
+// negative, 48 positive), all stable; 12 between 76.0 and 76.28 Hz (10
+// stable); 14 from 76.3 to 152.6 Hz (5 stable). 509 stable in all.
 
 == Verification against the mock backend <sec:mock-results>
 

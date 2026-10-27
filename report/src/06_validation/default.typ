@@ -1,6 +1,7 @@
 #import "/report.typ": flex-caption
 #import "/lib.typ": todo
 #import "fig_effort.typ": effort-figure
+#import "fig_readings.typ": readings-figure
 
 // Run statistics: every tip_prep_*.jsonl in
 // /run/media/kronberger/DATA/Tip Prep/Experiments/ from 2026-09-15 to
@@ -128,13 +129,25 @@ controller's range. A reading there marks a frequency shift beyond what the
 PLL follows, possibly from a tip tapping the surface. Of the 494, 446 were
 negative and 48 positive, and a positive frequency shift of that size
 indicates an insulating tip. All 494 passed both gates of @sec:measurement. A
-further 290 readings failed the gates on every retry and were used anyway.
+further 290 readings failed the gates on every retry and were used anyway
+(@fig:readings).
 // 76.29 Hz = 5 MHz / 2^16. Range limits, tapping and the insulating tip:
 // Martin, 2026-10-27, replacing the "most likely the PLL range" hedge of the
 // 2026-10-07 handover note, which also traces most rail reads to landings.
 // Recounted 2026-10-27 from the same 106 logs: 494 at |Δf| = 76.29 Hz (446
 // negative, 48 positive), all stable; 12 between 76.0 and 76.28 Hz (10
 // stable); 14 from 76.3 to 152.6 Hz (5 stable). 509 stable in all.
+
+#figure(
+  readings-figure(),
+  caption: flex-caption([
+    The 4430 accepted readings of the counted runs in $2$ Hz bins, split into
+    those that passed the noise and drift gates and those that failed them on
+    every retry. The bins at $plus.minus 76.29$ Hz hold the readings at the
+    limit of the PLL controller's range. Nine readings beyond
+    $plus.minus 80$ Hz are not shown.
+  ], [The accepted frequency-shift readings]),
+) <fig:readings>
 
 == Verification against the mock backend <sec:mock-results>
 

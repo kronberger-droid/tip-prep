@@ -57,7 +57,7 @@ faster than another.
 The measurement gates have a blind spot. They judge how a batch varies, not
 where it lies. A frequency shift beyond the PLL controller's range reads as a
 constant value at its limit, and all 494 readings at that limit passed both
-gates (@sec:hardware-results). A railed reading lies outside every interval the linear strategy maps, so it
+gates (@fig:readings). A railed reading lies outside every interval the linear strategy maps, so it
 draws the maximum voltage. That pulse fires where the tip may be in contact
 with the surface. The 290 readings that failed the gates on every retry were
 used anyway, by design (@sec:measurement). This trades a stalled run for a

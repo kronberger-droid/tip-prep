@@ -118,14 +118,47 @@ on every retry and were used anyway.
 == Verification against the mock backend <sec:mock-results>
 
 The mock backend of @sec:controller-trait exercised paths that are hard or
-unwise to provoke on the instrument. The routine's tests run it to each ending:
-a tip already sharp, with and without the stability test; a tip that sharpens
-after a number of pulses; a tip that stays blunt until the cycle limit; and a
-sharp but unstable tip that draws the maximum-voltage pulse. Further tests stop
-a run during the first approach and before the loop, inject an I/O fault mid-run
-and a fault during cleanup, send a new configuration mid-run, and let a routine
-panic. Each test checks that the tip ends withdrawn and that the run reports the
-right outcome.
+unwise to provoke on the instrument, from each ending of the routine to
+injected faults and a panicking routine. Each test checks that the tip ends
+withdrawn and that the run reports the right outcome. @tab:coverage sets these
+tests beside the runs on the instrument.
+// Tests: rusty-tip tests/tip_prep_routine.rs (strategies at the
+// `PulseMethod` configs, endings, shutdown, faults, mid-run config), and
+// src/routine/mod.rs a_panicking_routine_is_still_withdrawn_and_the_panic_re_raised.
+
+#figure(
+  table(
+    columns: 3,
+    align: (left, left, right),
+    table.header[][Path][Runs],
+    table.cell(rowspan: 3)[Pulse strategy],
+    [fixed], [39],
+    [linear], [67],
+    [stepping], [–],
+    table.cell(rowspan: 3)[Checks],
+    // A lower bound: every completed run confirmed, and the 53 operator stops
+    // were not checked for confirmations.
+    [confirmation readings], [$>= 53$],
+    [stability test], [1],
+    [maximum-voltage pulse after a failed test], [–],
+    table.cell(rowspan: 3)[Endings],
+    [completed], [53],
+    [stopped by the operator], [53],
+    [cycle limit reached], [–],
+    table.cell(rowspan: 3)[Faults],
+    [I/O fault mid-run], [–],
+    [fault during cleanup], [–],
+    [panic in the routine], [–],
+    table.cell(rowspan: 2)[Other],
+    [live configuration reload], [1],
+    [classifier transport], [–],
+  ),
+  caption: flex-caption([
+    Paths of the routine and the counted runs on the instrument that took
+    them; a dash marks a path no counted run took. Every path is also tested
+    off the instrument.
+  ], [Paths exercised on the instrument and against the mock]),
+) <tab:coverage>
 
 Both protocol boundaries were tested against real servers, not stubs. The
 Nanonis client of @sec:interface ran against the vendor's simulator as well as
@@ -133,10 +166,3 @@ the instrument. Without either, its tests cover encoding and decoding of every
 data type and the typed parameter sets of its larger subsystems. The classifier transport of @sec:analyzers is tested against an
 HTTP server on a local socket. This test checks that an unreachable model and a
 wrongly answering model surface as different errors.
-
-Evidence from the instrument therefore covers the pulse loop with the fixed and
-linear strategies, the confirmation readings, the endings by completion and
-operator stop, and the cleanup after them. The stability test and the live
-configuration reload have one run each. The stepping strategy, the
-maximum-voltage pulse after a failed stability test, the cleanup after a panic
-and the classifier have been exercised only against the mock.

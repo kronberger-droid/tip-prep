@@ -1,0 +1,13 @@
+{
+  "source": "106 counted tip_prep logs, 20260915 to 20261006",
+  "cycles": 3267,
+  "median_ms": {
+    "pulse": 74.6,
+    "withdraw": 112.1,
+    "coarse_step": 222.1,
+    "approach": 4532.0,
+    "home": 505.5,
+    "reland": 496.0,
+    "read": 175.0
+  }
+}

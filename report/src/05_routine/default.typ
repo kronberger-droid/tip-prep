@@ -51,8 +51,12 @@ land on.
 #figure(
   cycle-timeline(),
   caption: flex-caption([
-    One cycle of the routine, from the pulse to the $Delta f$ reading. Widths
-    are not to scale.
+    One cycle of the routine, from the pulse to the $Delta f$ reading, with the
+    configured pulse and settling time and otherwise the median durations of
+    the counted runs (@sec:hardware-results); $tilde.op$ marks a phase whose
+    length a gate decides. These runs stepped three coarse
+    steps per axis and waited a further $1$ s after landing. Widths are not to
+    scale.
   ], [One cycle of the tip-preparation routine]),
 ) <fig:cycle>
 

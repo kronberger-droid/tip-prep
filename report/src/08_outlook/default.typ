@@ -34,16 +34,10 @@ of @sec:events are the dataset, and the classifier interface is where a
 learned model attaches. Its decisions stay accountable, logged like any other.
 
 The same arrangement scales to a language model driving the instrument through
-the existing guards: a model that decides, a boundary it cannot reach past, and
-a record of everything it decided.
-
-The reading half of that boundary exists. A separate command line answers
-requests from scripts and agents with JSON over a local socket. Every request
-declares whether it acts on the instrument, so a server started read-only
-refuses those that do. So far, every request only reads: the status, signal
-values, the Z and PLL parameters, the scan frame, and the noise spectrum of a
-streamed signal. What remains is the acting half, routed through the same
-handles as a routine.
+the existing guards. The reading half of that boundary exists, as a command
+line that answers read-only requests from scripts and agents with JSON over a
+local socket; the acting half, routed through the same handles as a routine,
+does not yet.
 // rusty-tip src/control/mod.rs: Request::acts(); the seven requests
 // (describe, status, read, controllers, scan, frame, psd) are all reads.
 // Not on the event bus yet: reads go through Session::query.

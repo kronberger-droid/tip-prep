@@ -52,13 +52,11 @@ pulse voltage:
 
 - *Fixed.* The same voltage every cycle. The reading decides only whether to
   keep pulsing, never how hard.
-- *Stepping.* The voltage starts at the lower end of a configured range. The
-  tip counts as improving when $Delta f$ rises by more than a threshold over
-  the mean of the readings since the last change. The voltage then drops back
-  to the lower end. After a configured number of cycles without such a rise,
-  the voltage steps up by a fixed fraction of the range, capped at its upper
-  end. The strategy pulses as gently as still makes progress and escalates only
-  while progress stalls.
+- *Stepping.* The voltage starts at the lower end of a configured range,
+  steps up while $Delta f$ stops rising and drops back once it rises again. It
+  was not used on the instrument (@sec:hardware-results).
+  // Rise: more than a threshold over the mean since the last change; stall: a
+  // configured number of cycles; step: a fixed fraction of the range, capped.
 - *Linear.* Within a configured $Delta f$ interval, the measured $Delta f$
   maps linearly onto the voltage range. The interval's lower end gives the
   lower voltage. Outside the interval the maximum voltage applies.

@@ -1,10 +1,4 @@
-#import "/report.typ": flex-caption, unnumbered
-
-#unnumbered([Symbols and Notation])
-
-A table of the symbols used, with units.
-
-#pagebreak()
+#import "/report.typ": flex-caption
 
 = Reference tables <apx:reference>
 
@@ -34,8 +28,8 @@ are here because nobody reads them in sequence.
     [2D array string], [strings, each length-prefixed], [rows and columns usually sent before it],
   ),
   caption: flex-caption([
-    The thirteen data types of the Nanonis TCP protocol (specification
-    revision R14718). "Usually" is the specification's own word: the
+    The data types of the Nanonis TCP protocol (specification revision
+    R14718), which announces thirteen and lists these fourteen. "Usually" is the specification's own word: the
     signature of each command says which argument carries the length.
   ], [Data types of the Nanonis TCP protocol]),
 ) <tab:data-types>

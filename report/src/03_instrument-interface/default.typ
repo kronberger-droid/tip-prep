@@ -40,8 +40,7 @@ Every message, in either direction, is a fixed-size header followed by a
 body (@fig:frame). The header carries the command name zero-padded to 32
 bytes, the body size, and in a request a flag asking for a response. All
 numbers are big-endian. The body holds the command's arguments or return
-values, typed per command from thirteen data types listed in
-@apx:reference. These comprise integers, floating-point numbers, strings, and
+values, typed per command from the data types listed in @apx:reference. These comprise integers, floating-point numbers, strings, and
 one- and two-dimensional arrays of them. Strings are length-prefixed, and an
 array usually takes its length from the argument just before it. A body is
 therefore readable only with the command's signature at hand.
@@ -61,12 +60,10 @@ description. A response carries nothing identifying its request. It is matched b
 position, as the next message on an in-order connection, and checked by its
 command name.
 
-A second port serves continuous data logging, with records instead of messages
-and no request-response structure. Each record is a short header (channel
-count, sample counter, logger state) followed by one value per channel, at a
-base rate of $2$ kHz divided by an integer. The protocol specification omits
-this format; only a vendor-supplied LabVIEW example documents it.
-Both ports are TCP; only one of them is a conversation.
+A second port streams the data logger as records of one value per channel, at
+a base rate of $2$ kHz divided by an integer, with no request-response
+structure. The protocol specification omits this format; only a
+vendor-supplied LabVIEW example documents it.
 
 == Type safety at the protocol boundary <sec:typed-api>
 
@@ -81,7 +78,11 @@ a signature, not the caller's memory. For bare integers it uses newtypes, such
 as a channel index constructible only within the logger's 24 channels or a
 motor step count checked to fit its field. For magic numbers it uses
 enumerations, such as the six motor directions. Commands with many optional
-settings take a builder in which an unset field means "no change". Of the 661
+settings take a builder in which an unset field means "no change". Argument
+order, magic numbers, and channel and step-count ranges thus moved from run
+time to compile time. Signal indices did not: they are newtypes built without a
+range check, and conversion from a machine-sized integer truncates instead of
+failing. Of the 661
 commands in the targeted specification revision, the client wraps 576
 ($87 %$), including every scanning command.
 // 576 of 661 `####` command headings in docs/tcp-protocol.md, counted on
@@ -94,21 +95,15 @@ The last carries the instrument's code and description. The caller needs the
 distinction to choose its next step. Any nonzero error status counts as an
 error, even without a description.
 
-Argument order, magic numbers, and channel and step-count ranges moved from
-run time to compile time. Signal indices did not. They are newtypes but built
-without a range check, and conversion from a machine-sized integer truncates
-instead of failing.
-
-Variation across installations remains uncatchable. The scan-properties response
-has grown across Nanonis versions by fields appended at its end. The client
-therefore reads the full layout and falls back to the core when an older
-Nanonis controller sends less. The specification is also self-inconsistent in
-places. It gives two unused header bytes for a request and four for a
-same-size response. It describes the error status as unsigned where other
-parts of the protocol use signed integers. Its encoding of a feedback
-controller's slope differs from module to module. Each case is handled in the
-function for that command, where a caller would otherwise have had to know
-about it.
+Variation across installations remains uncatchable. Responses such as the scan
+properties have grown across Nanonis versions, and the specification is
+self-inconsistent in places, such as the unused header bytes of a request and
+a response. Each case is handled in the function for that command, where a
+caller would otherwise have had to know about it.
+// The cases: scan-properties fields appended over versions (the client falls
+// back to the core layout); 2 unused header bytes for a request, 4 for a
+// response; error status unsigned where the rest is signed; feedback slope
+// encoded differently per module; 13 data types announced, 14 listed.
 
 == Connection management and tip safety <sec:connection>
 

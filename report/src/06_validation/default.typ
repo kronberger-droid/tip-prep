@@ -33,12 +33,16 @@ apexes make this evidence qualitative, not a calibration.
   the $-0.6$ Hz apex resolves that the $-1.8$ Hz one does not.]
 
 #figure(
-  grid(
-    columns: 3,
-    column-gutter: 2mm,
-    image("fig_cu110_bad.png"), image("fig_cu110_okay.png"), image("fig_cu110_good.png"),
-    [(a) $Delta f = -1.8$ Hz], [(b) $Delta f = -1.0$ Hz], [(c) $Delta f = -0.6$ Hz],
-  ),
+  {
+    set text(size: 10pt)
+    grid(
+      columns: 3,
+      column-gutter: 2mm,
+      row-gutter: 2.5mm,
+      image("fig_cu110_bad.png"), image("fig_cu110_okay.png"), image("fig_cu110_good.png"),
+      [(a) $Delta f = -1.8$ Hz], [(b) $Delta f = -1.0$ Hz], [(c) $Delta f = -0.6$ Hz],
+    )
+  },
   caption: flex-caption([
     Constant-current STM images of partially oxidized Cu(110), $30 times 30$ nm,
     taken with three apexes on three separate days. (a) $+1.0$ V, $100$ pA;

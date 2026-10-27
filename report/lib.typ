@@ -3,9 +3,10 @@
 
 #import calc: pow, sqrt
 
-// An open question or missing source in the draft, in the poster's
-// blunt-red. Grep for `todo[` before handing the report in.
-#let todo(body) = text(fill: rgb("B0533A"), weight: "semibold")[[#body]]
+// An open question, missing source or unwritten part of the draft. Purple,
+// since the figures use the blunt-red for their own states. Grep for `todo[`
+// before handing the report in.
+#let todo(body) = text(fill: rgb("8E24AA"), weight: "semibold")[[TODO: #body]]
 
 #let mean(xs) = xs.sum() / xs.len()
 

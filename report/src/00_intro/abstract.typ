@@ -1,4 +1,5 @@
 #import "/report.typ": unnumbered
+#import "/lib.typ": todo
 
 #unnumbered([Abstract], outlined: false)
 
@@ -33,6 +34,10 @@ criterion is met. On a Nanonis-controlled microscope @nanonis, two unattended
 runs on partially oxidized Cu(110) started from blunt tips and reached the
 sharp bounds within seven minutes; one of them also passed the stability test,
 while the other returned to pulsing on its own.
+#todo[These two runs are from 29 January 2026, on the earlier code
+  (`../poster/figures/traces.json`), outside the runs @sec:validation counts.
+  There the stability test ran once, on a tip sharp from the start. Replace with
+  the counted results, or keep the conference wording and say where it is from.]
 
 These are the first steps towards autonomous functionalization of SPM tips. The
 framework will be extended to incorporate decision-making based on external

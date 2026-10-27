@@ -19,7 +19,9 @@ atomic-resolution work @barker2024.
 Efforts to systematize tip preparation range from defined procedures
 @tewari2017 to machine-learning-driven automation @rashidi2018 @krull2020
 @wang2021 @alldritt2022 (@sec:conditioning), yet operator-independent
-conditioning remains the exception.
+conditioning remains the exception. Each of these judges the tip from an image,
+a spectrum or an imprint. Most are tied to the surface they were trained or
+calibrated on, or to the setup they were written for.
 
 This work builds the conditioning loop around a signal available at every
 landing: the frequency shift $Delta f$ of a qPlus force sensor, read without

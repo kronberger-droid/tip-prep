@@ -57,7 +57,8 @@ land on.
     the counted runs (@sec:hardware-results); $tilde.op$ marks a phase whose
     length a gate decides. These runs stepped three coarse
     steps per axis and waited a further $1$ s after landing. Widths are not to
-    scale.
+    scale, and neither is the coarse retract, whose transitions in the tip
+    height are broken by dots.
   ], [One cycle of the tip-preparation routine]),
 ) <fig:cycle>
 

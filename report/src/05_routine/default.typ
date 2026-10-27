@@ -1,6 +1,7 @@
 #import "/report.typ": flex-caption
 #import "/lib.typ": todo
 #import "fig_state-machine.typ": tip-prep-fsm
+#import "fig_cycle.typ": cycle-timeline
 
 // Sources, unless a comment says otherwise: rusty-tip
 // src/tip_prep/runner.rs (the routine), src/tip_prep/pulse_state.rs (voltage
@@ -38,14 +39,22 @@ run ends.
 
 == Bias pulses and pulse strategies <sec:pulse>
 
-Each cycle opens with a bias pulse, $50$ ms long by default, applied with the
-Z-controller on hold so that it does not react. After a $1$ s settling time,
+Each cycle (@fig:cycle) opens with a bias pulse, $50$ ms long by default,
+applied with the Z-controller on hold so that it does not react. After a $1$ s settling time,
 the tip is withdrawn, stepped laterally with the coarse motors and
 re-approached. Only then is $Delta f$ measured. The tip leaves the pulse site
 as fast as possible, since further interaction with the freshly modified spot
 can change the apex again. The default of one coarse step in each direction
 leaves the pulse debris behind while adding little creep for the re-approach to
 land on.
+
+#figure(
+  cycle-timeline(),
+  caption: flex-caption([
+    One cycle of the routine, from the pulse to the $Delta f$ reading. Widths
+    are not to scale.
+  ], [One cycle of the tip-preparation routine]),
+) <fig:cycle>
 
 One of three pulse strategies, set in the run's configuration, chooses the next
 pulse voltage:

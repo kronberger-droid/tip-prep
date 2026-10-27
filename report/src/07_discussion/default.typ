@@ -18,22 +18,23 @@ What the results mean, and where they stop being trustworthy.
 Whether the seams of @sec:framework paid for themselves must be judged against
 the failures of @sec:poc-lessons, not against taste. The deletions recorded
 there need no appeal to preference. Nor does the classifier stack, which
-admitted a new kind of decision-maker without changes to the routine or the
-control path, though no trained model has used that door yet (@sec:analyzers). A second, unrelated routine, the drift
-measurement of @sec:harness, runs on the same harness and serves two front ends
-from one implementation.
+admitted a new kind of decision-maker, still untried (@sec:analyzers), without
+changes to the routine or the control path. A second, unrelated routine, the
+drift measurement of @sec:harness, runs on the same harness and serves two
+front ends from one implementation.
 
 Against that, the abstraction cost instrument time. The rewrite around the
-harness and the controller trait took the routine off the instrument. The last
+harness and the controller interface took the routine off the instrument. The last
 release ran there on 27 May 2026, and the next run followed on 14 September, on
 the development line. Its thresholds, calibrated against the earlier code path,
 had to be re-established on the instrument. For a project of this length, three
 and a half months without the instrument is a large share of the time.
 
 That the structure makes a routine portable across instruments is, so far, a
-design intention, not a result. The controller trait has two backends: the
-Nanonis backend and the mock. The mock was written alongside the trait, so it
-shows that the trait can be implemented, not that it fits another vendor's model
+design intention, not a result. The controller interface has two backends: the
+Nanonis backend and the mock. The mock was written alongside the interface, so
+it shows that the interface can be implemented, not that it fits another
+vendor's model
 of an instrument. Only a backend for a second controller can show whether the
 capability set has the right granularity and whether a routine written against
 it runs unchanged elsewhere. That backend is the minimum for calling the
@@ -42,8 +43,8 @@ interface general, and @sec:outlook returns to it.
 == Limitations of the criterion and the evidence <sec:limitations>
 
 One scalar stands in for the state of an atomic-scale apex. The evidence that
-it tracks image quality is qualitative and rests on three apexes
-(@sec:proxy-validation). The sharp window and the stability tolerance were set
+it tracks image quality rests on three apexes (@sec:proxy-validation) and is
+qualitative, not a calibration. The sharp window and the stability tolerance were set
 on one instrument and one surface. Even there the choice is unsettled: the runs
 used four lower bounds of the window between $-1.0$ and $-2.0$ Hz
 (@tab:run-params). What would need re-establishing on another instrument or
@@ -93,5 +94,5 @@ reconstructed (@sec:events).
 In return, this work asks that somebody write the routine down once and
 calibrate its window for the surface at hand (@sec:limitations). It is bound to
 one vendor exactly as Scanbot is, until the backend for a second controller of
-@sec:architecture-eval exists. But the binding sits in a backend behind a
-trait, not in the routine itself.
+@sec:architecture-eval exists. But the binding sits in a backend behind an
+interface, not in the routine itself.

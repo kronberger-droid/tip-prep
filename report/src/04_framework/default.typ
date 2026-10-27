@@ -148,9 +148,32 @@ run start. The log records each change with the full resulting configuration.
 The log alone therefore suffices to reconstruct what was run and with which
 numbers.
 
-The front ends build on the log. Besides a command-line tool for tip
-preparation, a graphical workbench draws a run as a fold over its log entries,
-so a live run and a log reopened from disk share one code path. A terminal reader lists, inspects and exports archived logs.
+The front ends build on the log. Tip preparation runs from a command-line tool
+or as a tool of a graphical workbench (@fig:workbench). Its setup there is a
+form generated from the configuration's schema, and its run view shows the tip
+state, the $Delta f$ trace against the sharp window and the pulse voltages.
+The view is a fold over the run's log records, so a live run and a log
+reopened from the tool's history share one code path. A terminal reader lists,
+inspects and exports archived logs.
+// rusty-tip bin/rusty-tip-gui/tools/tip_prep.rs:1-7 (setup form, run panel),
+// run_view.rs:1-6 (the fold, tested equal live and replayed at :381),
+// app.rs:104 (History per tool); bin/tip-prep, bin/rt-log.
+
+// PLACEHOLDER: replace the box with the screenshot of Tip prep -> Run.
+#figure(
+  rect(
+    width: 100%,
+    height: 55mm,
+    stroke: (paint: luma(160), dash: "dashed"),
+    align(center + horizon, text(fill: luma(110))[
+      Screenshot: workbench, Tip prep tool, Run tab
+    ]),
+  ),
+  caption: flex-caption([
+    The tip-preparation tool of the workbench during a run: tip state,
+    frequency shift against the sharp window, and the pulse voltages.
+  ], [The tip-preparation tool of the workbench]),
+) <fig:workbench>
 
 == Analyzers and classifiers <sec:analyzers>
 

@@ -34,12 +34,16 @@ of @sec:events are the dataset, and the classifier interface is where a
 learned model attaches. Its decisions stay accountable, logged like any other.
 
 The same arrangement scales to a language model driving the instrument through
-the existing guards. The reading half of that boundary exists, as a command
-line that answers read-only requests from scripts and agents with JSON over a
-local socket; the acting half, routed through the same handles as a routine,
-does not yet.
-// rusty-tip src/control/mod.rs: Request::acts(); the seven requests
-// (describe, status, read, controllers, scan, frame, psd) are all reads.
+the existing guards. The reading half of that boundary exists. The workbench,
+or the same server run without a window, answers requests from scripts and
+agents as JSON over a local socket, read-only by default. A model can thus
+already inspect the instrument and a run for analysis without being able to
+move anything. The acting half, routed through the same handles as a routine,
+does not exist yet: every request so far only reads.
+// rusty-tip src/control/mod.rs:1-18 (workbench socket, `rusty-tip serve`,
+// in process) and Request::acts(), false for all seven requests (describe,
+// status, read, controllers, scan, frame, psd); server.rs:1-6 for loopback
+// TCP; bin/rusty-tip-gui/connection.rs:42-51 for the read-only default.
 // Not on the event bus yet: reads go through Session::query.
 
 The routine itself could leave Rust for a scripting layer, to be reviewed,
@@ -48,4 +52,10 @@ attempt put the control flow into a configuration file and had to be removed.
 
 Alongside it sit the two questions this design was shaped for but has not yet
 been tested against: what porting to a second controller involves, and which further
-routines the framework can carry.
+routines the framework can carry. The workbench gives a first answer to the
+second. Besides tip preparation, it hosts drift compensation and a tool that
+reads, edits and writes the Z-controller and PLL loops and keeps complete
+operating points, every loop with the bias and the scan geometry, to apply in
+one step.
+// rusty-tip bin/rusty-tip-gui/tools/mod.rs:107-114 (the three tools),
+// tools/drift.rs:1-2, tools/controllers.rs:1-15; src/operating_point.rs:1-2.

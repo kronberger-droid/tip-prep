@@ -37,7 +37,7 @@
     #bibliography(
       "src/B_bibliography/references.bib",
       title: [References],
-      style: "iso-690-numeric",
+      style: "ieee",
     )
   ],
 )

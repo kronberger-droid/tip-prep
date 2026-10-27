@@ -75,11 +75,6 @@ reaches the instrument. A routine therefore refuses cleanly on an instrument
 that cannot run it. The Nanonis client of @sec:interface is the only hardware
 backend today. The trait is the seam for adding others.
 
-Each hardware operation is a value that holds its parameters and declares the
-capabilities it needs, which are checked before execution. Operations are an
-implementation detail, not the authoring surface (@sec:harness). Their names
-survive only as log labels.
-
 Results are typed too. A grabbed scan image is a `Frame`, not the JSON blob of
 @sec:poc-lessons. It carries its pixels, channel, dimensions and scan
 direction, plus the physical geometry the instrument reports (centre, size,
@@ -127,13 +122,10 @@ landing gate of @sec:outcomes.
 The harness borrows the backend instead of consuming it, so one connection can
 run routine after routine. A session builds on this. It connects once, loads
 the instrument's layout and settings and starts the data stream. It then runs
-jobs one at a time, each with its own log. In the graphical interface, exactly
-one thread owns the session and the backend, and the window talks to it
-through channels.
-
-Tip preparation is the reference routine, not the only one. Measuring and
-compensating the Z-piezo drift is a second routine on the same harness, shared
-by the graphical interface and the `const-distance` command-line tool.
+jobs one at a time, each with its own log. Tip preparation is the reference
+routine, not the only one: measuring and compensating the Z-piezo drift is a
+second routine on the same harness, shared by the graphical interface and the
+`const-distance` command-line tool.
 
 == Event system <sec:events>
 
@@ -166,23 +158,11 @@ so a live run and a log reopened from disk share one code path. A terminal reade
 
 The framework has two ways to turn a measurement into a decision. An analyzer
 is a pure function over a frame, so the same code runs live, over archived data
-and in a test. A classifier is a model, which brings identity, version, latency
-and possibly a network between the routine and the answer.
-
-The trait separates what a classifier answers from how it is reached. Models
-are written in Python and the control path is not, so the boundary is pixels as
-an npy array and metadata as JSON. A new model then costs a verdict type and a
-URL, not transport code. The connection resolves the model's identity at setup,
-so an unreachable model is a configuration error at startup, not a surprise
-partway through an unattended run.
-
-An unreachable model is a distinct, matchable error, because falling back to a
-simpler criterion is a legitimate response. A model that answers wrongly is
-a protocol error instead, since falling back would mask a broken deployment,
-which is the thing worth fixing. Model,
-version, latency and the verdict itself enter the log, which keeps a run driven
-by a model as accountable as one driven by a threshold.
-
-The classifier side is infrastructure so far. The reference server is a
-placeholder, and no trained model is attached. Tip preparation decides on
-thresholds of $Delta f$ (@sec:criteria-applied) without consulting either kind.
+and in a test. A classifier is a model, reached over a boundary of pixels as an
+npy array and metadata as JSON, since models are written in Python and the
+control path is not. An unreachable model and one that answers wrongly are
+distinct errors, since only the first justifies falling back to a simpler
+criterion. Model, version, latency and verdict enter the log like any other
+decision. The classifier side is infrastructure so far: no trained model is
+attached, and tip preparation decides on thresholds of $Delta f$
+(@sec:criteria-applied) without consulting either kind.

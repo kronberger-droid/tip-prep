@@ -16,7 +16,7 @@
 The framework is the general foundation a routine runs on; the routine itself is
 @sec:routine. Separating the two makes a routine reproducible, shareable and
 extendable, rather than a script bound to one instrument. The separation is
-also designed to make it portable across instruments, and
+also designed to make a routine portable across instruments, and
 @sec:architecture-eval tests how far that holds. @fig:architecture shows the
 parts and how a routine reaches the instrument through them.
 
@@ -30,20 +30,20 @@ parts and how a routine reaches the instrument through them.
   ], [Structure of the framework]),
 ) <fig:architecture>
 
-Its shape follows from what earlier versions got wrong, so the chapter starts
-there.
+The framework's shape follows from what earlier versions got wrong, so the
+chapter starts there.
 
 == Precursor implementations <sec:poc-lessons>
 
-Three earlier structures were deleted. Each deletion is evidence the rest of
-the chapter answers to.
+Three earlier structures were deleted. Each deletion fixed a requirement that
+the rest of the chapter meets.
 
 Routines were data. A declarative engine with its own steps, loops and
 conditionals sequenced actions, each constructed by name from a registry. It
 worked, but was removed for reinventing a general-purpose language badly inside
 a configuration file. The registry went with it, since constructing an
 operation from a string existed only to read those step lists. @sec:harness
-replaced it with control flow in Rust, where the compiler can see it. What
+replaced the engine with control flow in Rust, where the compiler can see it. What
 might yet replace *that* at a better layer is the scripting question of
 @sec:outlook.
 
@@ -57,25 +57,24 @@ tip-preparation end-to-end tests passed unchanged.
 Measurements went into a shared store as JSON under string keys, and whoever
 needed them read them back. That made every consumer a parser and every schema
 change a silent breakage. Its last writer handed grabbed scan frames to the
-analyzers. Once frames became a typed value (@sec:controller-trait), the store
-had no job left. A structure that disappears once the types are right was never
-carrying the design.
+analyzers. Once frames became a typed value (@sec:controller-interface), the store
+had no job left. The store had only ever carried what the types now carry.
 
 The line drawn afterwards is that a configuration file owns a run's numbers,
 not its control flow. The reproducible artifact the abstract promises is then
 the run's log, which embeds its configuration (@sec:events).
 
-== Hardware abstraction <sec:controller-trait>
+== Hardware abstraction <sec:controller-interface>
 
 A routine targets one interface to the instrument, the controller interface
 `SpmController`, not a TCP protocol. Each implementation of the interface, a
-backend, reports its
-capabilities, such as bias control, the Z-controller, the coarse motors,
-scanning, the phase-locked loop (PLL) or a data stream. An operation that needs
+backend, reports its capabilities, such as bias control, the Z-controller, the
+coarse motors, scanning, the phase-locked loop (PLL) or a data stream. An operation that needs
 a missing capability fails with an `Unsupported` error before any command
 reaches the instrument. A routine therefore refuses cleanly on an instrument
-that cannot run it. The Nanonis client of @sec:interface is the only hardware
-backend today. The interface is the seam for adding others.
+that cannot run it. The Nanonis backend, built on the client of
+@sec:interface, is the only hardware backend today. The interface is the seam
+for adding others.
 
 Results are typed too. A grabbed scan image is a `Frame`, not the JSON blob of
 @sec:poc-lessons. It carries its pixels, channel, dimensions and scan
@@ -83,11 +82,11 @@ direction, plus the physical geometry the instrument reports (centre, size,
 rotation). A frame loaded from a file carries no geometry, and a consumer can
 tell the difference.
 
-A mock backend implements the same interface without an instrument. Its frequency
-shift follows a scriptable model of the tip's response to pulses. Faults can be
-injected on chosen calls, and every call is recorded for inspection. A seeded
-random generator makes a simulated run repeatable. Its Z-controller is simulated
-too. Routines are developed and tested against the mock;
+A mock backend implements the same interface without an instrument. Its
+frequency shift follows a scriptable model of the tip's response to pulses, and
+its Z-controller is simulated too. Faults can be injected on chosen calls, and
+every call is recorded for inspection. A seeded random generator makes a
+simulated run repeatable. Routines are developed and tested against the mock;
 @sec:mock-results reports what that covers.
 
 == Routine harness <sec:harness>
@@ -101,7 +100,7 @@ routine would otherwise reimplement, so the body contains only the science:
   through them to the event bus.
 - *Cancellation.* Waits are interruptible, and a stop request surfaces as the
   outcome "stopped by the operator", not as an error.
-- *Budgets.* A cycle driver turns cycle and time limits into outcomes instead
+- *Budgets.* A cycle driver turns cycle and time budgets into outcomes instead
   of hand-written checks.
 - *Cleanup.* `rt.guarded` pairs a body with a cleanup that runs however the
   body ends, restoring hardware such as a running scan or a changed scan speed.
@@ -126,7 +125,7 @@ run routine after routine. A session builds on this. It connects once, loads
 the instrument's layout and settings and starts the data stream. It then runs
 jobs one at a time, each with its own log. Tip preparation is the reference
 routine, not the only one: measuring and compensating the Z-piezo drift is a
-second routine on the same harness, shared by the graphical interface and the
+second routine on the same harness, shared by a graphical workbench and the
 `const-distance` command-line tool.
 
 == Event system <sec:events>
@@ -135,8 +134,8 @@ Every operation through a handle is reported to an event bus when it starts,
 completes or fails, with its parameters, duration and result. Routines add
 their own typed events. Tip preparation reports each cycle, phase change and
 maximum-voltage pulse. Observers subscribe to the bus: one writes the run to a
-log file, one prints to the console, one forwards events to the graphical
-interface. One bus thus serves live monitoring, logging and offline analysis,
+log file, one prints to the console, one forwards events to the workbench.
+One bus thus serves live monitoring, logging and offline analysis,
 instead of logging bolted on afterwards.
 
 The log describes itself. It opens with the tool, its version and source
@@ -151,10 +150,10 @@ The log alone therefore suffices to reconstruct what was run and with which
 numbers.
 
 The front ends build on the log. Tip preparation runs from a command-line tool
-or as a tool of a graphical workbench (@fig:workbench). Its setup there is a
-form generated from the configuration's schema, and its run view shows the tip
+or as a tool of the workbench (@fig:workbench). Its setup there is a form
+generated from the configuration's schema, and its run view shows the apex
 state, the $Delta f$ trace against the sharp window and the pulse voltages.
-The view is a fold over the run's log records, so a live run and a log
+The view is rebuilt entry by entry from the run's log, so a live run and a log
 reopened from the tool's history share one code path. A terminal reader lists,
 inspects and exports archived logs.
 // rusty-tip bin/rusty-tip-gui/tools/tip_prep.rs:1-7 (setup form, run panel),
@@ -167,7 +166,7 @@ inspects and exports archived logs.
   image("fig_workbench.png", width: 100%),
   caption: flex-caption([
     The tip-preparation tool of the workbench replaying a logged run of
-    6 October 2026: tip state, frequency shift after each cycle against the
+    6 October 2026: apex state, frequency shift after each cycle against the
     sharp window, the pulse voltages, and the run's last logged events.
   ], [The tip-preparation tool of the workbench]),
 ) <fig:workbench>
@@ -178,11 +177,11 @@ inspects and exports archived logs.
 
 The framework has two ways to turn a measurement into a decision. An analyzer
 is a pure function over a frame, so the same code runs live, over archived data
-and in a test. A classifier is a model, reached over a boundary of pixels as an
-npy array and metadata as JSON, since models are written in Python and the
-control path is not. An unreachable model and one that answers wrongly are
-distinct errors, since only the first justifies falling back to a simpler
-criterion. Model, version, latency and verdict enter the log like any other
-decision. The classifier side is infrastructure so far: no trained model is
+and in a test. A classifier is a model, reached across a boundary that passes
+the pixels as an npy array and the metadata as JSON, since models are written
+in Python and the control path is not. An unreachable model and one that
+answers wrongly are distinct errors, because only the first justifies falling
+back to a simpler criterion. Model, version, latency and verdict enter the log like any other
+decision. The classifier boundary is infrastructure so far: no trained model is
 attached, and tip preparation decides on thresholds of $Delta f$
 (@sec:criteria-applied) without consulting either kind.

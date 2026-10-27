@@ -13,12 +13,13 @@
 
 = Results <sec:validation>
 
-The routine ran on a Nanonis-controlled STM/nc-AFM with a qPlus sensor
-@nanonis, on partially oxidized Cu(110), from 15 September to 6 October 2026.
+The routine ran on a Nanonis-controlled instrument for STM and non-contact
+atomic force microscopy (NC-AFM) with a qPlus sensor @nanonis, on partially
+oxidized Cu(110), from 15 September to 6 October 2026.
 All runs used the rusty-tip 0.5 development line (@sec:framework), thirteen
-source revisions in all, each recorded in its log. The count covers the 106 runs
-that completed or were stopped by the operator, not those that ended in an
-instrument error during commissioning. This chapter reports what
+source revisions in all, each recorded in its log. The statistics below cover
+the 106 runs that completed or were stopped by the operator, not those that
+ended in an instrument error during commissioning. This chapter reports what
 was observed; @sec:discussion interprets it.
 
 == Frequency shift as a quality proxy <sec:proxy-validation>
@@ -58,14 +59,15 @@ Of the 106 runs, 53 completed with a confirmed sharp tip and 53 were stopped by
 the operator to change parameters. Until the live configuration reload of
 @sec:events was available, a different window or pulse strategy meant stopping
 and restarting the run. The reload was used in one run. Twelve completed runs
-met an already sharp tip and confirmed it without a pulse.
+found the tip already sharp and confirmed it without a pulse.
 
 The other 41 completed runs needed 1 to 228 pulses (median 11) and $0.6$ to
 $34$ min (median $2.4$ min, @fig:effort). Their first readings spanned the
 frequency-shift range from one limit to the other, with a median of $-4.0$ Hz.
-@fig:run shows a typical course. For 46 pulses, $Delta f$ scatters between a
-few hertz and the edge of the range, with no trend towards the window. Then a
-single pulse lands the tip inside it, and all three confirmation readings hold.
+@fig:run shows the course of a typical run. For 46 pulses, $Delta f$ scattered
+between a few hertz and the edge of the range, with no trend towards the window.
+Then a single pulse landed the tip inside it, and all three confirmation
+readings held.
 
 #figure(
   effort-figure(),
@@ -116,7 +118,7 @@ pulse of @sec:criteria-applied never fired on the instrument.
     [$n = 3$, $5$ or $6$], [44],
     [$n = 10$], [61],
     [Stability test enabled], [], [4],
-    [Coarse steps per reposition], [3 per axis, Z retract 3], [106],
+    [Coarse steps per reposition], [3 per lateral axis, coarse Z retract 3], [106],
     [Settling after the landing], [$1$ s], [106],
     // From each log's configuration (reposition_steps, post_reposition_settle_ms)
     // and the reposition parameters (z_retract -3 in all 4369).
@@ -130,11 +132,12 @@ pulse of @sec:criteria-applied never fired on the instrument.
 Not every accepted reading was a measurement. Of 4430 accepted readings, 520
 ($11.7 %$) lay beyond $plus.minus 76$ Hz, 494 of them at exactly
 $plus.minus 76.29$ Hz and one at $152.59$ Hz. These are limits of the PLL
-controller's range. A reading there marks a frequency shift beyond what the
-PLL follows, possibly from a tip tapping the surface. Of the 494, 446 were
-negative and 48 positive, and a positive frequency shift of that size
-indicates an insulating tip. All 494 passed both gates of @sec:measurement. A
-further 290 readings failed the gates on every retry and were used anyway
+controller's range, and readings at them are called railed in what follows. A
+railed reading marks a frequency shift beyond what the PLL follows, possibly
+from a tip tapping the surface. Of the 494, 446 were negative and 48 positive; a positive frequency
+shift of that size indicates an insulating tip. All 494 passed both
+measurement gates of @sec:measurement. A further 290 readings failed the
+measurement gates on every retry and were used anyway
 (@fig:readings).
 // 76.29 Hz = 5 MHz / 2^16. Range limits, tapping and the insulating tip:
 // Martin, 2026-10-27, replacing the "most likely the PLL range" hedge of the
@@ -156,7 +159,7 @@ further 290 readings failed the gates on every retry and were used anyway
 
 == Verification against the mock backend <sec:mock-results>
 
-The mock backend of @sec:controller-trait exercised paths that are hard or
+The mock backend of @sec:controller-interface exercises paths that are hard or
 unwise to provoke on the instrument, from each ending of the routine to
 injected faults and a panicking routine. Each test checks that the tip ends
 withdrawn and that the run reports the right outcome. @tab:coverage sets these
@@ -183,14 +186,14 @@ tests beside the runs on the instrument.
     table.cell(rowspan: 3)[Endings],
     [completed], [53],
     [stopped by the operator], [53],
-    [cycle limit reached], [–],
+    [cycle budget reached], [–],
     table.cell(rowspan: 3)[Faults],
     [I/O fault mid-run], [–],
     [fault during cleanup], [–],
     [panic in the routine], [–],
     table.cell(rowspan: 2)[Other],
     [live configuration reload], [1],
-    [classifier transport], [–],
+    [classifier boundary], [–],
   ),
   caption: flex-caption([
     Paths of the routine and the counted runs on the instrument that took
@@ -202,6 +205,7 @@ tests beside the runs on the instrument.
 Both protocol boundaries were tested against real servers, not stubs. The
 Nanonis client of @sec:interface ran against the vendor's simulator as well as
 the instrument. Without either, its tests cover encoding and decoding of every
-data type and the typed parameter sets of its larger subsystems. The classifier transport of @sec:analyzers is tested against an
-HTTP server on a local socket. This test checks that an unreachable model and a
-wrongly answering model surface as different errors.
+data type and the typed parameter sets of its larger subsystems. The classifier
+boundary of @sec:analyzers is tested against an HTTP server on a local socket.
+This test checks that an unreachable model and a wrongly answering model
+surface as different errors.

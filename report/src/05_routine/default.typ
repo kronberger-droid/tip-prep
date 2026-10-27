@@ -29,19 +29,20 @@ an already sharp tip goes straight to these checks.
 #figure(
   tip-prep-fsm(),
   caption: flex-caption([
-    State machine of the routine. Each state selects a loop, and every loop
-    ends in a $Delta f$ reading that decides the next transition.
+    State machine of the routine. Each state selects a sequence of steps, and
+    every sequence ends in a $Delta f$ reading that decides the next
+    transition.
   ], [State machine of the tip-preparation routine]),
 ) <fig:fsm>
 
 == Bias pulses and pulse strategies <sec:pulse>
 
-Each cycle opens with a bias pulse, the Z-controller on hold so that it does
-not react, and moves the tip to a fresh site before $Delta f$ is measured
+Each cycle fires a bias pulse with the Z-controller on hold, so that it does
+not react, then moves the tip to a fresh site before $Delta f$ is measured
 (@fig:cycle). The tip leaves the pulse site as fast as possible, since further
-interaction with the freshly modified spot can change the apex again. The default of one coarse step in each direction
-leaves the pulse debris behind while adding little creep for the re-approach to
-land on.
+interaction with the freshly modified spot can change the apex again. The
+default of one coarse step per lateral axis leaves the pulse debris behind
+while adding little creep for the re-approach to land on.
 
 #figure(
   cycle-timeline(),
@@ -49,10 +50,10 @@ land on.
     One cycle of the routine, from the pulse to the $Delta f$ reading, with the
     configured pulse and settling time and otherwise the median durations of
     the counted runs (@sec:hardware-results); $tilde.op$ marks a phase whose
-    length a gate decides. These runs stepped three coarse
-    steps per axis and waited a further $1$ s after landing. Widths are not to
-    scale, and neither is the coarse retract, whose transitions in the tip
-    height are broken by dots.
+    length a gate decides. These runs moved three coarse steps per lateral
+    axis and waited a further $1$ s after landing. Widths are not to scale,
+    and neither is the coarse Z retract, whose transitions in the tip height
+    are broken by dots.
   ], [One cycle of the tip-preparation routine]),
 ) <fig:cycle>
 
@@ -66,24 +67,24 @@ one often changes it little or not at all.
 - *Fixed.* The same voltage every cycle, one known to work on the surface at
   hand. The reading decides only whether to keep pulsing, never how hard.
 - *Stepping.* The voltage starts at the lower end of a configured range,
-  steps up while $Delta f$ stops rising and drops back once it rises again. It
+  steps up whenever $Delta f$ stops rising and drops back once it rises again. It
   suits a run with time to spare that should change the tip as little as
   possible (@fig:strategies). It was not used on the instrument
   (@sec:hardware-results).
   // Rise: more than a threshold over the mean since the last change; stall: a
   // configured number of cycles; step: a fixed fraction of the range, capped.
-- *Linear.* Within a configured $Delta f$ interval, the clamp, the voltage
-  rises linearly with the distance from the sharp window: the gentlest pulse
-  at the clamp's end next to the window, the hardest at its far end
-  (@fig:strategies). Outside the clamp, below it or above the window, the
-  hardest pulse applies. A tip close to sharp is thus only nudged.
+- *Linear.* Within a configured $Delta f$ interval, called the clamp, the
+  voltage rises linearly with the distance from the sharp window: the gentlest
+  pulse at the clamp's end next to the window, the hardest at its far end
+  (@fig:strategies). Outside the clamp, that is below it or above the window,
+  the hardest pulse applies. A tip close to sharp is thus only nudged.
 
 #figure(
   strategies-figure(),
   caption: flex-caption([
     Pulse voltage of two strategies, both between $4$ and $8$ V. (a) Linear,
     against the preceding reading, for a clamp from $-5$ to $-1.5$ Hz; inside
-    the sharp window, shaded, the tip is not pulsed. (b) Stepping, over the
+    the shaded sharp window the tip is not pulsed. (b) Stepping, over the
     cycles of a scripted run: one step of four after two cycles without a rise
     of more than $0.5$ Hz, and back to the start when the reading rises. The
     values of (b) are illustrative.
@@ -97,31 +98,31 @@ opposite polarity, on a fixed period.
 
 == Measurement validation <sec:measurement>
 
-No single $Delta f$ value from the Nanonis controller is trusted on its own. A
-reading is a batch of samples from the Nanonis controller's data stream
-(@sec:message-format), $100$ by default. At a $1$ kHz stream rate, such a batch
-takes a tenth of a second. Its value is the batch mean, believed only once the
-batch passes two gates. A noise gate checks its standard deviation, $1.5$ Hz
-by default, and a drift gate the slope of a linear fit through it, $0.5$ Hz/s
-by default. A batch failing either is retried after waits of $100$, $200$ and
+No single $Delta f$ value is trusted on its own. A reading is a batch of
+samples from the Nanonis controller's data stream (@sec:message-format), $100$
+by default. At a $1$ kHz stream rate, such a batch takes a tenth of a second.
+Its value is the batch mean, believed only once the batch passes the two
+measurement gates. A noise gate bounds its standard deviation, $1.5$ Hz by
+default, and a drift gate the slope of a linear fit through it, $0.5$ Hz/s by
+default. A batch failing either is retried after waits of $100$, $200$ and
 $400$ ms.
 // signals.rs:207, backoff_ms = 100 * 2^attempt, with read_retry_count = 3.
 
-The gates delay a reading rather than veto it. A batch still failing after the
-last retry is used anyway, logged with a warning and marked unstable in the log
-(@sec:events). A run on a persistently noisy tip thus continues on the mean of
-its last batch. Both thresholds are set per run and can be loosened for
-noisier tips. The gates judge how a batch varies, not where it lies, which
-leaves the blind spot of @sec:limitations.
+The measurement gates delay a reading rather than veto it. A batch still
+failing after the last retry is used anyway, with a warning, and marked
+unstable in the log (@sec:events). A run on a persistently noisy tip thus
+continues on the mean of its last batch. Both thresholds are set per run and
+can be loosened for noisier tips. The measurement gates judge how a batch
+varies, not where it lies, which leaves the blind spot of @sec:limitations.
 
 == Sharpness and stability criteria <sec:criteria-applied>
 
 A tip counts as sharp when $Delta f$ lies inside the configured sharp window,
 bounds included. The window is a run parameter, not a routine constant.
 @tab:run-params lists the values used. Its lower bound follows the use case and
-the tip at hand. A tip too sharp can suit picking up material from the surface
-poorly, and some tips do not get better than about $-1$ Hz, so the bound is
-widened for them.
+the tip at hand. A tip that is too sharp can be poor at picking up material
+from the surface, and some tips never get closer to zero than about $-1$ Hz,
+so the lower bound is moved further negative for them.
 // Martin, 2026-10-27.
 
 One reading inside the window could be luck: a favourable site or a metastable
@@ -147,24 +148,24 @@ pulse at the strategy's maximum voltage (for the fixed strategy, its only
 voltage). It then resets the strategy to its starting voltage and returns to
 pulsing. This pulse fires with the tip still engaged from the final reading,
 because a pulse acts through the field at the apex. That field exists only near
-the surface, so a pulse fired withdrawn would reshape nothing. With the
-stability test switched off, a confirmed sharp tip ends the run.
+the surface, so a pulse fired with the tip withdrawn would reshape nothing. With
+the stability test switched off, a confirmed sharp tip ends the run.
 
 == Termination conditions and safety <sec:outcomes>
 
 A run ends in one of four outcomes, none of them an error: completed, cycle
-limit reached, time budget exhausted, or stopped by the operator. The time
+budget reached, time budget exhausted, or stopped by the operator. The time
 budget starts after the first approach, before the initial reading, so a
 stability test on a tip that arrives sharp already counts against it. Errors
 are reserved for what the routine cannot handle, such as an approach
-overrunning its time budget or a tripped safe-tip protection.
+overrunning the approach timeout or a tripped safe-tip protection.
 
 Every approach in the routine is a calibrated approach. The tip is approached
 and backed off $50$ nm from where it landed, and the PLL's frequency shift is
 centred there. The tip is then landed again by switching the Z-controller back
 on. A landing counts once the tunnelling current is within $50 %$ of the
-setpoint and has stopped scattering and drifting. This criterion replaces fixed
-settling times. A landing not settled after $30$ s is taken as done, with a
+setpoint and has stopped scattering and drifting. This landing gate replaces
+fixed settling times. A landing not settled after $30$ s is taken as done, with a
 warning.
 
 The Nanonis controller's safe-tip protection retracts the tip when the current
@@ -176,8 +177,8 @@ run rather than approaching again into whatever caused it. The instrument has
 already retracted the tip, and the check ensures the software never undoes
 that.
 
-However a run ends, the tip is withdrawn and the coarse motor backs off two
-steps, since a withdrawal alone leaves the tip at the top of the piezo range
+However a run ends, the tip is withdrawn and a coarse Z retract of two steps
+follows, since a withdrawal alone leaves the tip at the top of the piezo range
 within reach of the surface. The safe-tip settings are also restored to their
 pre-run values. A sweep likewise restores the scan properties, scan speed and
 bias however it ends. Both rest on the harness (@sec:harness).

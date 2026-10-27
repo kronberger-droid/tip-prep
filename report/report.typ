@@ -212,6 +212,16 @@
   // \intextsep: room between a figure and the text around it.
   show figure: set block(above: 1.5em, below: 1.5em)
 
+  // Tables: hairlines instead of Typst's 1pt default, \small text, and the
+  // header row in bold. Only for table figures, since a diagram may be drawn
+  // with `table` too; every table figure here opens with a `table.header`.
+  show figure.where(kind: table): set table(stroke: 0.4pt)
+  show figure.where(kind: table): set text(size: sz.small)
+  show figure.where(kind: table): it => {
+    show table.cell.where(y: 0): set text(weight: "bold")
+    it
+  }
+
   // \captionsetup{font=footnotesize, labelfont=bf, labelsep=period}
   set figure.caption(separator: [.#h(0.5em)])
   show figure.caption: it => block(width: 100%)[

@@ -100,6 +100,10 @@ pulse of @sec:criteria-applied never fired on the instrument.
     [$n = 3$, $5$ or $6$], [44],
     [$n = 10$], [61],
     [Stability test enabled], [], [4],
+    [Coarse steps per reposition], [3 per axis, Z retract 3], [106],
+    [Settling after the landing], [$1$ s], [106],
+    // From each log's configuration (reposition_steps, post_reposition_settle_ms)
+    // and the reposition parameters (z_retract -3 in all 4369).
   ),
   caption: flex-caption([
     Parameters of the 106 counted runs. The upper bound of the window was

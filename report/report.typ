@@ -29,6 +29,7 @@
   Huge: 25pt,
 )
 #let baselineskip = (
+  footnotesize: 11pt,
   small: 12pt,
   normal: 13.6pt,
   large: 14pt,
@@ -208,14 +209,17 @@
   show outline.entry.where(level: 2): it => toc-entry(it, 1.5em, 2.3em)
   show outline.entry.where(level: 3): it => toc-entry(it, 3.8em, 3.2em)
 
-  // \captionsetup{font=small, labelfont=bf, labelsep=period}
+  // \intextsep: room between a figure and the text around it.
+  show figure: set block(above: 1.5em, below: 1.5em)
+
+  // \captionsetup{font=footnotesize, labelfont=bf, labelsep=period}
   set figure.caption(separator: [.#h(0.5em)])
   show figure.caption: it => block(width: 100%)[
-    #set text(size: sz.small)
+    #set text(size: sz.footnotesize)
     #set par(
       justify: true,
       first-line-indent: 0pt,
-      leading: leading-for(sz.small, baselineskip.small),
+      leading: leading-for(sz.footnotesize, baselineskip.footnotesize),
     )
     #set align(left)
     #text(weight: "bold")[

@@ -4,8 +4,8 @@ One planned fix, then the extensions the design was built to allow, and what
 each would take.
 
 The nearest change closes the blind spot of @sec:limitations. A reading counts
-as a lost lock, not a measurement, when its mean lies within a few percent of
-the limit of the PLL's frequency range, or when it shows no noise at all. That
+as railed, not a measurement, when its mean lies within a few percent of the
+limit of the PLL controller's range, or when it shows no noise at all. That
 limit is read from the instrument at the start of a run, not configured. On
 such a reading the routine withdraws, fires no pulse, withholds the reading
 from the pulse strategy, logs the event, and measures again at a fresh site.

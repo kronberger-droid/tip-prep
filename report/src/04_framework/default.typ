@@ -61,7 +61,7 @@ analyzers. Once frames became a typed value (@sec:controller-interface), the sto
 had no job left. The store had only ever carried what the types now carry.
 
 The line drawn afterwards is that a configuration file owns a run's numbers,
-not its control flow. The reproducible artifact the abstract promises is then
+not its control flow. The reproducible artifact this report's abstract promises is then
 the run's log, which embeds its configuration (@sec:events).
 
 == Hardware abstraction <sec:controller-interface>

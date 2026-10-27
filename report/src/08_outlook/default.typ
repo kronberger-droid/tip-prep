@@ -34,7 +34,8 @@ of @sec:events are the dataset, and the classifier boundary is where a learned
 model attaches.
 
 The same arrangement scales to a language model driving the instrument through
-the existing guards. The reading half of that boundary exists. The workbench,
+the guards a routine already runs under, the safe-tip protection and the
+cleanup of the harness. Of that access, the reading half exists. The workbench,
 or the same server run without a window, answers requests from scripts and
 agents as JSON over a local socket, read-only by default. A model can thus
 already inspect the instrument and a run for analysis without being able to

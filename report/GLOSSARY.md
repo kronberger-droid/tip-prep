@@ -42,6 +42,7 @@ this table is the short form to edit against. The reader-facing glossary is
 | the publish/subscribe mechanism | event bus | event stream |
 | the file written for one run | the log, the run's log | event stream |
 | one execution of a routine | run | |
+| how a run ends | outcome | ending, endings |
 | `Session` / `Job` software concepts (chapter 4) | session, job | session in any other sense: chapter 6 "taken in separate sessions" -> "taken on three separate days"; outlook "recorded sessions" -> "recorded runs" |
 | the automation code | routine | procedure (except Tewari's "standardized procedure" and generic manual practice) |
 | prior art for @tewari2017 / the learned methods | standardized procedure(s); machine-learning-assisted | defined procedure(s); machine-learning-driven |

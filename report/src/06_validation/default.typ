@@ -160,7 +160,7 @@ measurement gates on every retry and were used anyway
 == Verification against the mock backend <sec:mock-results>
 
 The mock backend of @sec:controller-interface exercises paths that are hard or
-unwise to provoke on the instrument, from each ending of the routine to
+unwise to provoke on the instrument, from each outcome of the routine to
 injected faults and a panicking routine. Each test checks that the tip ends
 withdrawn and that the run reports the right outcome. @tab:coverage sets these
 tests beside the runs on the instrument.
@@ -183,10 +183,13 @@ tests beside the runs on the instrument.
     [confirmation readings], [$>= 53$],
     [stability test], [1],
     [maximum-voltage pulse after a failed test], [–],
-    table.cell(rowspan: 3)[Endings],
+    table.cell(rowspan: 4)[Outcomes],
     [completed], [53],
     [stopped by the operator], [53],
     [cycle budget reached], [–],
+    // Tested at the cycle driver, not through the routine: rusty-tip
+    // src/routine/rt.rs cycles_times_out.
+    [time budget exhausted], [–],
     table.cell(rowspan: 3)[Faults],
     [I/O fault mid-run], [–],
     [fault during cleanup], [–],

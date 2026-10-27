@@ -1,5 +1,6 @@
 #import "/report.typ": flex-caption
 #import "/lib.typ": todo
+#import "fig_effort.typ": effort-figure
 
 // Run statistics: every tip_prep_*.jsonl in
 // /run/media/kronberger/DATA/Tip Prep/Experiments/ from 2026-09-15 to
@@ -54,11 +55,20 @@ and restarting the run. The reload was used in one run. Twelve completed runs
 met an already sharp tip and confirmed it without a pulse.
 
 The other 41 completed runs needed 1 to 228 pulses (median 11) and $0.6$ to
-$34$ min (median $2.4$ min). Their first readings spanned the frequency-shift
-range from one limit to the other, with a median of $-4.0$ Hz. @fig:run shows a
-typical course. For 46 pulses, $Delta f$ scatters between a few hertz and the
-edge of the range, with no trend towards the window. Then a single pulse lands
-the tip inside it, and all three confirmation readings hold.
+$34$ min (median $2.4$ min, @fig:effort). Their first readings spanned the
+frequency-shift range from one limit to the other, with a median of $-4.0$ Hz.
+@fig:run shows a typical course. For 46 pulses, $Delta f$ scatters between a
+few hertz and the edge of the range, with no trend towards the window. Then a
+single pulse lands the tip inside it, and all three confirmation readings hold.
+
+#figure(
+  effort-figure(),
+  caption: flex-caption([
+    Pulses and duration of the 41 completed runs that needed a pulse, one dot
+    per run, on logarithmic axes; dashed lines mark the medians. The ringed run
+    is that of @fig:run. Twelve further runs completed without a pulse.
+  ], [Pulses and duration of the completed runs]),
+) <fig:effort>
 
 #figure(
   image("fig_run.pdf", width: 85%),

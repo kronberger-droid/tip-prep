@@ -1,0 +1,274 @@
+{
+  "source": "106 counted tip_prep logs, 20260915 to 20261006",
+  "completed": 53,
+  "without_pulse": 12,
+  "median_pulses": 11,
+  "median_minutes": 2.4,
+  "runs": [
+    {
+      "log": "tip_prep_20260915_095008.jsonl",
+      "pulses": 0,
+      "minutes": 2.445
+    },
+    {
+      "log": "tip_prep_20260917_121959.jsonl",
+      "pulses": 22,
+      "minutes": 3.682
+    },
+    {
+      "log": "tip_prep_20260917_124917.jsonl",
+      "pulses": 19,
+      "minutes": 3.212
+    },
+    {
+      "log": "tip_prep_20260918_093356.jsonl",
+      "pulses": 4,
+      "minutes": 1.384
+    },
+    {
+      "log": "tip_prep_20260918_100956.jsonl",
+      "pulses": 2,
+      "minutes": 1.327
+    },
+    {
+      "log": "tip_prep_20260918_132926.jsonl",
+      "pulses": 2,
+      "minutes": 1.032
+    },
+    {
+      "log": "tip_prep_20260918_134304.jsonl",
+      "pulses": 11,
+      "minutes": 3.789
+    },
+    {
+      "log": "tip_prep_20260918_142546.jsonl",
+      "pulses": 4,
+      "minutes": 1.491
+    },
+    {
+      "log": "tip_prep_20260918_143843.jsonl",
+      "pulses": 5,
+      "minutes": 2.669
+    },
+    {
+      "log": "tip_prep_20260918_151009.jsonl",
+      "pulses": 0,
+      "minutes": 1.074
+    },
+    {
+      "log": "tip_prep_20260918_151239.jsonl",
+      "pulses": 7,
+      "minutes": 2.521
+    },
+    {
+      "log": "tip_prep_20260918_155222.jsonl",
+      "pulses": 3,
+      "minutes": 1.636
+    },
+    {
+      "log": "tip_prep_20260918_161251.jsonl",
+      "pulses": 0,
+      "minutes": 0.483
+    },
+    {
+      "log": "tip_prep_20260918_162339.jsonl",
+      "pulses": 10,
+      "minutes": 2.399
+    },
+    {
+      "log": "tip_prep_20260922_160233.jsonl",
+      "pulses": 2,
+      "minutes": 0.88
+    },
+    {
+      "log": "tip_prep_20260922_161109.jsonl",
+      "pulses": 0,
+      "minutes": 0.608
+    },
+    {
+      "log": "tip_prep_20260922_161546.jsonl",
+      "pulses": 0,
+      "minutes": 0.501
+    },
+    {
+      "log": "tip_prep_20260922_161640.jsonl",
+      "pulses": 0,
+      "minutes": 0.584
+    },
+    {
+      "log": "tip_prep_20260923_095503.jsonl",
+      "pulses": 13,
+      "minutes": 2.41
+    },
+    {
+      "log": "tip_prep_20260924_142114.jsonl",
+      "pulses": 7,
+      "minutes": 1.631
+    },
+    {
+      "log": "tip_prep_20260924_143340.jsonl",
+      "pulses": 10,
+      "minutes": 2.095
+    },
+    {
+      "log": "tip_prep_20260924_154446.jsonl",
+      "pulses": 11,
+      "minutes": 2.254
+    },
+    {
+      "log": "tip_prep_20260925_104637.jsonl",
+      "pulses": 47,
+      "minutes": 6.69
+    },
+    {
+      "log": "tip_prep_20260925_105601.jsonl",
+      "pulses": 0,
+      "minutes": 0.422
+    },
+    {
+      "log": "tip_prep_20260925_112200.jsonl",
+      "pulses": 37,
+      "minutes": 5.245
+    },
+    {
+      "log": "tip_prep_20260928_105112.jsonl",
+      "pulses": 0,
+      "minutes": 0.434
+    },
+    {
+      "log": "tip_prep_20260928_125809.jsonl",
+      "pulses": 2,
+      "minutes": 0.747
+    },
+    {
+      "log": "tip_prep_20260928_132126.jsonl",
+      "pulses": 0,
+      "minutes": 0.487
+    },
+    {
+      "log": "tip_prep_20260930_092257.jsonl",
+      "pulses": 1,
+      "minutes": 0.623
+    },
+    {
+      "log": "tip_prep_20260930_131705.jsonl",
+      "pulses": 32,
+      "minutes": 4.676
+    },
+    {
+      "log": "tip_prep_20260930_132513.jsonl",
+      "pulses": 121,
+      "minutes": 17.344
+    },
+    {
+      "log": "tip_prep_20260930_134418.jsonl",
+      "pulses": 0,
+      "minutes": 0.429
+    },
+    {
+      "log": "tip_prep_20260930_143355.jsonl",
+      "pulses": 227,
+      "minutes": 31.53
+    },
+    {
+      "log": "tip_prep_20261001_092426.jsonl",
+      "pulses": 47,
+      "minutes": 7.45
+    },
+    {
+      "log": "tip_prep_20261001_113314.jsonl",
+      "pulses": 23,
+      "minutes": 4.617
+    },
+    {
+      "log": "tip_prep_20261001_131658.jsonl",
+      "pulses": 2,
+      "minutes": 0.805
+    },
+    {
+      "log": "tip_prep_20261001_135632.jsonl",
+      "pulses": 5,
+      "minutes": 1.694
+    },
+    {
+      "log": "tip_prep_20261001_140305.jsonl",
+      "pulses": 41,
+      "minutes": 6.175
+    },
+    {
+      "log": "tip_prep_20261001_145049.jsonl",
+      "pulses": 7,
+      "minutes": 1.412
+    },
+    {
+      "log": "tip_prep_20261001_152307.jsonl",
+      "pulses": 42,
+      "minutes": 6.705
+    },
+    {
+      "log": "tip_prep_20261001_153251.jsonl",
+      "pulses": 30,
+      "minutes": 4.529
+    },
+    {
+      "log": "tip_prep_20261001_155148.jsonl",
+      "pulses": 2,
+      "minutes": 1.031
+    },
+    {
+      "log": "tip_prep_20261005_092651.jsonl",
+      "pulses": 6,
+      "minutes": 1.344
+    },
+    {
+      "log": "tip_prep_20261005_113048.jsonl",
+      "pulses": 4,
+      "minutes": 1.059
+    },
+    {
+      "log": "tip_prep_20261005_113436.jsonl",
+      "pulses": 92,
+      "minutes": 13.476
+    },
+    {
+      "log": "tip_prep_20261005_130929.jsonl",
+      "pulses": 0,
+      "minutes": 0.456
+    },
+    {
+      "log": "tip_prep_20261005_131146.jsonl",
+      "pulses": 228,
+      "minutes": 34.061
+    },
+    {
+      "log": "tip_prep_20261005_140412.jsonl",
+      "pulses": 0,
+      "minutes": 0.435
+    },
+    {
+      "log": "tip_prep_20261005_140636.jsonl",
+      "pulses": 41,
+      "minutes": 6.521
+    },
+    {
+      "log": "tip_prep_20261005_141424.jsonl",
+      "pulses": 9,
+      "minutes": 1.72
+    },
+    {
+      "log": "tip_prep_20261005_150044.jsonl",
+      "pulses": 14,
+      "minutes": 2.268
+    },
+    {
+      "log": "tip_prep_20261006_073614.jsonl",
+      "pulses": 13,
+      "minutes": 2.087
+    },
+    {
+      "log": "tip_prep_20261006_133900.jsonl",
+      "pulses": 119,
+      "minutes": 26.088
+    }
+  ]
+}

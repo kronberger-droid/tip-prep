@@ -159,19 +159,14 @@ inspects and exports archived logs.
 // run_view.rs:1-6 (the fold, tested equal live and replayed at :381),
 // app.rs:104 (History per tool); bin/tip-prep, bin/rt-log.
 
-// PLACEHOLDER: replace the box with the screenshot of Tip prep -> Run.
+// Screenshot of 2026-10-27, light theme, replaying
+// tip_prep_20261006_133900.jsonl (completed, 119 pulses, 26 min).
 #figure(
-  rect(
-    width: 100%,
-    height: 55mm,
-    stroke: (paint: luma(160), dash: "dashed"),
-    align(center + horizon, text(fill: luma(110))[
-      Screenshot: workbench, Tip prep tool, Run tab
-    ]),
-  ),
+  image("fig_workbench.png", width: 100%),
   caption: flex-caption([
-    The tip-preparation tool of the workbench during a run: tip state,
-    frequency shift against the sharp window, and the pulse voltages.
+    The tip-preparation tool of the workbench replaying a logged run of
+    6 October 2026: tip state, frequency shift after each cycle against the
+    sharp window, the pulse voltages, and the run's last logged events.
   ], [The tip-preparation tool of the workbench]),
 ) <fig:workbench>
 

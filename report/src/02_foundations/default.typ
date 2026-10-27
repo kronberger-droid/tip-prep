@@ -65,9 +65,7 @@ well enough defined that a good tip is recognizable on it.
 In situ, a tip is reshaped by controlled collision with the surface or by
 high-field treatment @meyer2021. The routine of @sec:routine pulses the bias.
 Mechanical annealing, repeated indentation into a metal up to a preset
-conductance, yields tips of reproducible structure @tewari2017. By hand, an
-operator judges every change to the tip from the next topographic image
-@barker2024.
+conductance, yields tips of reproducible structure @tewari2017.
 
 Automated approaches differ mainly in what they judge by. Images: neural
 networks recognize degraded tips from the appearance of a known surface
@@ -82,6 +80,6 @@ the imprint's area and circularity @ceddia2024. Functionalization: a
 pre-trained library finds CO molecules in an image and picks one up
 @alldritt2022.
 
-All of these judge the tip from an image, a spectrum or an imprint scan. None
-judges it by a single reading of the frequency shift, available at every
-landing without scanning. That reading is where this work starts.
+None of them judges the tip by a single reading of the frequency shift,
+available at every landing without scanning. That reading is where this work
+starts.

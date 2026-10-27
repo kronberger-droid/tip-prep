@@ -34,18 +34,12 @@ an already sharp tip goes straight to these checks.
   ], [State machine of the tip-preparation routine]),
 ) <fig:fsm>
 
-The sections below follow one pass through the loop: the pulse and the move
-off its site, the measurement, the two criteria classifying the tip, and how a
-run ends.
-
 == Bias pulses and pulse strategies <sec:pulse>
 
-Each cycle (@fig:cycle) opens with a bias pulse, $50$ ms long by default,
-applied with the Z-controller on hold so that it does not react. After a $1$ s settling time,
-the tip is withdrawn, stepped laterally with the coarse motors and
-re-approached. Only then is $Delta f$ measured. The tip leaves the pulse site
-as fast as possible, since further interaction with the freshly modified spot
-can change the apex again. The default of one coarse step in each direction
+Each cycle opens with a bias pulse, the Z-controller on hold so that it does
+not react, and moves the tip to a fresh site before $Delta f$ is measured
+(@fig:cycle). The tip leaves the pulse site as fast as possible, since further
+interaction with the freshly modified spot can change the apex again. The default of one coarse step in each direction
 leaves the pulse debris behind while adding little creep for the re-approach to
 land on.
 

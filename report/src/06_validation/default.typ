@@ -29,8 +29,8 @@ with three apexes on three separate days, independent of the conditioning runs.
 Ordered by the apex's frequency shift, from $-1.8$ Hz to $-0.6$ Hz, they are the
 evidence that $Delta f$ tracks the images an operator would judge by. The
 $-0.6$ Hz apex resolves the oxide rows that the $-1.8$ Hz apex blurs, and the
-stripe edges sharpen from (a) to (c). Three apexes, imaged at different bias
-and current, make this evidence qualitative, not a calibration.
+stripe edges sharpen from (a) to (c). The three images were taken at different
+bias and current.
 // Reading of the images: Martin, 2026-10-27.
 
 #figure(

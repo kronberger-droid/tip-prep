@@ -31,7 +31,7 @@ Beyond judging the tip, the same data could choose the pulse. Amplitude,
 polarity and timing can be optimized offline against recorded runs, and
 ultimately learned from previous outcomes @alldritt2022 @rashidi2018. The logs
 of @sec:events are the dataset, and the classifier interface is where a
-learned model attaches. Its decisions stay accountable, logged like any other.
+learned model attaches.
 
 The same arrangement scales to a language model driving the instrument through
 the existing guards. The reading half of that boundary exists. The workbench,

@@ -67,14 +67,15 @@ the run's log, which embeds its configuration (@sec:events).
 
 == Hardware abstraction <sec:controller-trait>
 
-A routine targets one interface to the instrument, the `SpmController` trait,
-not a TCP protocol. Each implementation of the trait, a backend, reports its
+A routine targets one interface to the instrument, the controller interface
+`SpmController`, not a TCP protocol. Each implementation of the interface, a
+backend, reports its
 capabilities, such as bias control, the Z-controller, the coarse motors,
 scanning, the phase-locked loop (PLL) or a data stream. An operation that needs
 a missing capability fails with an `Unsupported` error before any command
 reaches the instrument. A routine therefore refuses cleanly on an instrument
 that cannot run it. The Nanonis client of @sec:interface is the only hardware
-backend today. The trait is the seam for adding others.
+backend today. The interface is the seam for adding others.
 
 Results are typed too. A grabbed scan image is a `Frame`, not the JSON blob of
 @sec:poc-lessons. It carries its pixels, channel, dimensions and scan
@@ -82,7 +83,7 @@ direction, plus the physical geometry the instrument reports (centre, size,
 rotation). A frame loaded from a file carries no geometry, and a consumer can
 tell the difference.
 
-A mock backend implements the same trait without an instrument. Its frequency
+A mock backend implements the same interface without an instrument. Its frequency
 shift follows a scriptable model of the tip's response to pulses. Faults can be
 injected on chosen calls, and every call is recorded for inspection. A seeded
 random generator makes a simulated run repeatable. Its Z-controller is simulated
@@ -91,7 +92,7 @@ too. Routines are developed and tested against the mock;
 
 == Routine harness <sec:harness>
 
-A routine is a plain Rust struct implementing the `Routine` trait. Its `run`
+A routine is a plain Rust struct implementing the `Routine` interface. Its `run`
 method receives a runtime, `Rt`. The runtime absorbs the scaffolding every
 routine would otherwise reimplement, so the body contains only the science:
 
@@ -112,13 +113,13 @@ it leaves the tip as the routine's exit policy says, restores the protection
 and tears down. That includes a panic. A guard around the routine catches the
 unwinding, cleans up the hardware and re-raises the panic unchanged.
 
-Safety follows from the structure, not from the operator's discipline. With the
-machine-state model of @sec:poc-lessons deleted, it no longer rests on run-time
-bookkeeping. The handle is the only route to an operation, and obtaining one
-runs the capability check. A call the backend cannot serve therefore cannot be
-written: the compiler enforces what the state model checked at run time. What
-remains at run time are checks only a live reading can answer, such as the
-landing gate of @sec:outcomes.
+Safety follows from the structure, not from the operator's discipline. The
+handle is the only route to an operation, and the compiler enforces that every
+operation takes it. Obtaining a handle runs the capability check, so a call the
+backend cannot serve fails there, before any command reaches the instrument.
+This replaces the machine-state model of @sec:poc-lessons, which judged every
+step before executing it. Beyond that, the checks left at run time are those
+only a live reading can answer, such as the landing gate of @sec:outcomes.
 
 The harness borrows the backend instead of consuming it, so one connection can
 run routine after routine. A session builds on this. It connects once, loads

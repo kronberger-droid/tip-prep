@@ -48,7 +48,7 @@
     nd((3.5, 1), <interface>, [*Controller interface* \ #tag[`SpmController`]], w: 33mm),
 
     nd((0, 2), <analyzers>, [*Analyzers, classifiers* \ #tag[not used by \ tip preparation]], fill: unused-fill, dashed: true),
-    nd((1.5, 2), <events>, [*Event bus* \ #tag[log, console, GUI]]),
+    nd((1.5, 2), <events>, [*Event bus* \ #tag[log, console, workbench]]),
     nd((3, 2), <nanonis>, [*Nanonis backend* \ #tag[nanonis-rs]], w: 28mm),
     nd((4, 2), <mock>, [*Mock backend* \ #tag[scripted tip model]]),
 

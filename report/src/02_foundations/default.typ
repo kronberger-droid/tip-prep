@@ -16,10 +16,10 @@ This chapter covers the physics the later chapters lean on and the prior art
 beside this work. All of it is prior work, except one inference marked as such
 in @sec:apex; this work starts at @sec:interface.
 
-Scanning probe microscopy resolves surfaces by bringing a sharp probe close
+Scanning probe microscopy resolves surfaces by bringing a sharp tip close
 enough to interact with them, through a tunnelling current @binnig1982 or
 through force @binnig1986. With a qPlus sensor, the frequency shift $Delta f$
-of the oscillating probe reports the interaction. This shift is proportional to
+of the oscillating tip reports the interaction. This shift is proportional to
 the average tip-sample force gradient and, for amplitudes small compared to the
 range of the force, to the gradient itself @giessibl2019. The routine of
 @sec:routine reads this signal.
@@ -27,8 +27,8 @@ range of the force, to the gradient itself @giessibl2019. The routine of
 == Tip apex and terminations <sec:apex>
 
 The geometry and composition of the apex, not the instrument, set what the
-probe resolves: a blunt tip blurs an image, a contaminated one makes it noisy
-@ceddia2024.
+tip resolves: a blunt tip blurs an image, and a contaminated one makes it
+noisy @ceddia2024.
 
 The frequency shift carries a measure of apex bluntness. The tip-sample force
 has a short-range part from the apex atoms and a long-range part from van der
@@ -39,26 +39,28 @@ radius $R$ whose closest part lies a distance $macron(s)$ from a flat sample,
 the van der Waals part of the frequency shift at large amplitude $A$ is
 $ (Delta f_"vdW") / f_0 k A = - (H R) / (6 macron(s) sqrt(2 macron(s) A)) $
 with the resonance frequency $f_0$, the stiffness $k$ and the Hamaker constant
-$H$ @meyer2021[eq. 3.31]. The electrostatic part grows with $R$ likewise. At
+$H$ @meyer2021[eq. 3.31]. The electrostatic part likewise grows with $R$. At
 fixed separation and amplitude, a blunter apex thus shifts the frequency
 further negative.
 
 Reading $Delta f$ at a fixed tunnelling setpoint as a measure of bluntness is
-this work's inference. On a relatively clean surface, STM feedback sets similar
+this work's inference. On a relatively clean surface, the feedback of scanning
+tunnelling microscopy (STM) sets similar
 tunnelling conditions from tip to tip, and with them a similar separation. At
-nonzero bias short- and long-range forces both act, but under STM feedback a
+nonzero bias, short- and long-range forces both act, but under STM feedback a
 reasonably sharp tip sits far enough from the surface for the short-range part
 to contribute little. $Delta f$ close to zero then indicates a sharp apex. This
-is what @sec:routine means by blunt and sharp; stable adds that the apex keeps
-its $Delta f$ under field stress. @fig:proxy supports the reading empirically.
+is what @sec:routine means by _blunt_ and _sharp_; _stable_ adds that the apex
+keeps its $Delta f$ under field stress. @fig:proxy supports this
+interpretation empirically.
 // The setpoint step and the short-range caveat: Martin, 2026-10-27.
 
 Controlled functionalization makes the apex a known object. A CO-terminated tip
 resolved the chemical structure of a single molecule @gross2009. An
 oxygen-terminated copper tip (CuO#sub[x]) gives chemically selective contrast
 between metal and oxygen atoms on a range of metal-oxide surfaces
-@wiesener2024. This work uses partially oxidized Cu(110) as its model system,
-well enough defined that a good tip is recognizable on it.
+@wiesener2024. This work uses partially oxidized Cu(110) as its model system, a
+surface well enough defined that a well-prepared tip is recognizable on it.
 
 == Tip conditioning and its systematization <sec:conditioning>
 
@@ -67,19 +69,19 @@ high-field treatment @meyer2021. The routine of @sec:routine pulses the bias.
 Mechanical annealing, repeated indentation into a metal up to a preset
 conductance, yields tips of reproducible structure @tewari2017.
 
-Automated approaches differ mainly in what they judge by. Images: neural
-networks recognize degraded tips from the appearance of a known surface
+Automated approaches differ mainly in what they judge the tip by. Images:
+neural networks recognize degraded tips from the appearance of a known surface
 @rashidi2018. In DeepSPM, a network judges image quality while a
-reinforcement-learning agent conditions the probe over multi-day experiments
+reinforcement-learning agent conditions the tip over multi-day experiments
 @krull2020. Template matching reaches comparable accuracy from a single image
 without training data, which are costly to label for every surface
 @barker2024. Spectra: models trained on archived spectra recognize the surface
-state of gold and condition the tip until it appears @wang2021. Imprints:
-Scanbot indents the tip into a clean metal on a second sample holder and judges
-the imprint's area and circularity @ceddia2024. Functionalization: a
+state of gold and condition the tip until that state appears @wang2021.
+Imprints: Scanbot indents the tip into a clean metal on a second sample holder
+and judges the imprint's area and circularity @ceddia2024. Functionalization: a
 pre-trained library finds CO molecules in an image and picks one up
 @alldritt2022.
 
 None of them judges the tip by a single reading of the frequency shift,
-available at every landing without scanning. That reading is where this work
-starts.
+available at every landing without scanning. That interpretation is where this
+work starts.

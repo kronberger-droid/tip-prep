@@ -110,11 +110,6 @@ controller's slope differs from module to module. Each case is handled in the
 function for that command, where a caller would otherwise have had to know
 about it.
 
-Without an instrument, the client's tests cover encoding and decoding of every
-data type and the typed parameter sets of its larger subsystems. The commands
-themselves were exercised against the vendor's simulator and on the
-instrument.
-
 == Connection management and tip safety <sec:connection>
 
 A connection that has failed once is not trusted again. Any I/O error, and
@@ -125,7 +120,5 @@ reconnects, as the session of @sec:harness does.
 
 When dropped, the client can withdraw the tip and back off the coarse motor,
 but only on request and only while the connection is healthy. The routines of
-@sec:framework do not rely on this. Their tip safety sits one layer up, in the
-harness. It applies a routine's exit policy however the run ends, including a
-panic (@sec:harness, @sec:outcomes). The client's own withdrawal is a last
-resort for programs written directly against it.
+@sec:framework rely instead on the harness (@sec:harness), and the client's
+own withdrawal is a last resort for programs written directly against it.

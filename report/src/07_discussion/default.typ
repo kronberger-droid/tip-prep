@@ -16,13 +16,10 @@ What the results mean, and where they stop being trustworthy.
 == Assessment of the architecture <sec:architecture-eval>
 
 Whether the seams of @sec:framework paid for themselves must be judged against
-the failures of @sec:poc-lessons, not against taste. Three pieces of evidence
-need no appeal to preference. The untyped store lost its purpose once
-measurements were typed. The declarative engine and its state model, 2894
-lines of code, could be deleted without changing the tip-preparation routine or
-its tests. And the classifier stack admitted a new kind of decision-maker
-without changes to the routine or the control path. However, no trained model
-has used that door yet (@sec:analyzers). A second, unrelated routine, the drift
+the failures of @sec:poc-lessons, not against taste. The deletions recorded
+there need no appeal to preference. Nor does the classifier stack, which
+admitted a new kind of decision-maker without changes to the routine or the
+control path, though no trained model has used that door yet (@sec:analyzers). A second, unrelated routine, the drift
 measurement of @sec:harness, runs on the same harness and serves two front ends
 from one implementation.
 
@@ -55,30 +52,28 @@ surface is an open question, not a detail.
 The parameters were varied as the work went along, not in a designed
 comparison. The data therefore show that the routine reaches a confirmed sharp
 tip under a range of settings, not that one strategy, voltage or window does so
-faster than another. The stepping strategy was not used at all.
+faster than another.
 
 The measurement gates have a blind spot. They judge how a batch varies, not
 where it lies. A PLL that has lost lock reports a constant value at its range
 limit, and 509 such readings passed both gates (@sec:hardware-results). A
 railed reading lies outside every interval the linear strategy maps, so it
 draws the maximum voltage. That pulse fires where the tip may be in contact
-with the surface. A further 290 readings failed the gates on every retry and
-were used anyway, by design (@sec:measurement). This trades a stalled run for a
+with the surface. The 290 readings that failed the gates on every retry were
+used anyway, by design (@sec:measurement). This trades a stalled run for a
 decision on a doubtful number. @sec:outlook describes the guard planned against
 the first case.
 
 Several parts of the routine rest on little or no evidence from the instrument
-(@sec:mock-results). The stable state rests on one run, on a tip sharp from the
-start. That run was judged against a tolerance of $1.0$ Hz, where the default
-is $0.2$ Hz. The maximum-voltage pulse after a failed stability test has never
-fired on the instrument. And the runs span thirteen revisions of a development
+(@sec:mock-results). The one stability test was judged against a tolerance of
+$1.0$ Hz, where the default is $0.2$ Hz. And the runs span thirteen revisions of a development
 line, not one fixed version. Every run is traceable through the revision its
 log records, but the runs were not all made on the same code.
 
 == Comparison with related work <sec:comparison>
 
-The approaches of @sec:conditioning trade along two axes: what judges the tip,
-and what the method is bound to. A defined procedure such as mechanical
+The approaches of @sec:conditioning differ in what judges the tip, and also in
+what the method is bound to. A defined procedure such as mechanical
 annealing @tewari2017 needs no learned criterion, but runs as a script for one
 controller on a gold sample at liquid-helium temperature. Learned criteria
 @rashidi2018 @krull2020 @wang2021 judge tips well on the surface they were
@@ -90,10 +85,8 @@ to one vendor's control software @alldritt2022.
 Scanbot is the closest relative @ceddia2024. It is open source and runs on any
 STM controlled by the Nanonis V5 software, not on one installation. It also
 exposes hooks for the laboratory-specific parts, the transferability this work
-also argues for. It differs in what it judges and how. Scanbot judges an STM
-imprint scanned on a clean metal on a second sample holder. This work judges a
-single $Delta f$ reading at every landing, with no scan and no training data.
-And it differs in the record it leaves: this work adds typed contracts at the
+also argues for. It differs in what it judges, an imprint scan rather than a
+$Delta f$ reading (@sec:conditioning), and in the record it leaves: this work adds typed contracts at the
 instrument boundary (@sec:interface) and a log from which each run can be
 reconstructed (@sec:events).
 

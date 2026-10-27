@@ -111,7 +111,7 @@ Not every accepted reading was a measurement. Of 4430 accepted readings, 520
 ($11.7 %$) sat at $plus.minus 76.29$ Hz. This is most likely the limit of the
 PLL's frequency range, where the PLL has lost lock. Of these readings, 509
 passed both gates of @sec:measurement. A further 290 readings failed the gates
-on every retry and were used anyway, by design.
+on every retry and were used anyway.
 // 76.29 Hz = 5 MHz / 2^16; "most likely the PLL range" is the hedge from the
 // 2026-10-07 handover note, which also traces most rail reads to landings.
 
@@ -129,7 +129,8 @@ right outcome.
 
 Both protocol boundaries were tested against real servers, not stubs. The
 Nanonis client of @sec:interface ran against the vendor's simulator as well as
-the instrument. The classifier transport of @sec:analyzers is tested against an
+the instrument. Without either, its tests cover encoding and decoding of every
+data type and the typed parameter sets of its larger subsystems. The classifier transport of @sec:analyzers is tested against an
 HTTP server on a local socket. This test checks that an unreachable model and a
 wrongly answering model surface as different errors.
 

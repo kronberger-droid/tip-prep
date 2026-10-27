@@ -10,10 +10,7 @@
 // "worked" means, and what is out of scope.
 
 The quality and interpretability of scanning probe microscopy data critically
-depend on the tip termination. The geometry and composition of the apex set
-what the probe resolves @ceddia2024. A controlled termination, such as a single
-CO molecule, can resolve the chemical structure of a molecule @gross2009.
-Preparing a good tip is nevertheless time-consuming and strongly dependent on
+depend on the tip termination (@sec:apex). Preparing a good tip is nevertheless time-consuming and strongly dependent on
 operator experience, limiting the reproducibility and throughput of SPM
 experiments. An operator judges every change to the tip by inspecting the next
 image, which makes tip preparation one of the most tedious steps of
@@ -21,11 +18,8 @@ atomic-resolution work @barker2024.
 
 Efforts to systematize tip preparation range from defined procedures
 @tewari2017 to machine-learning-driven automation @rashidi2018 @krull2020
-@wang2021 @alldritt2022. Others classify without machine learning @barker2024
-or provide open automation tools for one controller family @ceddia2024. Yet
-operator-independent conditioning remains the exception. Each of these judges
-the tip from an image, a spectrum or an imprint. Most are tied to the surface
-they were trained or calibrated on, or to the setup they were written for.
+@wang2021 @alldritt2022 (@sec:conditioning), yet operator-independent
+conditioning remains the exception.
 
 This work builds the conditioning loop around a signal available at every
 landing: the frequency shift $Delta f$ of a qPlus force sensor, read without

@@ -1,9 +1,19 @@
 // One cycle of the tip-preparation loop as swimlanes, not to scale. Phase
 // order and states mirror rusty-tip src/tip_prep/runner.rs (main loop:
 // pulse, post-pulse settle, reposition, read_stable) and
-// src/action/z_controller.rs (CalibratedApproach, steps 1 to 8).
-// STUB: layout only; durations of withdraw, coarse step and approach are
-// not measured yet.
+// src/action/z_controller.rs (CalibratedApproach, steps 1 to 8). Pulse and
+// settle carry their configured defaults; the other phases carry the medians
+// in data/cycle_durations.json, written by scripts/cycle_durations.py.
+
+#let durations = json("/data/cycle_durations.json").median_ms
+
+// Seconds to two significant figures, as a label. `approx` marks a phase
+// whose length a gate decides, so its median is no fixed time.
+#let secs(ms, approx: false) = {
+  let s = ms / 1000
+  let digits = if s >= 1 { 1 } else { 2 }
+  [#if approx { sym.tilde.op }#calc.round(s, digits: digits) s]
+}
 
 #let cycle-timeline(accent: rgb("0267A5")) = layout(size => {
   set text(size: 7pt)
@@ -17,12 +27,12 @@
   let phases = (
     ([pulse], [50 ms], 0.8),
     ([settle], [1 s], 0.9),
-    ([withdraw], [], 0.9),
-    ([coarse step], [1 per axis], 0.9),
-    ([approach, landing gate], [], 1.3),
-    ([Z-home, wait, centre PLL], [50 nm, 500 ms], 1.5),
-    ([re-land, landing gate], [$<= 30$ s], 1.3),
-    ([read], [100 samples, 0.1 s], 1.3),
+    ([withdraw], secs(durations.withdraw), 0.9),
+    ([coarse step], secs(durations.coarse_step), 0.9),
+    ([approach, landing gate], secs(durations.approach, approx: true), 1.3),
+    ([Z-home, centre PLL], secs(durations.home), 1.5),
+    ([re-land, landing gate], secs(durations.reland, approx: true), 1.3),
+    ([read], secs(durations.read, approx: true), 1.3),
   )
 
   let label-w = 17mm
@@ -71,7 +81,7 @@
       place(dx: x(i, 0), dy: 0pt, box(
         width: x(i, 1) - x(i, 0),
         height: head-h,
-        align(center + bottom, [*#p.at(0)* \ #text(fill: luma(90), p.at(1))]),
+        align(center + bottom, text(size: 6pt)[*#p.at(0)* \ #text(fill: luma(90), p.at(1))]),
       ))
       place(line(
         start: (x(i, 0), head-h),
@@ -95,10 +105,11 @@
       (7, 1, 0.3),
     ))
 
-    // Tip height: 0 is the surface, 0.3 Z-home, 1 withdrawn.
+    // Tip height: 0 is the surface, 0.3 Z-home, 0.7 the piezo withdrawn, 1
+    // after the coarse step's Z retract (`z_retract`, -3 by default).
     trace(1, (
       (0, 0, 0), (1, 1, 0),
-      (2, 0.8, 1), (3, 1, 1),
+      (2, 0.8, 0.7), (3, 0.2, 0.7), (3, 0.8, 1), (3, 1, 1),
       (4, 0.8, 0), (5, 0.2, 0),
       (5, 0.4, 0.3), (5, 1, 0.3),
       (6, 0.6, 0), (7, 1, 0),

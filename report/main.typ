@@ -37,7 +37,7 @@
     #bibliography(
       "src/B_bibliography/references.bib",
       title: [References],
-      style: "ieee",
+      style: "src/B_bibliography/ieee-grouped.csl",
     )
   ],
 )

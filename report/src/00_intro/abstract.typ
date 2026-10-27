@@ -14,7 +14,7 @@
 The quality and interpretability of scanning probe microscopy data critically
 depend on the tip termination. Controlled functionalization provides
 reproducible contrast and makes surface structures comparable with
-computational modeling, and copper-oxide surfaces are among the best-defined
+computational modelling, and copper-oxide surfaces are among the best-defined
 systems for it. Preparing a well-functionalized tip is nevertheless
 time-consuming and strongly dependent on operator experience, limiting the
 reproducibility and throughput of SPM experiments. Efforts to systematize tip

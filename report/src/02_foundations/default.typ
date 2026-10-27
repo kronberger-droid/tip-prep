@@ -83,5 +83,5 @@ pre-trained library finds CO molecules in an image and picks one up
 @alldritt2022.
 
 None of them judges the tip by a single reading of the frequency shift,
-available at every landing without scanning. That interpretation is where this
-work starts.
+available at every landing without scanning. Taking $Delta f$ as a measure of
+bluntness, as @sec:apex does, is where this work starts.

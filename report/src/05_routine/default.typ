@@ -179,6 +179,6 @@ that.
 
 However a run ends, the tip is withdrawn and a coarse Z retract of two steps
 follows, since a withdrawal alone leaves the tip at the top of the piezo range
-within reach of the surface. The safe-tip settings are also restored to their
-pre-run values. A sweep likewise restores the scan properties, scan speed and
-bias however it ends. Both rest on the harness (@sec:harness).
+within reach of the surface. The settings of the safe-tip protection are also
+restored to their pre-run values. A sweep likewise restores the scan
+properties, scan speed and bias however it ends. Both rest on the harness (@sec:harness).

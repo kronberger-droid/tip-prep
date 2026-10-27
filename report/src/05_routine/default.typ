@@ -91,12 +91,8 @@ The gates delay a reading rather than veto it. A batch still failing after the
 last retry is used anyway, logged with a warning and marked unstable in the log
 (@sec:events). A run on a persistently noisy tip thus continues on the mean of
 its last batch. Both thresholds are set per run and can be loosened for
-noisier tips.
-
-The gates judge how a batch varies, not where it lies. A PLL that has lost lock
-reports a constant value at the limit of its frequency range. A batch without
-noise or drift passes both gates. Such readings occurred on the instrument
-(@sec:hardware-results) and are taken up in @sec:limitations.
+noisier tips. The gates judge how a batch varies, not where it lies, which
+leaves the blind spot of @sec:limitations.
 
 == Sharpness and stability criteria <sec:criteria-applied>
 
@@ -161,5 +157,4 @@ However a run ends, the tip is withdrawn and the coarse motor backs off two
 steps, since a withdrawal alone leaves the tip at the top of the piezo range
 within reach of the surface. The safe-tip settings are also restored to their
 pre-run values. A sweep likewise restores the scan properties, scan speed and
-bias however it ends. Both rest on the harness of @sec:harness, which runs
-cleanup on every exit path instead of relying on the routine body to reach it.
+bias however it ends. Both rest on the harness (@sec:harness).

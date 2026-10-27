@@ -2,8 +2,10 @@
 
 // Sources, all checked against the papers (Zotero collection "Autonomous Tip
 // Preparation - STM", or doi.org): giessibl2019 eq. (4)-(6) and pp. 5-6 for
-// Δf and the role of long-range forces; meyer2021 eq. (3.5), p. 56, for the
-// van der Waals force ∝ R, and p. 18 for in-situ tip preparation; ceddia2024
+// Δf and the role of long-range forces; meyer2021 §3.5, p. 81, eq. (3.31)
+// for the van der Waals frequency shift ∝ −R (after Guggisberg et al., PRB 61,
+// 11151, 2000, not checked here) and eq. (3.30) for the electrostatic one, and
+// p. 18 for in-situ tip preparation; ceddia2024
 // for blunt/contaminated tips and Scanbot; barker2024, krull2020, wang2021,
 // rashidi2018, alldritt2022, tewari2017 from their abstracts and full text;
 // wiesener2024 from the arXiv abstract (2402.11045). 
@@ -11,8 +13,8 @@
 = Foundations <sec:foundations>
 
 This chapter covers the physics the later chapters lean on and the prior art
-beside this work. All of it is prior work; this work starts at
-@sec:interface.
+beside this work. All of it is prior work, except one inference marked as such
+in @sec:apex; this work starts at @sec:interface.
 
 Scanning probe microscopy resolves surfaces by bringing a sharp probe close
 enough to interact with them, through a tunnelling current @binnig1982 or
@@ -32,18 +34,24 @@ The frequency shift carries a measure of apex bluntness. The tip-sample force
 has a short-range part from the apex atoms and a long-range part from van der
 Waals and electrostatic forces @giessibl2019. The long-range part is weakly
 distance-dependent but large, and it contributes more to $Delta f$ the larger
-the oscillation amplitude @giessibl2019. For a tip modelled as a sphere of radius
-$R$ at distance $D$ from a flat sample, the van der Waals force is
-$ F_"vdW" = (H R) / (6 D^2) $
-with the Hamaker constant $H$ @meyer2021. The attraction therefore grows with
-the radius. At a fixed tunnelling setpoint, a blunter apex thus shifts the
-frequency further negative, as far as the long-range contribution dominates,
-and $Delta f$ close to zero indicates a sharp one. This is what @sec:routine
-means by blunt and sharp; stable adds that the apex keeps its $Delta f$ under
-field stress.
-#todo[Check this argument: it combines Meyer's $F prop R$ with Giessibl's
-  account of long-range contributions to $Delta f$. Neither source states the
-  conclusion for tip sharpness in one sentence.]
+the oscillation amplitude @giessibl2019. For a tip modelled as a sphere of
+radius $R$ whose closest part lies a distance $macron(s)$ from a flat sample,
+the van der Waals part of the frequency shift at large amplitude $A$ is
+$ (Delta f_"vdW") / f_0 k A = - (H R) / (6 macron(s) sqrt(2 macron(s) A)) $
+with the resonance frequency $f_0$, the stiffness $k$ and the Hamaker constant
+$H$ @meyer2021[eq. 3.31]. The electrostatic part grows with $R$ likewise. At
+fixed separation and amplitude, a blunter apex thus shifts the frequency
+further negative.
+
+Reading $Delta f$ at a fixed tunnelling setpoint as a measure of bluntness is
+this work's inference. On a relatively clean surface, STM feedback sets similar
+tunnelling conditions from tip to tip, and with them a similar separation. At
+nonzero bias short- and long-range forces both act, but under STM feedback a
+reasonably sharp tip sits far enough from the surface for the short-range part
+to contribute little. $Delta f$ close to zero then indicates a sharp apex. This
+is what @sec:routine means by blunt and sharp; stable adds that the apex keeps
+its $Delta f$ under field stress. @fig:proxy supports the reading empirically.
+// The setpoint step and the short-range caveat: Martin, 2026-10-27.
 
 Controlled functionalization makes the apex a known object. A CO-terminated tip
 resolved the chemical structure of a single molecule @gross2009. An

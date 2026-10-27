@@ -27,10 +27,11 @@ The routine's results are worth only as much as the number it optimizes.
 @fig:proxy shows constant-current images of partially oxidized Cu(110) taken
 with three apexes on three separate days, independent of the conditioning runs.
 Ordered by the apex's frequency shift, from $-1.8$ Hz to $-0.6$ Hz, they are the
-evidence that $Delta f$ tracks the images an operator would judge by. Three
-apexes make this evidence qualitative, not a calibration.
-#todo[One sentence on what changes across the three images: which features
-  the $-0.6$ Hz apex resolves that the $-1.8$ Hz one does not.]
+evidence that $Delta f$ tracks the images an operator would judge by. The
+$-0.6$ Hz apex resolves the oxide rows that the $-1.8$ Hz apex blurs, and the
+stripe edges sharpen from (a) to (c). Three apexes, imaged at different bias
+and current, make this evidence qualitative, not a calibration.
+// Reading of the images: Martin, 2026-10-27.
 
 #figure(
   {

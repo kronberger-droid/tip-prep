@@ -106,6 +106,21 @@ header. This report sets it, since it is read on screen rather than printed, so
 the geometry above describes the template's default and not this document.
 `margin` overrides the geometry outright.
 
+## Review notes
+
+`#note[the passage][the comment]` (from `lib.typ`) marks a passage for review
+without moving any text. The passage gets a light highlight and a numbered
+marker in the left margin. The comments are collected, with the passage quoted,
+on a "Review notes" page at the end of the back matter, each entry showing its
+page and section and linking back to the spot. In Helix: select the passage,
+surround it with `[` `]`, prefix `#note`, append `[comment]`.
+
+For a clean build, drop the highlights, markers and page:
+
+```sh
+typst compile --input review=off main.typ main.pdf
+```
+
 ## Template parameters
 
 The title page follows the LaTeX front page from the same repository

@@ -41,11 +41,22 @@
     st((2.6, 0), <stable>, [Stable], fill: stable-fill),
 
     edge((-0.28, -0.22), (-0.28, 0.22), "-|>", bend: -145deg),
-    node((-0.48, -0.5), text(size: 0.8em, tag[$Delta f$ out of bounds]), inset: 2pt),
+    node(
+      (-0.48, -0.5),
+      text(size: 0.8em, tag[$Delta f$ out of bounds]),
+      inset: 2pt,
+    ),
     edge(<blunt>, <sharp>, "-|>", tag[$Delta f$ in bounds], ..lbl, bend: 22deg),
     edge(<sharp>, <stable>, "-|>", tag[sweep \ passed], ..lbl),
 
-    edge(<sharp>, <blunt>, "-|>", tag[$Delta f$ out of bounds], ..lbl, bend: 22deg),
+    edge(
+      <sharp>,
+      <blunt>,
+      "-|>",
+      tag[$Delta f$ out of bounds],
+      ..lbl,
+      bend: 22deg,
+    ),
 
     phase((-0.52, 0), [bias pulse \ & \ reposition]),
     phase((0.65, 0), [sharpness \ check]),

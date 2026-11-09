@@ -41,16 +41,24 @@ bias and current.
       columns: 3,
       column-gutter: 2mm,
       row-gutter: 2.5mm,
-      image("fig_cu110_bad.png"), image("fig_cu110_okay.png"), image("fig_cu110_good.png"),
-      [(a) $Delta f = -1.8$ Hz], [(b) $Delta f = -1.0$ Hz], [(c) $Delta f = -0.6$ Hz],
+      image("fig_cu110_bad.png"),
+      image("fig_cu110_okay.png"),
+      image("fig_cu110_good.png"),
+
+      [(a) $Delta f = -1.8$ Hz],
+      [(b) $Delta f = -1.0$ Hz],
+      [(c) $Delta f = -0.6$ Hz],
     )
   },
-  caption: flex-caption([
-    Constant-current STM images of partially oxidized Cu(110), $30 times 30$ nm,
-    taken with three apexes on three separate days. (a) $+1.0$ V, $100$ pA;
-    (b) $-0.5$ V, $105$ pA; (c) $-0.2$ V, $100$ pA. The frequency shift is
-    that of the apex in each image.
-  ], [STM images of partially oxidized Cu(110) taken with three apexes]),
+  caption: flex-caption(
+    [
+      Constant-current STM images of partially oxidized Cu(110), $30 times 30$ nm,
+      taken with three apexes on three separate days. (a) $+1.0$ V, $100$ pA;
+      (b) $-0.5$ V, $105$ pA; (c) $-0.2$ V, $100$ pA. The frequency shift is
+      that of the apex in each image.
+    ],
+    [STM images of partially oxidized Cu(110) taken with three apexes],
+  ),
 ) <fig:proxy>
 
 == Unattended conditioning runs <sec:hardware-results>
@@ -71,22 +79,28 @@ readings held.
 
 #figure(
   effort-figure(),
-  caption: flex-caption([
-    Pulses and duration of the 41 completed runs that needed a pulse, one dot
-    per run, on logarithmic axes; dashed lines mark the medians. The ringed run
-    is that of @fig:run. Twelve further runs completed without a pulse.
-  ], [Pulses and duration of the completed runs]),
+  caption: flex-caption(
+    [
+      Pulses and duration of the 41 completed runs that needed a pulse, one dot
+      per run, on logarithmic axes; dashed lines mark the medians. The ringed run
+      is that of @fig:run. Twelve further runs completed without a pulse.
+    ],
+    [Pulses and duration of the completed runs],
+  ),
 ) <fig:effort>
 
 #figure(
   image("fig_run.pdf", width: 85%),
-  caption: flex-caption([
-    Run of 25 September 2026, with $plus.minus 8$ V pulses whose polarity
-    reverses on every third pulse, and a sharp window from $-1.5$ to $0$ Hz.
-    Top: frequency shift after each pulse, on an axis that is linear within
-    $plus.minus 1$ Hz and logarithmic beyond. Bottom: the pulse that followed
-    each reading. The tip reached the window after 47 pulses and $6.4$ min.
-  ], [A conditioning run of 25 September 2026]),
+  caption: flex-caption(
+    [
+      Run of 25 September 2026, with $plus.minus 8$ V pulses whose polarity
+      reverses on every third pulse, and a sharp window from $-1.5$ to $0$ Hz.
+      Top: frequency shift after each pulse, on an axis that is linear within
+      $plus.minus 1$ Hz and logarithmic beyond. Bottom: the pulse that followed
+      each reading. The tip reached the window after 47 pulses and $6.4$ min.
+    ],
+    [A conditioning run of 25 September 2026],
+  ),
 ) <fig:run>
 
 The confirmation readings rejected tips that had reached the window. In 14 of
@@ -118,15 +132,20 @@ pulse of @sec:criteria-applied never fired on the instrument.
     [$n = 3$, $5$ or $6$], [44],
     [$n = 10$], [61],
     [Stability test enabled], [], [4],
-    [Coarse steps per reposition], [3 per lateral axis, coarse Z retract 3], [106],
+    [Coarse steps per reposition],
+    [3 per lateral axis, coarse Z retract 3],
+    [106],
     [Settling after the landing], [$1$ s], [106],
     // From each log's configuration (reposition_steps, post_reposition_settle_ms)
     // and the reposition parameters (z_retract -3 in all 4369).
   ),
-  caption: flex-caption([
-    Parameters of the 106 counted runs. The upper bound of the window was
-    $0$ Hz throughout; one run used no polarity reversal.
-  ], [Parameters of the counted runs]),
+  caption: flex-caption(
+    [
+      Parameters of the 106 counted runs. The upper bound of the window was
+      $0$ Hz throughout; one run used no polarity reversal.
+    ],
+    [Parameters of the counted runs],
+  ),
 ) <tab:run-params>
 
 Not every accepted reading was a measurement. Of 4430 accepted readings, 520
@@ -148,13 +167,16 @@ measurement gates on every retry and were used anyway
 
 #figure(
   readings-figure(),
-  caption: flex-caption([
-    The 4430 accepted readings of the counted runs in $2$ Hz bins, split into
-    those that passed the noise and drift gates and those that failed them on
-    every retry. The bins at $plus.minus 76.29$ Hz hold the readings at the
-    limit of the PLL controller's range. Nine readings beyond
-    $plus.minus 80$ Hz are not shown.
-  ], [The accepted frequency-shift readings]),
+  caption: flex-caption(
+    [
+      The 4430 accepted readings of the counted runs in $2$ Hz bins, split into
+      those that passed the noise and drift gates and those that failed them on
+      every retry. The bins at $plus.minus 76.29$ Hz hold the readings at the
+      limit of the PLL controller's range. Nine readings beyond
+      $plus.minus 80$ Hz are not shown.
+    ],
+    [The accepted frequency-shift readings],
+  ),
 ) <fig:readings>
 
 == Verification against the mock backend <sec:mock-results>
@@ -198,11 +220,14 @@ tests beside the runs on the instrument.
     [live configuration reload], [1],
     [classifier boundary], [–],
   ),
-  caption: flex-caption([
-    Paths of the routine and the counted runs on the instrument that took
-    them; a dash marks a path no counted run took. Every path is also tested
-    off the instrument.
-  ], [Paths exercised on the instrument and against the mock]),
+  caption: flex-caption(
+    [
+      Paths of the routine and the counted runs on the instrument that took
+      them; a dash marks a path no counted run took. Every path is also tested
+      off the instrument.
+    ],
+    [Paths exercised on the instrument and against the mock],
+  ),
 ) <tab:coverage>
 
 Both protocol boundaries were tested against real servers, not stubs. The

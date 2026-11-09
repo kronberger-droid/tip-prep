@@ -8,7 +8,7 @@
 // p. 18 for in-situ tip preparation; ceddia2024
 // for blunt/contaminated tips and Scanbot; barker2024, krull2020, wang2021,
 // rashidi2018, alldritt2022, tewari2017 from their abstracts and full text;
-// wiesener2024 from the arXiv abstract (2402.11045). 
+// wiesener2024 from the arXiv abstract (2402.11045).
 
 = Foundations <sec:foundations>
 

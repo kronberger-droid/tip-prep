@@ -50,7 +50,9 @@
   // different size.
   let lane-hs = (7mm, 14mm, 7mm, 7mm, 7mm)
   let lane-h(k) = lane-hs.at(k)
-  let lane-y(k) = head-h + 2.5mm + lane-hs.slice(0, k).sum(default: 0mm) + k * gap
+  let lane-y(k) = (
+    head-h + 2.5mm + lane-hs.slice(0, k).sum(default: 0mm) + k * gap
+  )
   let height = lane-y(lanes.len())
 
   // A trace through (phase, fraction, level) points; level 0 is the lane's
@@ -84,7 +86,9 @@
       place(dx: x(i, 0), dy: 0pt, box(
         width: x(i, 1) - x(i, 0),
         height: head-h,
-        align(center + bottom, text(size: 6pt)[*#p.at(0)* \ #text(fill: luma(90), p.at(1))]),
+        align(center + bottom, text(
+          size: 6pt,
+        )[*#p.at(0)* \ #text(fill: luma(90), p.at(1))]),
       ))
       place(line(
         start: (x(i, 0), head-h),
@@ -104,7 +108,11 @@
 
     // Bias: one pulse at the start, the setpoint bias otherwise.
     trace(0, (
-      (0, 0, 0.3), (0, 0.3, 0.3), (0, 0.3, 1), (0, 0.6, 1), (0, 0.6, 0.3),
+      (0, 0, 0.3),
+      (0, 0.3, 0.3),
+      (0, 0.3, 1),
+      (0, 0.6, 1),
+      (0, 0.6, 0.3),
       (7, 1, 0.3),
     ))
 
@@ -121,7 +129,10 @@
       let y0 = lane-y(k) + lane-h(k)
       let pt(p) = (x(p.at(0), p.at(1)), y0 - p.at(2) * lane-h(k))
       let (pa, pb) = (pt(a), pt(b))
-      let at(t) = (pa.at(0) + t * (pb.at(0) - pa.at(0)), pa.at(1) + t * (pb.at(1) - pa.at(1)))
+      let at(t) = (
+        pa.at(0) + t * (pb.at(0) - pa.at(0)),
+        pa.at(1) + t * (pb.at(1) - pa.at(1)),
+      )
       let seg(t0, t1, dash) = place(line(
         start: at(t0),
         end: at(t1),
@@ -132,21 +143,30 @@
       seg(0.62, 1, none)
     }
     trace(1, (
-      (0, 0, 0), (1, 1, 0),
-      (2, 0.8, withdrawn), (3, 0.2, withdrawn),
+      (0, 0, 0),
+      (1, 1, 0),
+      (2, 0.8, withdrawn),
+      (3, 0.2, withdrawn),
     ))
     broken(1, (3, 0.2, withdrawn), (3, 0.8, coarse))
     trace(1, ((3, 0.8, coarse), (3, 1, coarse)))
     broken(1, (3, 1, coarse), (4, rejoin, withdrawn))
     trace(1, (
-      (4, rejoin, withdrawn), (4, 0.8, 0), (5, 0.2, 0),
-      (5, 0.4, home), (5, 1, home),
-      (6, 0.6, 0), (7, 1, 0),
+      (4, rejoin, withdrawn),
+      (4, 0.8, 0),
+      (5, 0.2, 0),
+      (5, 0.4, home),
+      (5, 1, home),
+      (6, 0.6, 0),
+      (7, 1, 0),
     ))
     place(
       dx: x(5, 0.4),
       dy: lane-y(1) + lane-h(1) * (1 - home) - 8pt,
-      box(width: x(5, 1) - x(5, 0.4), align(center, text(size: 6pt, fill: luma(90))[50 nm])),
+      box(width: x(5, 1) - x(5, 0.4), align(center, text(
+        size: 6pt,
+        fill: luma(90),
+      )[50 nm])),
     )
 
     state(2, 0, 0, [hold], warn-fill)

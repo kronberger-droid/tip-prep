@@ -14,7 +14,10 @@
   ])
 
   let row(label, ..cells) = (
-    table.cell(stroke: none, align: right + horizon, text(weight: "bold", label)),
+    table.cell(stroke: none, align: right + horizon, text(
+      weight: "bold",
+      label,
+    )),
     ..cells.pos(),
   )
 
@@ -30,13 +33,19 @@
       field([body size], [4 B], head),
       field([response \ flag], [2 B], head),
       field([unused], [2 B], head),
-      table.cell(colspan: 4, fill: body, align: center + horizon)[arguments, typed per command],
+      table.cell(
+        colspan: 4,
+        fill: body,
+        align: center + horizon,
+      )[arguments, typed per command],
     ),
     ..row(
       [Response],
       field([command name], [32 B, zero-padded], head),
       field([body size], [4 B], head),
-      table.cell(colspan: 2, fill: head, align(center)[unused \ #text(size: 0.85em, fill: luma(90))[4 B]]),
+      table.cell(colspan: 2, fill: head, align(
+        center,
+      )[unused \ #text(size: 0.85em, fill: luma(90))[4 B]]),
       field([return values], [typed per command], body),
       field([error status], [4 B], err),
       field([description \ size], [4 B], err),

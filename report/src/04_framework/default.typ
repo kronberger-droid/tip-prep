@@ -22,12 +22,15 @@ parts and how a routine reaches the instrument through them.
 
 #figure(
   architecture-diagram(),
-  caption: flex-caption([
-    Structure of the framework. The harness runs a routine, which owns the
-    control flow and reaches the controller interface only through subsystem
-    handles that check the backend's capabilities. Routine and handles report
-    to the event bus. Dark: hardware; dashed: not used by tip preparation.
-  ], [Structure of the framework]),
+  caption: flex-caption(
+    [
+      Structure of the framework. The harness runs a routine, which owns the
+      control flow and reaches the controller interface only through subsystem
+      handles that check the backend's capabilities. Routine and handles report
+      to the event bus. Dark: hardware; dashed: not used by tip preparation.
+    ],
+    [Structure of the framework],
+  ),
 ) <fig:architecture>
 
 The framework's shape follows from what earlier versions got wrong, so the
@@ -164,11 +167,14 @@ inspects and exports archived logs.
 // tip_prep_20261006_133900.jsonl (completed, 119 pulses, 26 min).
 #figure(
   image("fig_workbench.png", width: 100%),
-  caption: flex-caption([
-    The tip-preparation tool of the workbench replaying a logged run of
-    6 October 2026: apex state, frequency shift after each cycle against the
-    sharp window, the pulse voltages, and the run's last logged events.
-  ], [The tip-preparation tool of the workbench]),
+  caption: flex-caption(
+    [
+      The tip-preparation tool of the workbench replaying a logged run of
+      6 October 2026: apex state, frequency shift after each cycle against the
+      sharp window, the pulse voltages, and the run's last logged events.
+    ],
+    [The tip-preparation tool of the workbench],
+  ),
 ) <fig:workbench>
 
 == Analyzers and classifiers <sec:analyzers>

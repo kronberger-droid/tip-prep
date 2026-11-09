@@ -49,11 +49,14 @@ readable only with the command's signature at hand.
 #figure(
   frame-diagram(),
   kind: image,
-  caption: flex-caption([
-    Request and response messages of the Nanonis TCP protocol. The header is
-    40 bytes in both directions; the error section closes every response
-    body. Widths are not to scale.
-  ], [Request and response messages of the Nanonis TCP protocol]),
+  caption: flex-caption(
+    [
+      Request and response messages of the Nanonis TCP protocol. The header is
+      40 bytes in both directions; the error section closes every response
+      body. Widths are not to scale.
+    ],
+    [Request and response messages of the Nanonis TCP protocol],
+  ),
 ) <fig:frame>
 
 A response ends in an error section: a status, a description length, and the

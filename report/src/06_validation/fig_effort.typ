@@ -31,9 +31,24 @@
     lq.vlines(effort.median_pulses, stroke: guide),
     lq.hlines(effort.median_minutes, stroke: guide),
     lq.scatter(xs, ys, size: 9pt, color: c-run.transparentize(20%)),
-    lq.scatter((ring.pulses,), (ring.minutes,), size: 18pt, color: black.transparentize(100%), stroke: 0.8pt + black),
-    lq.place(ring.pulses * 1.3, ring.minutes, align: left + horizon, [@fig:run]),
-    lq.place(effort.median_pulses * 1.08, 50, align: left + top, text(fill: luma(90))[median]),
-    lq.place(300, effort.median_minutes * 1.08, align: right + bottom, text(fill: luma(90))[median]),
+    lq.scatter(
+      (ring.pulses,),
+      (ring.minutes,),
+      size: 18pt,
+      color: black.transparentize(100%),
+      stroke: 0.8pt + black,
+    ),
+    lq.place(
+      ring.pulses * 1.3,
+      ring.minutes,
+      align: left + horizon,
+      [@fig:run],
+    ),
+    lq.place(effort.median_pulses * 1.08, 50, align: left + top, text(
+      fill: luma(90),
+    )[median]),
+    lq.place(300, effort.median_minutes * 1.08, align: right + bottom, text(
+      fill: luma(90),
+    )[median]),
   )
 }

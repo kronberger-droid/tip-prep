@@ -23,8 +23,24 @@
 // a scripted sequence gives the same staircase against the last reading.
 #let stepping = (steps: 4, every: 2, threshold: 0.5)
 #let readings = (
-  -6.2, -6.0, -6.3, -6.1, -6.2, -6.0, -6.1, -6.3, -6.2, -6.0, -6.1, -6.2,
-  -3.5, -3.6, -3.4, -3.7, -3.5, -3.6,
+  -6.2,
+  -6.0,
+  -6.3,
+  -6.1,
+  -6.2,
+  -6.0,
+  -6.1,
+  -6.3,
+  -6.2,
+  -6.0,
+  -6.1,
+  -6.2,
+  -3.5,
+  -3.6,
+  -3.4,
+  -3.7,
+  -3.5,
+  -3.6,
 )
 
 #let stepping-pulses(readings) = {
@@ -70,12 +86,32 @@
     // A curve, not bars, so the axis need not start at zero.
     ylim: (3, 9),
     yaxis: (ticks: (4, 6, 8)),
-    lq.rect(window.at(0), 0%, width: window.at(1) - window.at(0), height: 100%, fill: c-inside.transparentize(75%), stroke: none),
+    lq.rect(
+      window.at(0),
+      0%,
+      width: window.at(1) - window.at(0),
+      height: 100%,
+      fill: c-inside.transparentize(75%),
+      stroke: none,
+    ),
     lq.vlines(clamp.at(0), stroke: guide),
-    lq.plot(below, below.map(linear-voltage), mark: none, stroke: 1pt + c-pulse),
-    lq.plot(above, above.map(linear-voltage), mark: none, stroke: 1pt + c-pulse),
+    lq.plot(
+      below,
+      below.map(linear-voltage),
+      mark: none,
+      stroke: 1pt + c-pulse,
+    ),
+    lq.plot(
+      above,
+      above.map(linear-voltage),
+      mark: none,
+      stroke: 1pt + c-pulse,
+    ),
     lq.place(-0.75, 6, align: center + horizon, text(size: 7pt)[sharp]),
-    lq.place(-5.15, 3.6, align: right + horizon, text(size: 7pt, fill: luma(90))[clamp]),
+    lq.place(-5.15, 3.6, align: right + horizon, text(
+      size: 7pt,
+      fill: luma(90),
+    )[clamp]),
   )
 
   // (b) A thin reading lane over the pulses, on one cycle axis.
@@ -94,7 +130,13 @@
     xaxis: (format-ticks: none),
     yaxis: (ticks: (tick(-6), tick(-3))),
     ylabel: [$Delta f$ (Hz)],
-    lq.plot(cycles, readings, mark: "o", mark-size: 3pt, stroke: 0.8pt + c-read),
+    lq.plot(
+      cycles,
+      readings,
+      mark: "o",
+      mark-size: 3pt,
+      stroke: 0.8pt + c-read,
+    ),
     lq.place(reset - 1.4, -4.4, align: right + horizon, text(size: 7pt)[rise]),
   )
   let steps = lq.diagram(

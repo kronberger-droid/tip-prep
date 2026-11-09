@@ -26,12 +26,38 @@
     ylim: (0, peak * 1.15),
     legend: (position: top + right),
     // The window most runs used (@tab:run-params).
-    lq.rect(-1.5, 0%, width: 1.5, height: 100%, fill: c-inside.transparentize(75%), stroke: none, label: [sharp window]),
-    lq.bar(xs, passed, width: w * 0.85, fill: c-read, label: [passed the gates]),
+    lq.rect(
+      -1.5,
+      0%,
+      width: 1.5,
+      height: 100%,
+      fill: c-inside.transparentize(75%),
+      stroke: none,
+      label: [sharp window],
+    ),
+    lq.bar(
+      xs,
+      passed,
+      width: w * 0.85,
+      fill: c-read,
+      label: [passed the gates],
+    ),
     // A bar runs from `base` up to its value, so the stacked one ends at the
     // total and not at its own count.
-    lq.bar(xs, both, base: passed, width: w * 0.85, fill: c-fail, label: [failed every retry]),
-    lq.place(-78, spike(-77) + peak * 0.03, align: left + bottom, [$-76.29$ Hz]),
+    lq.bar(
+      xs,
+      both,
+      base: passed,
+      width: w * 0.85,
+      fill: c-fail,
+      label: [failed every retry],
+    ),
+    lq.place(
+      -78,
+      spike(-77) + peak * 0.03,
+      align: left + bottom,
+      [$-76.29$ Hz],
+    ),
     lq.place(78, spike(77) + peak * 0.03, align: right + bottom, [$+76.29$ Hz]),
   )
 }

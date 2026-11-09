@@ -28,11 +28,14 @@ an already sharp tip goes straight to these checks.
 
 #figure(
   tip-prep-fsm(),
-  caption: flex-caption([
-    State machine of the routine. Each state selects a sequence of steps, and
-    every sequence ends in a $Delta f$ reading that decides the next
-    transition.
-  ], [State machine of the tip-preparation routine]),
+  caption: flex-caption(
+    [
+      State machine of the routine. Each state selects a sequence of steps, and
+      every sequence ends in a $Delta f$ reading that decides the next
+      transition.
+    ],
+    [State machine of the tip-preparation routine],
+  ),
 ) <fig:fsm>
 
 == Bias pulses and pulse strategies <sec:pulse>
@@ -46,15 +49,18 @@ while adding little creep for the re-approach to land on.
 
 #figure(
   cycle-timeline(),
-  caption: flex-caption([
-    One cycle of the routine, from the pulse to the $Delta f$ reading, with the
-    configured pulse and settling time and otherwise the median durations of
-    the counted runs (@sec:hardware-results); $tilde.op$ marks a phase whose
-    length a gate decides. These runs moved three coarse steps per lateral
-    axis and waited a further $1$ s after landing. Widths are not to scale,
-    and neither is the coarse Z retract, whose transitions in the tip height
-    are broken by dots.
-  ], [One cycle of the tip-preparation routine]),
+  caption: flex-caption(
+    [
+      One cycle of the routine, from the pulse to the $Delta f$ reading, with the
+      configured pulse and settling time and otherwise the median durations of
+      the counted runs (@sec:hardware-results); $tilde.op$ marks a phase whose
+      length a gate decides. These runs moved three coarse steps per lateral
+      axis and waited a further $1$ s after landing. Widths are not to scale,
+      and neither is the coarse Z retract, whose transitions in the tip height
+      are broken by dots.
+    ],
+    [One cycle of the tip-preparation routine],
+  ),
 ) <fig:cycle>
 
 One of three pulse strategies, set in the run's configuration, chooses the next
@@ -71,8 +77,8 @@ one often changes it little or not at all.
   suits a run with time to spare that should change the tip as little as
   possible (@fig:strategies). It was not used on the instrument
   (@sec:hardware-results).
-  // Rise: more than a threshold over the mean since the last change; stall: a
-  // configured number of cycles; step: a fixed fraction of the range, capped.
+// Rise: more than a threshold over the mean since the last change; stall: a
+// configured number of cycles; step: a fixed fraction of the range, capped.
 - *Linear.* Within a configured $Delta f$ interval, called the clamp, the
   voltage rises linearly with the distance from the sharp window: the gentlest
   pulse at the clamp's end next to the window, the hardest at its far end
@@ -81,14 +87,17 @@ one often changes it little or not at all.
 
 #figure(
   strategies-figure(),
-  caption: flex-caption([
-    Pulse voltage of two strategies, both between $4$ and $8$ V. (a) Linear,
-    against the preceding reading, for a clamp from $-5$ to $-1.5$ Hz; inside
-    the shaded sharp window the tip is not pulsed. (b) Stepping, over the
-    cycles of a scripted run: one step of four after two cycles without a rise
-    of more than $0.5$ Hz, and back to the start when the reading rises. The
-    values of (b) are illustrative.
-  ], [Pulse voltage of the linear and stepping strategies]),
+  caption: flex-caption(
+    [
+      Pulse voltage of two strategies, both between $4$ and $8$ V. (a) Linear,
+      against the preceding reading, for a clamp from $-5$ to $-1.5$ Hz; inside
+      the shaded sharp window the tip is not pulsed. (b) Stepping, over the
+      cycles of a scripted run: one step of four after two cycles without a rise
+      of more than $0.5$ Hz, and back to the start when the reading rises. The
+      values of (b) are illustrative.
+    ],
+    [Pulse voltage of the linear and stepping strategies],
+  ),
 ) <fig:strategies>
 
 Each strategy fixes a polarity. Optionally, every $n$-th pulse fires at the

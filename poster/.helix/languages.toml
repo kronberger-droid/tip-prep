@@ -1,0 +1,8 @@
+# This directory makes `poster/` the helix workspace when `hx` is started inside
+# it, so tinymist takes `poster/` as the Typst root instead of the git root one
+# level up. Without it root-relative imports such as `/lib.typ` do not resolve.
+#
+# Pin the entry file per session with
+#   :lsp-workspace-command tinymist.pinMain "<absolute path>/main.typ"
+# Setting `typstExtraArgs = ["main.typ"]` here instead silences tinymist's
+# diagnostics altogether (tinymist 0.15.10).

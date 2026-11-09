@@ -116,7 +116,6 @@ src/A_appendix/default.typ.
 | runtime scaffolding | subsystem handles, cancellation, budgets, cleanup | 04:97-105 |
 | three observers | log file, console, workbench | 04:135-137 |
 | two ways to a decision | analyzer, classifier | 04:177-180 |
-| two front ends (drift routine) | workbench, `const-distance` tool | 04:127-128, 07:23 |
 | two backends | Nanonis backend, mock | 07:35-36 |
 | deliverables | nanonis-rs, rusty-tip, tip-preparation routine | intro:28-30 |
 | working criteria | confirmed sharp tip unattended, tip withdrawn, reconstructable log | intro:31-34 |
@@ -228,7 +227,7 @@ means the report uses the term without defining it; those cells carry a
 | PLL | Phase-locked loop (PLL); it follows the frequency shift up to the limits of its range. | 04:72, 06:133-135 |
 | Z-controller | The instrument's feedback to a current setpoint; held during a pulse and switched back on to land the tip. | 05:39, 05:163-165, A:61 (inferred from use; the text never says what the Z-controller is) |
 | Safe-tip protection | The Nanonis controller's protection that retracts the tip when the current exceeds a threshold, $1$ nA by default; the routine keeps it off except while the tip is backed off. | 05:169-173 |
-| Apex | Its geometry and composition, not the instrument, set what the tip resolves. | 02:29-31 ("end of the tip" is not in the text; no definition of the word itself) |
+| Apex | Its geometry and composition determine what the tip resolves. | 02:29-31 ("end of the tip" is not in the text; no definition of the word itself) |
 | Blunt, sharp, stable | The three apex states: sharp when $Delta f$ lies inside the sharp window, blunt otherwise, stable when a sharp tip keeps its $Delta f$ through the stability test. | 05:21-25, 05:118, 02:52-54, 05:143-144 |
 | Sharp window | The configured interval of $Delta f$, bounds included, inside which a tip counts as sharp; a run parameter. | 05:118-119 |
 | Bias pulse | A pulse of the bias, $50$ ms by default, fired with the Z-controller on hold; it reshapes the apex through the field at it. | 05:39, 05:147-149, A:65 |
@@ -280,7 +279,7 @@ already applies to it, and `todo` and `flex-caption` are already imported.
     [PLL], [phase-locked loop; follows the frequency shift up to the limits of its range],
     [Z-controller], [held during a pulse, switched back on to land the tip; has a current setpoint #todo[inferred from use; the text never says what it is]],
     [safe-tip protection], [the Nanonis controller's protection that retracts the tip when the current exceeds a threshold, $1$ nA by default; off during a run except while the tip is backed off],
-    [apex], [its geometry and composition, not the instrument, set what the tip resolves (@sec:apex) #todo[the text never says what the apex is]],
+    [apex], [its geometry and composition determine what the tip resolves (@sec:apex) #todo[the text never says what the apex is]],
     [blunt, sharp, stable], [the three apex states: sharp when $Delta f$ lies inside the sharp window, blunt otherwise, stable when a sharp tip keeps its $Delta f$ through the stability test],
     table.cell(colspan: 2, fill: luma(240))[Routine],
     [sharp window], [configured interval of $Delta f$, bounds included, inside which a tip counts as sharp],

@@ -553,7 +553,9 @@
 // \listoffigures and \listoftables.
 // \caption[short]{long}: the figure shows `long`, the lists show `short`.
 #let in-outline = state("in-outline", false)
-#let flex-caption(long, short) = context if in-outline.get() { short } else { long }
+#let flex-caption(long, short) = context if in-outline.get() { short } else {
+  long
+}
 
 #let list-of-figures(title: [List of Figures]) = {
   in-outline.update(true)

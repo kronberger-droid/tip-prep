@@ -12,9 +12,10 @@
 
 = The tip-preparation routine <sec:routine>
 
-The routine conditions a tip as an operator does, by pulsing it and judging the result, but never assumes what a pulse has done.
+The routine conditions a tip as an operator in our laboratory does, by pulsing it and judging the result, but never assumes what a pulse has done.
 A bias pulse changes the apex unpredictably, so a fixed pulse sequence cannot know when to stop or whether it has made the tip worse.
 The routine instead measures the frequency shift $Delta f$ after every pulse and chooses its next step from it.
+It measures on a fresh site, since a pulse leaves material behind that would distort a reading at the pulse site.
 
 These decisions form a state machine over three apex states: blunt, sharp and stable (@fig:fsm).
 @sec:apex discusses their physical meaning.
@@ -36,9 +37,9 @@ A run starts with one reading after the first approach, so an already sharp tip 
 
 == Bias pulses and pulse strategies <sec:pulse>
 
-Each cycle fires a bias pulse with the Z-controller on hold, so that it does not react, then moves the tip to a fresh site before $Delta f$ is measured (@fig:cycle).
+Each cycle of the blunt state fires a bias pulse with the Z-controller on hold, so that it does not react to the current spike, then moves the tip to a fresh site before $Delta f$ is measured (@fig:cycle).
 The tip leaves the pulse site as fast as possible, since further interaction with the freshly modified spot can change the apex again.
-The default of one coarse step per lateral axis leaves the pulse debris behind while adding little creep for the re-approach to land on.
+The coarse steps leave the material of the pulse behind while adding little piezo creep to the next landing.
 
 #figure(
   cycle-timeline(),
@@ -68,9 +69,9 @@ A large pulse reshapes the apex unpredictably and often strongly, while a small 
 // Rise: more than a threshold over the mean since the last change; stall: a
 // configured number of cycles; step: a fixed fraction of the range, capped.
 - *Linear.*
-  Within a configured $Delta f$ interval, called the clamp, the voltage rises linearly with the distance from the sharp window: the gentlest pulse at the clamp's end next to the window, the hardest at its far end (@fig:strategies).
+  Within a configured $Delta f$ interval, called the clamp, the voltage rises linearly with the distance from the sharp window: the gentlest pulse at the clamp's end next to the sharp window, the hardest at its far end (@fig:strategies).
   Outside the clamp, that is below it or above the window, the hardest pulse applies.
-  A tip close to sharp is thus only nudged.
+  A tip close to the window thus receives only gentle pulses.
 
 #figure(
   strategies-figure(),
@@ -86,7 +87,7 @@ A large pulse reshapes the apex unpredictably and often strongly, while a small 
 ) <fig:strategies>
 
 Each strategy fixes a polarity.
-Optionally, every $n$-th pulse fires at the opposite polarity, on a fixed period.
+Optionally, every $n$-th pulse fires at the opposite polarity.
 // The config key is `random_polarity_switch`, but the code is periodic:
 // `pulse_count.is_multiple_of(switch_every_n_pulses)`, pulse_state.rs:84.
 
@@ -95,9 +96,9 @@ Optionally, every $n$-th pulse fires at the opposite polarity, on a fixed period
 No single $Delta f$ value is trusted on its own.
 A reading is a batch of samples from the Nanonis controller's data stream (@sec:message-format), $100$ by default.
 At a $1$ kHz stream rate, such a batch takes a tenth of a second.
-Its value is the batch mean, believed only once the batch passes the two measurement gates.
+Its value is the batch mean, accepted only once the batch passes the two measurement gates.
 A noise gate bounds its standard deviation, $1.5$ Hz by default, and a drift gate the slope of a linear fit through it, $0.5$ Hz/s by default.
-A batch failing either is retried after waits of $100$, $200$ and $400$ ms.
+A batch failing either is retried up to three times.
 // signals.rs:207, backoff_ms = 100 * 2^attempt, with read_retry_count = 3.
 
 The measurement gates delay a reading rather than veto it.
@@ -111,26 +112,26 @@ The measurement gates judge how a batch varies, not where it lies, which leaves 
 A tip counts as sharp when $Delta f$ lies inside the configured sharp window, bounds included.
 The window is a run parameter, not a routine constant.
 @tab:run-params lists the values used.
-Its lower bound follows the use case and the tip at hand.
-A tip that is too sharp can be poor at picking up material from the surface, and some tips never get closer to zero than about $-1$ Hz, so the lower bound is moved further negative for them.
+Its lower bound depends on the use case and the tip at hand.
+Some tips never bring $Delta f$ closer to zero than a certain value, and the lower bound is moved further negative for them.
 // Martin, 2026-10-27.
 
-One reading inside the window could be luck: a favourable site or a metastable apex.
+One reading inside the window could be chance: a favourable site or a metastable apex.
 The routine therefore repositions and measures three more times.
 Any reading outside the window sends it back to pulsing, and the next voltage is chosen from that reading.
 The three confirmation readings are fixed, not configured.
 
-Sharp is not yet enough: an apex can rearrange under field stress.
+A sharp apex is not sufficient, since it can still rearrange under field stress.
 The stability test takes the last confirmation reading as baseline.
 Then, for each configured polarity, it moves to a fresh site and approaches.
 It starts a continuous scan at reduced speed ($5$ nm/s by default) and steps the bias from the largest magnitude of a configured range towards the smallest.
-With the defaults, this is $1000$ steps of $200$ ms from $2$ V down to $0.01$ V, about $200$ s per polarity, positive then negative.
+With the defaults, a sweep takes about $200$ s per polarity, positive then negative.
 The tip is then withdrawn, re-approached at the initial bias and measured again.
 Every sweep starts at a fresh site, so baseline and final reading come from different sites.
 The test therefore compares the apex across sites as well as across the sweep.
 
 If the two readings differ by at most a configured tolerance, $0.2$ Hz by default, the tip is stable and the run complete.
-Otherwise, the routine fires a pulse at the strategy's maximum voltage (for the fixed strategy, its only voltage).
+Otherwise, the routine fires a pulse at the strategy's maximum voltage.
 It then resets the strategy to its starting voltage and returns to pulsing.
 This pulse fires with the tip still engaged from the final reading, because a pulse acts through the field at the apex.
 That field exists only near the surface, so a pulse fired with the tip withdrawn would reshape nothing.
@@ -138,7 +139,7 @@ With the stability test switched off, a confirmed sharp tip ends the run.
 
 == Termination conditions and safety <sec:outcomes>
 
-A run ends in one of four outcomes, none of them an error: completed, cycle budget reached, time budget exhausted, or stopped by the operator.
+Barring an error, a run ends in one of four outcomes: completed, cycle budget reached, time budget exhausted, or stopped by the operator.
 The time budget starts after the first approach, before the initial reading, so a stability test on a tip that arrives sharp already counts against it.
 Errors are reserved for what the routine cannot handle, such as an approach overrunning the approach timeout or a tripped safe-tip protection.
 
@@ -147,16 +148,16 @@ The tip is approached and backed off $50$ nm from where it landed, and the PLL's
 The tip is then landed again by switching the Z-controller back on.
 A landing counts once the tunnelling current is within $50 %$ of the setpoint and has stopped scattering and drifting.
 This landing gate replaces fixed settling times.
-A landing not settled after $30$ s is taken as done, with a warning.
+A landing not settled after $30$ s is accepted anyway, with a warning.
 
 The Nanonis controller's safe-tip protection retracts the tip when the current exceeds a threshold, $1$ nA by default.
 A pulse is a deliberate current spike that would trip it every cycle.
 The routine therefore switches it off for the run, and on only while the tip is backed off during a calibrated approach.
 Its status is checked after each step of that backed-off phase.
-A trip aborts the run rather than approaching again into whatever caused it.
+A trip aborts the run rather than approaching again into the cause of the trip.
 The instrument has already retracted the tip, and the check ensures the software never undoes that.
 
-However a run ends, the tip is withdrawn and a coarse Z retract of two steps follows, since a withdrawal alone leaves the tip at the top of the piezo range within reach of the surface.
+However a run ends, the tip is withdrawn and a coarse Z retract follows, since a withdrawal alone leaves the tip at the top of the piezo range within reach of the surface.
 The settings of the safe-tip protection are also restored to their pre-run values.
 A sweep likewise restores the scan properties, scan speed and bias however it ends.
-Both rest on the harness (@sec:harness).
+Both are provided by the harness (@sec:harness).

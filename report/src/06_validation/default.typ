@@ -20,9 +20,9 @@ This chapter reports what was observed; @sec:discussion interprets it.
 
 == Frequency shift as a quality proxy <sec:proxy-validation>
 
-The routine's results are worth only as much as the number it optimizes.
+The results of the routine are only as meaningful as the quantity it optimizes.
 @fig:proxy shows constant-current images of partially oxidized Cu(110) taken with three apexes on three separate days, independent of the conditioning runs.
-Ordered by the apex's frequency shift, from $-1.8$ Hz to $-0.6$ Hz, they are the evidence that $Delta f$ tracks the images an operator would judge by.
+Ordered by the apex's frequency shift, from $-1.8$ Hz to $-0.6$ Hz, they illustrate how $Delta f$ tracks the images an operator would judge by.
 The $-0.6$ Hz apex resolves the oxide rows that the $-1.8$ Hz apex blurs, and the stripe edges sharpen from (a) to (c).
 The three images were taken at different bias and current.
 // Reading of the images: Martin, 2026-10-27.
@@ -64,7 +64,7 @@ The other 41 completed runs needed 1 to 228 pulses (median 11) and $0.6$ to $34$
 Their first readings spanned the frequency-shift range from one limit to the other, with a median of $-4.0$ Hz.
 @fig:run shows the course of a typical run.
 For 46 pulses, $Delta f$ scattered between a few hertz and the edge of the range, with no trend towards the window.
-Then a single pulse landed the tip inside it, and all three confirmation readings held.
+Then a single pulse brought the tip inside it, and all three confirmation readings held.
 
 #figure(
   effort-figure(),

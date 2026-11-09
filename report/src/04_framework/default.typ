@@ -13,9 +13,8 @@
 
 = The automation framework <sec:framework>
 
-The framework is the general foundation a routine runs on; the routine itself is @sec:routine.
-Separating the two makes a routine reproducible, shareable and extendable, rather than a script bound to one instrument.
-The separation is also designed to make a routine portable across instruments, and @sec:architecture-eval tests how far that holds.
+The framework is the general foundation a routine runs on; the routine itself is the subject of @sec:routine.
+Separating the two is meant to make a routine reproducible, shareable, extendable and portable across instruments; @sec:architecture-eval assesses how far that holds.
 @fig:architecture shows the parts and how a routine reaches the instrument through them.
 
 #figure(
@@ -31,47 +30,38 @@ The separation is also designed to make a routine portable across instruments, a
   ),
 ) <fig:architecture>
 
-The framework's shape follows from what earlier versions got wrong, so the chapter starts there.
+The framework's structure follows from the shortcomings of earlier versions, so the chapter starts with them.
 
 == Precursor implementations <sec:poc-lessons>
 
-Three earlier structures were deleted.
-Each deletion fixed a requirement that the rest of the chapter meets.
+Three earlier structures were deleted, and each deletion fixed a requirement that the rest of the chapter meets.
 
-Routines were data.
-A declarative engine with its own steps, loops and conditionals sequenced actions, each constructed by name from a registry.
-It worked, but was removed for reinventing a general-purpose language badly inside a configuration file.
-The registry went with it, since constructing an operation from a string existed only to read those step lists.
-@sec:harness replaced the engine with control flow in Rust, where the compiler can see it.
-What might yet replace *that* at a better layer is the scripting question of @sec:outlook.
+Routines were data: a declarative engine with its own steps, loops and conditionals sequenced actions that a registry constructed by name.
+It worked, but it amounted to a poor reimplementation of a general-purpose language inside a configuration file, and @sec:harness replaced it with control flow in Rust, where the compiler can see it.
+Because a step list read from a file has no compiler behind it, the engine also carried a machine-state model, which tracked the instrument's state and decided at run time whether a step was legal.
+Engine, registry and state model were deleted together.
+The question the model answered remains: a routine's author now answers it in the control flow, and a caller with no compiler behind it would need the model again (@sec:outlook).
+// What the model tracked (tip engagement, bias, Z-setpoint, Z-controller
+// status, scan activity, safe-tip) and that actions declared requirements
+// against it: rusty-tip src/machine_state.rs before its deletion in f76a991.
 
-The engine also needed a machine-state model, since a step list read from a file has no compiler behind it.
-The model decided at run time whether a step was legal before executing it.
-A routine written against the harness cannot pose the question (@sec:harness), so the state model was deleted with the engine and the registry.
-The change removed 2894 lines and added 10; the tip-preparation end-to-end tests passed unchanged.
+Measurements went into a shared store as JSON under string keys, which made every consumer a parser and every schema change a silent breakage.
+Once grabbed scan frames, the last thing written to it, became a typed value (@sec:controller-interface), the store had no job left.
 
-Measurements went into a shared store as JSON under string keys, and whoever needed them read them back.
-That made every consumer a parser and every schema change a silent breakage.
-Its last writer handed grabbed scan frames to the analyzers.
-Once frames became a typed value (@sec:controller-interface), the store had no job left.
-The store had only ever carried what the types now carry.
-
-The line drawn afterwards is that a configuration file owns a run's numbers, not its control flow.
-The reproducible artifact this report's abstract promises is then the run's log, which embeds its configuration (@sec:events).
+The resulting rule is that a configuration file holds a run's parameters, not its control flow.
+The reproducible artifact this report's abstract promises is then twofold: the run's log, which embeds its configuration (@sec:events), and the routine itself, which is written against the controller interface and not against one instrument (@sec:controller-interface).
 
 == Hardware abstraction <sec:controller-interface>
 
 A routine targets one interface to the instrument, the controller interface `SpmController`, not a TCP protocol.
 Each implementation of the interface, a backend, reports its capabilities, such as bias control, the Z-controller, the coarse motors, scanning, the phase-locked loop (PLL) or a data stream.
 An operation that needs a missing capability fails with an `Unsupported` error before any command reaches the instrument.
-A routine therefore refuses cleanly on an instrument that cannot run it.
+A routine therefore fails with a clear error on an instrument that cannot run it.
 The Nanonis backend, built on the client of @sec:interface, is the only hardware backend today.
-The interface is the seam for adding others.
+The interface is where further backends attach.
 
 Results are typed too.
-A grabbed scan image is a `Frame`, not the JSON blob of @sec:poc-lessons.
-It carries its pixels, channel, dimensions and scan direction, plus the physical geometry the instrument reports (centre, size, rotation).
-A frame loaded from a file carries no geometry, and a consumer can tell the difference.
+A grabbed scan image is a `Frame`, not the untyped JSON of @sec:poc-lessons.
 
 A mock backend implements the same interface without an instrument.
 Its frequency shift follows a scriptable model of the tip's response to pulses, and its Z-controller is simulated too.
@@ -83,7 +73,7 @@ Routines are developed and tested against the mock; @sec:mock-results reports wh
 
 A routine is a plain Rust struct implementing the `Routine` interface.
 Its `run` method receives a runtime, `Rt`.
-The runtime absorbs the scaffolding every routine would otherwise reimplement, so the body contains only the science:
+The runtime absorbs the scaffolding every routine would otherwise reimplement, so the body contains only the measurement logic:
 
 - *Subsystem handles.*
   `rt.bias()`, `rt.z()`, `rt.scan()` and their siblings check the backend's capabilities when obtained and report every operation through them to the event bus.
@@ -101,17 +91,21 @@ Whatever the outcome, it leaves the tip as the routine's exit policy says, resto
 That includes a panic.
 A guard around the routine catches the unwinding, cleans up the hardware and re-raises the panic unchanged.
 
-Safety follows from the structure, not from the operator's discipline.
+Two properties follow from the structure rather than from the routine author's care.
 The handle is the only route to an operation, and the compiler enforces that every operation takes it.
 Obtaining a handle runs the capability check, so a call the backend cannot serve fails there, before any command reaches the instrument.
-This replaces the machine-state model of @sec:poc-lessons, which judged every step before executing it.
-Beyond that, the checks left at run time are those only a live reading can answer, such as the landing gate of @sec:outcomes.
+Whether an operation is legal in the instrument's current state remains the routine's responsibility (@sec:poc-lessons).
+The other checks left at run time are those only a live reading can answer, such as the landing gate of @sec:outcomes.
 
 The harness borrows the backend instead of consuming it, so one connection can run routine after routine.
 A session builds on this.
 It connects once, loads the instrument's layout and settings and starts the data stream.
 It then runs jobs one at a time, each with its own log.
-Tip preparation is the reference routine, not the only one: measuring and compensating the Z-piezo drift is a second routine on the same harness, shared by a graphical workbench and the `const-distance` command-line tool.
+Tip preparation is the reference routine, not the only one: measuring and compensating the Z-piezo drift is a second routine on the same harness.
+Both can be run from a graphical workbench, which also saves complete operating points, the Z-controller and PLLs with the bias and the scan settings, and applies them in one step.
+// Operating points: rusty-tip src/operating_point.rs:1-8 (every loop with its
+// setpoint, the bias and the scan's size, angle, resolution and speed,
+// captured in one read and applied in one job).
 
 == Event system <sec:events>
 
@@ -119,16 +113,14 @@ Every operation through a handle is reported to an event bus when it starts, com
 Routines add their own typed events.
 Tip preparation reports each cycle, phase change and maximum-voltage pulse.
 Observers subscribe to the bus: one writes the run to a log file, one prints to the console, one forwards events to the workbench.
-One bus thus serves live monitoring, logging and offline analysis, instead of logging bolted on afterwards.
+One bus thus serves live monitoring, logging and offline analysis.
 
 The log describes itself.
 It opens with the tool, its version and source revision, the loaded configuration with every default applied, the resolved signals and stream rate, and a schema for every event type the tool can write.
 It closes with the outcome.
-Every entry carries a sequence number, and every operation a nesting depth.
-The steps inside a compound operation such as a calibrated approach can thus be reassembled into a tree.
 A configuration change during tip preparation takes effect between cycles, except for fields frozen at run start.
 The log records each change with the full resulting configuration.
-The log alone therefore suffices to reconstruct what was run and with which numbers.
+The log alone therefore suffices to reconstruct what was run and with which parameters.
 
 The front ends build on the log.
 Tip preparation runs from a command-line tool or as a tool of the workbench (@fig:workbench).

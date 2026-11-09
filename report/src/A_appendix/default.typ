@@ -3,9 +3,10 @@
 
 = Reference tables <apx:reference>
 
-This appendix lists the data types of the message format of @sec:interface in full, and every configuration field that shapes a run, with its default, so that a run in @sec:validation can be reproduced from the configuration its log records.
-A glossary of the report's terms and abbreviations follows.
-The three tables are collected here because they are consulted, not read in sequence.
+The three tables of this appendix are collected here because they are consulted, not read in sequence.
+The configuration table lists every field that shapes a run, with its default, so that a run in @sec:validation can be reproduced from the configuration its log records.
+
+== Data types of the message format <apx:data-types>
 
 #figure(
   table(
@@ -61,6 +62,8 @@ The three tables are collected here because they are consulted, not read in sequ
     [Data types of the Nanonis TCP protocol],
   ),
 ) <tab:data-types>
+
+== Configuration fields and their defaults <apx:config>
 
 // Defaults from rusty-tip main (7976b24): src/config.rs (`default_*` and the
 // `Default` impls of DataAcquisitionConfig, TipPrepConfig, TimingConfig,
@@ -165,6 +168,8 @@ The three tables are collected here because they are consulted, not read in sequ
     [Configuration fields and their defaults],
   ),
 ) <tab:config>
+
+== Terms and abbreviations <apx:glossary>
 
 #figure(
   table(

@@ -44,5 +44,9 @@ described.
   Anything that is one paragraph of a larger argument stays a paragraph.
 - Section titles are formal noun phrases: `Connection management and tip
   safety`, not `What type safety bought`.
+- Prose in the `.typ` sources is one sentence per line, never hard-wrapped;
+  the editor soft-wraps. Nothing enforces it: typstyle on save keeps whatever
+  line breaks it finds, so the writer holds the line. Bind an abbreviation to
+  what follows (`eq.~3.31`) so no tool mistakes its period for a sentence end.
 - Cross-reference by label. A dangling `@sec:` fails the build, which is how a
   restructure announces what it broke.

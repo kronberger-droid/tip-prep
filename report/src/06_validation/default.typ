@@ -13,25 +13,18 @@
 
 = Results <sec:validation>
 
-The routine ran on a Nanonis-controlled instrument for STM and non-contact
-atomic force microscopy (NC-AFM) with a qPlus sensor @nanonis, on partially
-oxidized Cu(110), from 15 September to 6 October 2026.
-All runs used the rusty-tip 0.5 development line (@sec:framework), thirteen
-source revisions in all, each recorded in its log. The statistics below cover
-the 106 runs that completed or were stopped by the operator, not those that
-ended in an instrument error during commissioning. This chapter reports what
-was observed; @sec:discussion interprets it.
+The routine ran on a Nanonis-controlled instrument for STM and non-contact atomic force microscopy (NC-AFM) with a qPlus sensor @nanonis, on partially oxidized Cu(110), from 15 September to 6 October 2026.
+All runs used the rusty-tip 0.5 development line (@sec:framework), thirteen source revisions in all, each recorded in its log.
+The statistics below cover the 106 runs that completed or were stopped by the operator, not those that ended in an instrument error during commissioning.
+This chapter reports what was observed; @sec:discussion interprets it.
 
 == Frequency shift as a quality proxy <sec:proxy-validation>
 
 The routine's results are worth only as much as the number it optimizes.
-@fig:proxy shows constant-current images of partially oxidized Cu(110) taken
-with three apexes on three separate days, independent of the conditioning runs.
-Ordered by the apex's frequency shift, from $-1.8$ Hz to $-0.6$ Hz, they are the
-evidence that $Delta f$ tracks the images an operator would judge by. The
-$-0.6$ Hz apex resolves the oxide rows that the $-1.8$ Hz apex blurs, and the
-stripe edges sharpen from (a) to (c). The three images were taken at different
-bias and current.
+@fig:proxy shows constant-current images of partially oxidized Cu(110) taken with three apexes on three separate days, independent of the conditioning runs.
+Ordered by the apex's frequency shift, from $-1.8$ Hz to $-0.6$ Hz, they are the evidence that $Delta f$ tracks the images an operator would judge by.
+The $-0.6$ Hz apex resolves the oxide rows that the $-1.8$ Hz apex blurs, and the stripe edges sharpen from (a) to (c).
+The three images were taken at different bias and current.
 // Reading of the images: Martin, 2026-10-27.
 
 #figure(
@@ -52,10 +45,9 @@ bias and current.
   },
   caption: flex-caption(
     [
-      Constant-current STM images of partially oxidized Cu(110), $30 times 30$ nm,
-      taken with three apexes on three separate days. (a) $+1.0$ V, $100$ pA;
-      (b) $-0.5$ V, $105$ pA; (c) $-0.2$ V, $100$ pA. The frequency shift is
-      that of the apex in each image.
+      Constant-current STM images of partially oxidized Cu(110), $30 times 30$ nm, taken with three apexes on three separate days.
+      (a) $+1.0$ V, $100$ pA; (b) $-0.5$ V, $105$ pA; (c) $-0.2$ V, $100$ pA.
+      The frequency shift is that of the apex in each image.
     ],
     [STM images of partially oxidized Cu(110) taken with three apexes],
   ),
@@ -63,27 +55,24 @@ bias and current.
 
 == Unattended conditioning runs <sec:hardware-results>
 
-Of the 106 runs, 53 completed with a confirmed sharp tip and 53 were stopped by
-the operator to change parameters. Until the live configuration reload of
-@sec:events was available, a different window or pulse strategy meant stopping
-and restarting the run. The reload was used in one run. Twelve completed runs
-found the tip already sharp and confirmed it without a pulse.
+Of the 106 runs, 53 completed with a confirmed sharp tip and 53 were stopped by the operator to change parameters.
+Until the live configuration reload of @sec:events was available, a different window or pulse strategy meant stopping and restarting the run.
+The reload was used in one run.
+Twelve completed runs found the tip already sharp and confirmed it without a pulse.
 
-The other 41 completed runs needed 1 to 228 pulses (median 11) and $0.6$ to
-$34$ min (median $2.4$ min, @fig:effort). Their first readings spanned the
-frequency-shift range from one limit to the other, with a median of $-4.0$ Hz.
-@fig:run shows the course of a typical run. For 46 pulses, $Delta f$ scattered
-between a few hertz and the edge of the range, with no trend towards the window.
-Then a single pulse landed the tip inside it, and all three confirmation
-readings held.
+The other 41 completed runs needed 1 to 228 pulses (median 11) and $0.6$ to $34$ min (median $2.4$ min, @fig:effort).
+Their first readings spanned the frequency-shift range from one limit to the other, with a median of $-4.0$ Hz.
+@fig:run shows the course of a typical run.
+For 46 pulses, $Delta f$ scattered between a few hertz and the edge of the range, with no trend towards the window.
+Then a single pulse landed the tip inside it, and all three confirmation readings held.
 
 #figure(
   effort-figure(),
   caption: flex-caption(
     [
-      Pulses and duration of the 41 completed runs that needed a pulse, one dot
-      per run, on logarithmic axes; dashed lines mark the medians. The ringed run
-      is that of @fig:run. Twelve further runs completed without a pulse.
+      Pulses and duration of the 41 completed runs that needed a pulse, one dot per run, on logarithmic axes; dashed lines mark the medians.
+      The ringed run is that of @fig:run.
+      Twelve further runs completed without a pulse.
     ],
     [Pulses and duration of the completed runs],
   ),
@@ -93,27 +82,25 @@ readings held.
   image("fig_run.pdf", width: 85%),
   caption: flex-caption(
     [
-      Run of 25 September 2026, with $plus.minus 8$ V pulses whose polarity
-      reverses on every third pulse, and a sharp window from $-1.5$ to $0$ Hz.
-      Top: frequency shift after each pulse, on an axis that is linear within
-      $plus.minus 1$ Hz and logarithmic beyond. Bottom: the pulse that followed
-      each reading. The tip reached the window after 47 pulses and $6.4$ min.
+      Run of 25 September 2026, with $plus.minus 8$ V pulses whose polarity reverses on every third pulse, and a sharp window from $-1.5$ to $0$ Hz.
+      Top: frequency shift after each pulse, on an axis that is linear within $plus.minus 1$ Hz and logarithmic beyond.
+      Bottom: the pulse that followed each reading.
+      The tip reached the window after 47 pulses and $6.4$ min.
     ],
     [A conditioning run of 25 September 2026],
   ),
 ) <fig:run>
 
-The confirmation readings rejected tips that had reached the window. In 14 of
-the 53 completed runs, at least one reading inside the window failed to hold at
-the next sites. This happened 25 times in total and up to four times in one
-run. Each time, the routine resumed pulsing and later confirmed a tip.
+The confirmation readings rejected tips that had reached the window.
+In 14 of the 53 completed runs, at least one reading inside the window failed to hold at the next sites.
+This happened 25 times in total and up to four times in one run.
+Each time, the routine resumed pulsing and later confirmed a tip.
 
-The runs covered a range of parameters (@tab:run-params); the stepping strategy
-was not used. The stability test was enabled in four runs and ran in one, on a
-tip sharp from the start. Its reading went from a baseline of $-1.26$ Hz to
-$-1.19$ Hz. This change of $0.07$ Hz lay within a tolerance of $1.0$ Hz, and the
-tip was classified stable. With no failed stability test, the maximum-voltage
-pulse of @sec:criteria-applied never fired on the instrument.
+The runs covered a range of parameters (@tab:run-params); the stepping strategy was not used.
+The stability test was enabled in four runs and ran in one, on a tip sharp from the start.
+Its reading went from a baseline of $-1.26$ Hz to $-1.19$ Hz.
+This change of $0.07$ Hz lay within a tolerance of $1.0$ Hz, and the tip was classified stable.
+With no failed stability test, the maximum-voltage pulse of @sec:criteria-applied never fired on the instrument.
 
 #figure(
   table(
@@ -141,23 +128,20 @@ pulse of @sec:criteria-applied never fired on the instrument.
   ),
   caption: flex-caption(
     [
-      Parameters of the 106 counted runs. The upper bound of the window was
-      $0$ Hz throughout; one run used no polarity reversal.
+      Parameters of the 106 counted runs.
+      The upper bound of the window was $0$ Hz throughout; one run used no polarity reversal.
     ],
     [Parameters of the counted runs],
   ),
 ) <tab:run-params>
 
-Not every accepted reading was a measurement. Of 4430 accepted readings, 520
-($11.7 %$) lay beyond $plus.minus 76$ Hz, 494 of them at exactly
-$plus.minus 76.29$ Hz and one at $152.59$ Hz. These are limits of the PLL
-controller's range, and readings at them are called railed in what follows. A
-railed reading marks a frequency shift beyond what the PLL follows, possibly
-from a tip tapping the surface. Of the 494, 446 were negative and 48 positive; a positive frequency
-shift of that size indicates an insulating tip. All 494 passed both
-measurement gates of @sec:measurement. A further 290 readings failed the
-measurement gates on every retry and were used anyway
-(@fig:readings).
+Not every accepted reading was a measurement.
+Of 4430 accepted readings, 520 ($11.7 %$) lay beyond $plus.minus 76$ Hz, 494 of them at exactly $plus.minus 76.29$ Hz and one at $152.59$ Hz.
+These are limits of the PLL controller's range, and readings at them are called railed in what follows.
+A railed reading marks a frequency shift beyond what the PLL follows, possibly from a tip tapping the surface.
+Of the 494, 446 were negative and 48 positive; a positive frequency shift of that size indicates an insulating tip.
+All 494 passed both measurement gates of @sec:measurement.
+A further 290 readings failed the measurement gates on every retry and were used anyway (@fig:readings).
 // 76.29 Hz = 5 MHz / 2^16. Range limits, tapping and the insulating tip:
 // Martin, 2026-10-27, replacing the "most likely the PLL range" hedge of the
 // 2026-10-07 handover note, which also traces most rail reads to landings.
@@ -169,11 +153,9 @@ measurement gates on every retry and were used anyway
   readings-figure(),
   caption: flex-caption(
     [
-      The 4430 accepted readings of the counted runs in $2$ Hz bins, split into
-      those that passed the noise and drift gates and those that failed them on
-      every retry. The bins at $plus.minus 76.29$ Hz hold the readings at the
-      limit of the PLL controller's range. Nine readings beyond
-      $plus.minus 80$ Hz are not shown.
+      The 4430 accepted readings of the counted runs in $2$ Hz bins, split into those that passed the noise and drift gates and those that failed them on every retry.
+      The bins at $plus.minus 76.29$ Hz hold the readings at the limit of the PLL controller's range.
+      Nine readings beyond $plus.minus 80$ Hz are not shown.
     ],
     [The accepted frequency-shift readings],
   ),
@@ -181,11 +163,9 @@ measurement gates on every retry and were used anyway
 
 == Verification against the mock backend <sec:mock-results>
 
-The mock backend of @sec:controller-interface exercises paths that are hard or
-unwise to provoke on the instrument, from each outcome of the routine to
-injected faults and a panicking routine. Each test checks that the tip ends
-withdrawn and that the run reports the right outcome. @tab:coverage sets these
-tests beside the runs on the instrument.
+The mock backend of @sec:controller-interface exercises paths that are hard or unwise to provoke on the instrument, from each outcome of the routine to injected faults and a panicking routine.
+Each test checks that the tip ends withdrawn and that the run reports the right outcome.
+@tab:coverage sets these tests beside the runs on the instrument.
 // Tests: rusty-tip tests/tip_prep_routine.rs (strategies at the
 // `PulseMethod` configs, endings, shutdown, faults, mid-run config), and
 // src/routine/mod.rs a_panicking_routine_is_still_withdrawn_and_the_panic_re_raised.
@@ -222,18 +202,15 @@ tests beside the runs on the instrument.
   ),
   caption: flex-caption(
     [
-      Paths of the routine and the counted runs on the instrument that took
-      them; a dash marks a path no counted run took. Every path is also tested
-      off the instrument.
+      Paths of the routine and the counted runs on the instrument that took them; a dash marks a path no counted run took.
+      Every path is also tested off the instrument.
     ],
     [Paths exercised on the instrument and against the mock],
   ),
 ) <tab:coverage>
 
-Both protocol boundaries were tested against real servers, not stubs. The
-Nanonis client of @sec:interface ran against the vendor's simulator as well as
-the instrument. Without either, its tests cover encoding and decoding of every
-data type and the typed parameter sets of its larger subsystems. The classifier
-boundary of @sec:analyzers is tested against an HTTP server on a local socket.
-This test checks that an unreachable model and a wrongly answering model
-surface as different errors.
+Both protocol boundaries were tested against real servers, not stubs.
+The Nanonis client of @sec:interface ran against the vendor's simulator as well as the instrument.
+Without either, its tests cover encoding and decoding of every data type and the typed parameter sets of its larger subsystems.
+The classifier boundary of @sec:analyzers is tested against an HTTP server on a local socket.
+This test checks that an unreachable model and a wrongly answering model surface as different errors.

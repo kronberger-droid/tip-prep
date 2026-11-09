@@ -3,11 +3,9 @@
 
 = Reference tables <apx:reference>
 
-This appendix lists the data types of the message format of @sec:interface in
-full, and every configuration field that shapes a run, with its default, so
-that a run in @sec:validation can be reproduced from the configuration its log
-records. A glossary of the report's terms and abbreviations follows. All three
-are here because nobody reads them in sequence.
+This appendix lists the data types of the message format of @sec:interface in full, and every configuration field that shapes a run, with its default, so that a run in @sec:validation can be reproduced from the configuration its log records.
+A glossary of the report's terms and abbreviations follows.
+All three are here because nobody reads them in sequence.
 
 #figure(
   table(
@@ -57,10 +55,8 @@ are here because nobody reads them in sequence.
   ),
   caption: flex-caption(
     [
-      The data types of the Nanonis TCP protocol (specification revision
-      R14718); the specification announces thirteen types and lists these
-      fourteen. "Usually" is the specification's own word: the signature of each
-      command says which argument carries the length.
+      The data types of the Nanonis TCP protocol (specification revision R14718); the specification announces thirteen types and lists these fourteen.
+      "Usually" is the specification's own word: the signature of each command says which argument carries the length.
     ],
     [Data types of the Nanonis TCP protocol],
   ),
@@ -161,9 +157,7 @@ are here because nobody reads them in sequence.
   caption: flex-caption(
     [
       Configuration fields that shape a run, with their defaults in rusty-tip.
-      The fixed strategy takes a `voltage` and the linear one a `linear_clamp`,
-      neither with a default; see @tab:run-params for the values the counted
-      runs used.
+      The fixed strategy takes a `voltage` and the linear one a `linear_clamp`, neither with a default; see @tab:run-params for the values the counted runs used.
     ],
     [Configuration fields and their defaults],
   ),
@@ -255,8 +249,7 @@ are here because nobody reads them in sequence.
   ),
   caption: flex-caption(
     [
-      Terms and abbreviations of this report, each with the section that
-      introduces it where one does.
+      Terms and abbreviations of this report, each with the section that introduces it where one does.
     ],
     [Terms and abbreviations],
   ),

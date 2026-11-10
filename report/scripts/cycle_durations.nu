@@ -71,7 +71,7 @@ def median-ms [] {
 }
 
 def main [root: path] {
-  let runs = (counted-logs $root | each {|log|
+  let runs = (counted-logs $root --lines 'action_completed|reposition' | par-each {|log|
     let done = ($log.records | where type == action_completed)
     {
       pulses: ($done | where action == bias_pulse | get duration)

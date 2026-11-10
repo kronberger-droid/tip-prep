@@ -21,7 +21,7 @@ const RAIL = 76.29
 def main [root: path] {
   let n = (($HI - $LO) // $WIDTH)
   let reads = (
-    counted-logs $root
+    counted-logs $root --lines stable_read
     | each {|log| $log.records | where type == data_collected | where label == stable_read | get value }
     | flatten
     | each {|r|
@@ -34,8 +34,10 @@ def main [root: path] {
   )
   let inside = ($reads | where bin >= 0 and bin < $n)
   let outside = ($reads | where bin < 0 or bin >= $n)
-  let passed = (0..<$n | each {|i| $inside | where key == passed and bin == $i | length })
-  let failed = (0..<$n | each {|i| $inside | where key == failed and bin == $i | length })
+  # One pass over the readings, then 160 lookups; a `where` per bin costs 1 s.
+  let counts = ($inside | group-by {|r| $"($r.key)/($r.bin)" })
+  let passed = (0..<$n | each {|i| $counts | get -o $"passed/($i)" | default [] | length })
+  let failed = (0..<$n | each {|i| $counts | get -o $"failed/($i)" | default [] | length })
   let result = {
     source: $"stable_read records of the counted tip_prep logs, ($FIRST) to ($LAST)"
     readings: ($reads | length)

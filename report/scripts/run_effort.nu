@@ -11,7 +11,7 @@
 use logs.nu [FIRST LAST counted-logs save-data]
 
 def main [root: path] {
-  let logs = (counted-logs $root | each {|log|
+  let logs = (counted-logs $root --lines 'tip_prep/cycle' | each {|log|
     {
       log: $log.name
       outcome: $log.outcome

@@ -3,7 +3,7 @@
 // pulse, post-pulse settle, reposition, read_stable) and
 // src/action/z_controller.rs (CalibratedApproach, steps 1 to 8). Pulse and
 // settle carry their configured defaults; the other phases carry the medians
-// in data/cycle_durations.json, written by scripts/cycle_durations.py.
+// in data/cycle_durations.json, written by scripts/cycle_durations.nu.
 
 #let durations = json("/data/cycle_durations.json").median_ms
 

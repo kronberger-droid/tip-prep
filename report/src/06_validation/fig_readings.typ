@@ -1,5 +1,5 @@
 // Histogram of the accepted frequency-shift readings, split by the gates.
-// Data: data/readings.json, written by scripts/readings.py. Colours follow
+// Data: data/readings.json, written by scripts/readings.nu. Colours follow
 // figures/lib.typ: blue for readings, orange for the second series, the
 // sharp window in transparent green.
 #import "@preview/lilaq:0.6.0" as lq

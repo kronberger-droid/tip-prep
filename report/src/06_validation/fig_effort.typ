@@ -1,5 +1,5 @@
 // Pulses and duration of each pulsed completed run, one dot per run. Data:
-// data/run_effort.json, written by scripts/run_effort.py. Runs completed
+// data/run_effort.json, written by scripts/run_effort.nu. Runs completed
 // without a pulse cannot sit on a log axis and are counted in the caption.
 #import "@preview/lilaq:0.6.0" as lq
 

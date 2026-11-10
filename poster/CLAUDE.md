@@ -26,10 +26,8 @@ typst watch main.typ                                      # while editing
 | `assets/` | logos, plus the Cu(110) STM scans used in Proof of Concept |
 | `refs.bib` | only cited entries render, `bib-refs(full: true)` lists everything |
 | `experiments/` | gitignored; one demo-mode file. Real archive is on the DATA drive, see Data below |
-| `scripts/scan_logs.py` | summarise every log, tolerates truncated files |
-| `scripts/detail.py` | action-by-action timeline of one run |
-| `scripts/index_logs.py` | index a whole log *drive* into a cache, then rank runs |
-| `scripts/extract_trace.py` | pull one run's Δf trace into `figures/traces.json` |
+| `scripts/index_logs.nu` | index a whole log *drive* into a cache, then rank runs; tolerates truncated files |
+| `scripts/extract_trace.nu` | pull one run's Δf trace into `figures/traces.json` |
 
 Everything sizes off two constants in `template.typ`: `base-size` (28pt) and
 `paper-size` ("a0").
@@ -248,7 +246,7 @@ in `em`.
   The word survives in **internal names only**, where it is now wrong but cheap
   to leave: `figures/convergence.typ` and `convergence-plot()`. Renaming those
   touches `main.typ`'s import; worth doing if anyone is in there anyway.
-  `index_logs.py` used to print `converged +3.3 Hz` as a verdict and now prints
+  the indexer used to print `converged +3.3 Hz` as a verdict and now prints
   `reached band`. **No poster-visible text has ever used the word**, which was
   checked, not assumed.
 - **American English**, to match the submitted abstract (`functionalization`,
@@ -692,7 +690,7 @@ but that comes from a `CheckTipStability` action that no longer exists in
 (`163859` logs `Blunt` on sweep 1 and the run then ends cleanly). Today's
 `check_stability` takes the last `confirm_sharp` read as baseline, sweeps, takes
 one more read, and compares `|final - baseline|` against the tolerance.
-`extract_trace.py` recomputes it that way and it matches what the loop then did
+`extract_trace.nu` recomputes it that way and it matches what the loop then did
 in every case. Read the outcome off the loop's *behaviour*, never off the sweep's
 `TipState`.
 
@@ -825,7 +823,7 @@ wording change:
   is also a 1.2 mm comb. If a bar chart is ever wanted, the version that works is
   a two-bar summary of *cycles to reach the band* (9 vs 287), which is a
   different figure making a different point.
-- **The Δf figure now colours the stability check.** `extract_trace.py` tags every
+- **The Δf figure now colours the stability check.** `extract_trace.nu` tags every
   read with a `phase`: `loop` (follows a bias pulse), `confirm` (no pulse since
   the previous read, which is exactly what `confirm_sharp` produces) and
   `post_sweep` (the read after the bias sweeps). `confirm` and `post_sweep`
@@ -928,7 +926,7 @@ without them, since `figures/traces.json` is committed and is all Typst reads.
 **File size tells you nothing about run length.** The bulk of every file is
 `ExperimentData.signal_frames`, the full TCP capture attached to each pulse. The
 largest file is 2.7 GB; a 120 MB one holds only 38 cycles. Use
-`scripts/index_logs.py`, not `ls -S`.
+`scripts/index_logs.nu`, not `ls -S`.
 
 `rusty-tip/experiments/` is all Nanonis demo mode — Δf identically `0.0`, or
 pinned flat at `-5.252 Hz` in the one file that has real TCP frames — and an
@@ -949,10 +947,12 @@ The six December runs, all from the afternoon of 2025-12-12:
 and `155910` are no longer on the poster. The full drive was indexed to pick the
 long one, see `### Picking a run` below.
 
-Three of the six are **truncated JSON**, since the run was killed mid-write, so
-`json.load` rejects the whole file.
-Decode entry by entry with `JSONDecoder.raw_decode` and stop at the first
-failure rather than discarding the file. `scripts/scan_logs.py` does that.
+The three runs marked truncated above were killed mid-write, but by the time the
+drive was indexed every December file closed its array, and the only file on the
+drive that does not is `20260127_145314` (see `### Log formats`). Truncation
+costs nothing anyway: `scripts/index_logs.nu` never parses a file whole, it
+pulls out the handful of lines it needs and flags `truncated` from the last 64
+bytes.
 
 ### Caveats on those numbers
 
@@ -1033,18 +1033,18 @@ failure rather than discarding the file. `scripts/scan_logs.py` does that.
 
 ### Picking a run
 
-All 69 runs were indexed with `scripts/index_logs.py` (100 s for the full 13 GB,
+All 69 runs were indexed with `scripts/index_logs.nu` (100 s for the full 13 GB,
 disk-bound). The cache is `scripts/runs_index.json`, so re-ranking is instant and
-works with the drive unplugged. Note its `pulse_v` field **undercounts**: like
-`extract_trace.py` did until 2026-07-30, it only matches `Pulse retract -4.0V`
-and misses the 2026 wording `Bias pulse -8.000V`, which is why the index reports
-0 pulses for `124032` (really 36) and `123152` (really 35). `scan_logs.py` and
-`detail.py` count them correctly. Fix the regex in `index_logs.py` if the index
-is ever used to rank by pulse count again.
+works with the drive unplugged. Until 2026-11-10 its `pulses` and `pulse_v`
+fields **undercounted**: like `extract_trace` did until 2026-07-30, the indexer
+only matched `Pulse retract -4.0V` and missed the 2026 wording
+`Bias pulse -8.000V`, so the index reported 0 pulses for `124032` (really 36)
+and `123152` (really 35). The Nushell port matches both wordings and the cache
+was rebuilt with it, which raised the pulse counts of 13 of the 2026 runs.
 
 ```nu
-python3 scripts/index_logs.py scan "/run/media/kronberger/DATA/Tip Prep/Experiments"
-python3 scripts/index_logs.py report --min-pulses 10 --sharp-only
+nu scripts/index_logs.nu scan "/run/media/kronberger/DATA/Tip Prep/Experiments"
+nu scripts/index_logs.nu report --min-pulses 10 --sharp-only
 ```
 
 **±76.2937 Hz is a saturation rail, not a measurement.** It recurs in both signs
@@ -1091,18 +1091,28 @@ Of the runs that actually reached the band:
 111 minutes) and is a **failure**: Δf goes -5.1 -> -38.1. Useful someday as an
 "it can also not work" counterexample, useless for Proof of Concept.
 
-`20260127_145314` is 1 GB and the indexer reports **0 entries**. It is not the
-JSON-array format the parser expects, so it needs looking at before anyone
-concludes it is empty.
+`20260127_145314` is 1 GB and, until 2026-11-10, the indexer reported **0
+entries** for it: it is one compact record per line, not the pretty-printed
+array the line patterns expect. `index_logs.nu` now reads that format too (see
+`### Log formats`), and the run is real: 3828 records, 750 pulses at ±8 V,
+385 reads of which 26 are `Sharp`, bounds (-1.5, 0.0), 119 minutes, no
+stability check. It ranks second by pulse count, right behind `093447`, and it
+is a failure of the same kind: the `Sharp` reads sit in the middle of the run,
+Δf goes -10.6 -> +76.3, which is the rail, and the last reads are all `Blunt`.
 
 ### Log formats
 
-Two exist, and they are not interchangeable:
+Three exist, and they are not interchangeable:
 
 - **JSON array** (Dec 2025, Jan 2026) — `{action, result, start_time,
   duration_ms}` with typed results: `StableSignal` carries `stable_value` and
   `stability_metrics`, `TipState` carries `shape`. This is the plottable one,
-  and everything on the poster comes from it.
+  and everything on the poster comes from it. Pretty-printed, which is what
+  lets `index_logs.nu` and `extract_trace.nu` read a 2.7 GB file with `rg`
+  on indentation-anchored patterns instead of parsing it.
+- **The same records, one compact line each** — only `20260127_145314`.
+  `index_logs.nu` detects it from the first byte and parses line by line
+  (about 40 s for that file); `extract_trace.nu` does not read it.
 - **JSONL from the `EventBus`** (Mar 2026) — `action_started` /
   `action_completed` / `custom`. Streamable, but `output` is `null`, so it
   carries timing and the three `tip_prep_state` phase markers and nothing else.
@@ -1234,7 +1244,7 @@ Roughly in order of how much they cost the poster:
 3. **Stability-check data exists, and `Sharp -> Stable` is in it.** 25 of the 83
    runs carry `Check tip stability: bias sweep` actions; 16 returned a Nanonis
    `Error` ("Bias Sweep can't be started because some settings are bad"), so a
-   sweep appearing in a log does not mean it ran. `scripts/index_logs.py` reports
+   sweep appearing in a log does not mean it ran. `scripts/index_logs.nu` reports
    a pass/attempt ratio per run for exactly this reason.
 
    The one to look at is **`20260128_145048`**, which walks the whole FSM:

@@ -18,6 +18,7 @@
 // option of the article class. Note these are the round values: the 10.95 /
 // 11.955 / 14.4 series belongs to the 10pt class, and using it makes every
 // heading a little too large.
+#import "/theme.typ" as th
 #let sz = (
   footnotesize: 9pt,
   small: 10pt,
@@ -113,6 +114,7 @@
   // parity, so they are only right for a two-sided document.
   set page(
     paper: "a4",
+    fill: if th.dark { th.paper } else { auto },
     binding: left,
     margin: if margin != auto { margin } else if two-sided {
       (inside: 4cm, outside: 2.5cm, top: 2.5cm, bottom: 2.5cm)
@@ -120,7 +122,12 @@
       (left: 3cm, right: 2.5cm, top: 2.5cm, bottom: 2.5cm)
     },
   )
-  set text(lang: language, font: "New Computer Modern", size: sz.normal)
+  set text(lang: language, font: "New Computer Modern", size: sz.normal, fill: th.ink)
+  // Rules and frames take the ink too: a stroke given as a bare thickness
+  // folds into these, where it would otherwise be black.
+  set line(stroke: th.ink)
+  set table(stroke: th.ink)
+  set raw(theme: th.raw-theme) if th.dark
 
   // \secnumdepth is 3 in the article class, so subsubsections are numbered too.
   set heading(numbering: (..nums) => {
@@ -445,7 +452,7 @@
       let even = two-sided and calc.even(counter(page).get().first())
       block(
         width: 100%,
-        stroke: (bottom: 0.4pt),
+        stroke: (bottom: 0.4pt + th.ink),
         inset: (bottom: 0.4em),
         // The zero-width strut keeps the rule at a fixed height on pages whose
         // mark is empty, such as a section opening before its first subsection.

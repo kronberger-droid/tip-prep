@@ -1,16 +1,17 @@
+#import "/theme.typ" as th
 // Request and response frames of the Nanonis TCP protocol, after
 // nanonis-rs docs/tcp-protocol.md (R14718), sections Request message and
 // Response message. Field widths are not to scale.
-#let frame-diagram(accent: rgb("0267A5")) = {
+#let frame-diagram(accent: th.accent) = {
   set text(size: 7pt, hyphenate: false)
   set par(justify: false)
 
-  let head = accent.lighten(85%)
-  let body = luma(238)
-  let err = rgb("B0533A").lighten(80%)
+  let head = th.tint(accent, 85%)
+  let body = th.grey(238)
+  let err = th.tint(th.blunt, 80%)
 
   let field(name, size, fill) = table.cell(fill: fill, align(center)[
-    #name \ #text(size: 0.85em, fill: luma(90))[#size]
+    #name \ #text(size: 0.85em, fill: th.grey(90))[#size]
   ])
 
   let row(label, ..cells) = (
@@ -45,7 +46,7 @@
       field([body size], [4 B], head),
       table.cell(colspan: 2, fill: head, align(
         center,
-      )[unused \ #text(size: 0.85em, fill: luma(90))[4 B]]),
+      )[unused \ #text(size: 0.85em, fill: th.grey(90))[4 B]]),
       field([return values], [typed per command], body),
       field([error status], [4 B], err),
       field([description \ size], [4 B], err),

@@ -1,5 +1,6 @@
 #import "/report.typ": flex-caption
 #import "/lib.typ": todo
+#import "/theme.typ" as th
 #import "fig_effort.typ": effort-figure
 #import "fig_readings.typ": readings-figure
 
@@ -79,7 +80,8 @@ Then a single pulse brought the tip inside it, and all three confirmation readin
 ) <fig:effort>
 
 #figure(
-  image("fig_run.pdf", width: 85%),
+  // The dark output has its own copy; figures/report-export.typ writes both.
+  image(th.variant("fig_run.pdf"), width: 85%),
   caption: flex-caption(
     [
       Run of 25 September 2026, with $plus.minus 8$ V pulses whose polarity reverses on every third pulse, and a sharp window from $-1.5$ to $0$ Hz.

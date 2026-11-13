@@ -2,11 +2,12 @@
 // Add parsing routines for your own data format here.
 
 #import calc: pow, sqrt
+#import "/theme.typ" as th
 
 // An open question, missing source or unwritten part of the draft. Purple,
 // since the figures use the blunt-red for their own states. Grep for `todo[`
 // before handing the report in.
-#let todo(body) = text(fill: rgb("8E24AA"), weight: "semibold")[[TODO: #body]]
+#let todo(body) = text(fill: th.todo-color, weight: "semibold")[[TODO: #body]]
 
 #let mean(xs) = xs.sum() / xs.len()
 
@@ -46,7 +47,7 @@
 // Compile with `--input review=off` to drop the highlight, the markers and the
 // page, which leaves the passage as plain text.
 #let review-on = sys.inputs.at("review", default: "on") != "off"
-#let note-color = rgb("1E88E5")
+#let note-color = th.note-color
 
 // A fixed size, so it still lays out inside the zero-width box of `note`.
 #let note-badge(n) = box(
@@ -54,7 +55,7 @@
   height: 1.1em,
   fill: note-color,
   radius: 2pt,
-  align(center + horizon, text(size: 7pt, fill: white, weight: "bold", str(n))),
+  align(center + horizon, text(size: 7pt, fill: th.on-fill, weight: "bold", str(n))),
 )
 
 #let note(target, comment) = if not review-on { target } else {
@@ -97,11 +98,11 @@
           column-gutter: 0.4em,
           [#note-badge(i + 1)#label("review-entry-" + str(i + 1))],
           [
-            #text(size: 9pt, fill: luma(90))[#emph(m.value.target)]
+            #text(size: 9pt, fill: th.grey(90))[#emph(m.value.target)]
             #linebreak()
             #m.value.comment
             #linebreak()
-            #text(size: 9pt, fill: luma(90))[#link(loc)[p. #page-no]#if where-in != none [ · #where-in]]
+            #text(size: 9pt, fill: th.grey(90))[#link(loc)[p. #page-no]#if where-in != none [ · #where-in]]
           ],
         ))
       }

@@ -16,6 +16,14 @@ Or watch mode for live preview:
 typst watch main.typ main.pdf
 ```
 
+A dark version for reading on screen, on the base16 palette in `theme.typ`:
+
+```sh
+typst compile --input theme=dark main.typ main-dark.pdf
+```
+
+The printed report is the default and does not change with the palette.
+
 Requires Typst 0.15 or later and the `New Computer Modern` font. Packages
 (`lilaq`, `unify`) are fetched on first compile.
 
@@ -28,6 +36,8 @@ separately and never collide.
 ```
 main.typ                            template options + #include list
 report.typ                          title page, page style, LaTeX metrics
+theme.typ                           colours: light for print, base16 for dark
+plot.typ                            the dark restyling of lilaq plots
 lib.typ                             mean, standard deviation, linear fit, todo,
                                     code references (data/code_refs.json)
 src/00_intro/                       declaration, abstract, introduction

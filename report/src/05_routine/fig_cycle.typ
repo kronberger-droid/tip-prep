@@ -1,3 +1,4 @@
+#import "/theme.typ" as th
 // One cycle of the tip-preparation loop as swimlanes, not to scale. Phase
 // order and states mirror rusty-tip src/tip_prep/runner.rs (main loop:
 // pulse, post-pulse settle, reposition, read_stable) and
@@ -15,13 +16,13 @@
   [#if approx { sym.tilde.op }#calc.round(s, digits: digits) s]
 }
 
-#let cycle-timeline(accent: rgb("0267A5")) = layout(size => {
+#let cycle-timeline(accent: th.accent) = layout(size => {
   set text(size: 7pt)
   set par(justify: false)
 
-  let on-fill = accent.lighten(70%)
-  let off-fill = luma(235)
-  let warn-fill = rgb("B0533A").lighten(70%)
+  let on-fill = th.tint(accent, 70%)
+  let off-fill = th.grey(235)
+  let warn-fill = th.tint(th.blunt, 70%)
 
   // (name, duration label, relative width)
   let phases = (
@@ -75,7 +76,7 @@
       width: x(b, 1) - x(a, 0),
       height: lane-h(k),
       fill: fill,
-      stroke: 0.4pt + white,
+      stroke: 0.4pt + th.paper,
       align(center + horizon, body),
     ),
   )
@@ -88,12 +89,12 @@
         height: head-h,
         align(center + bottom, text(
           size: 6pt,
-        )[*#p.at(0)* \ #text(fill: luma(90), p.at(1))]),
+        )[*#p.at(0)* \ #text(fill: th.grey(90), p.at(1))]),
       ))
       place(line(
         start: (x(i, 0), head-h),
         end: (x(i, 0), height),
-        stroke: (paint: luma(180), thickness: 0.4pt, dash: "dashed"),
+        stroke: (paint: th.grey(180), thickness: 0.4pt, dash: "dashed"),
       ))
     }
 
@@ -165,7 +166,7 @@
       dy: lane-y(1) + lane-h(1) * (1 - home) - 8pt,
       box(width: x(5, 1) - x(5, 0.4), align(center, text(
         size: 6pt,
-        fill: luma(90),
+        fill: th.grey(90),
       )[50 nm])),
     )
 

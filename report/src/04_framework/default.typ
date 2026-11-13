@@ -1,5 +1,6 @@
 #import "/report.typ": flex-caption
 #import "/lib.typ": code, todo
+#import "/theme.typ" as th
 #import "fig_architecture.typ": architecture-diagram
 
 // Describes the rusty-tip 0.5 development line as main plus the
@@ -131,10 +132,11 @@ A terminal reader lists, inspects and exports archived logs.
 // run_view.rs:1-6 (the fold, tested equal live and replayed at :381),
 // app.rs:104 (History per tool); bin/tip-prep, bin/rt-log.
 
-// Screenshot of 2026-10-27, light theme, replaying
-// tip_prep_20261006_133900.jsonl (completed, 119 pulses, 26 min).
+// Screenshots replaying tip_prep_20261006_133900.jsonl (completed, 119
+// pulses, 26 min): the light one of 2026-10-27, the dark one of 2026-11-13
+// from rusty-tip main (b6f6c2b) in a headless sway at the same 2545x1396.
 #figure(
-  image("fig_workbench.png", width: 100%),
+  image(th.variant("fig_workbench.png"), width: 100%),
   caption: flex-caption(
     [
       The tip-preparation tool of the workbench replaying a logged run of 6 October 2026: apex state, frequency shift after each cycle against the sharp window, the pulse voltages, and the run's last logged events.

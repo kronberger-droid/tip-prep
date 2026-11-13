@@ -2,11 +2,14 @@
 // Data: data/readings.json, written by scripts/readings.nu. Colours follow
 // figures/lib.typ: blue for readings, orange for the second series, the
 // sharp window in transparent green.
+#import "/theme.typ" as th
+#import "/plot.typ": plot-style
 #import "@preview/lilaq:0.6.0" as lq
 
 #let readings = json("/data/readings.json")
 
 #let readings-figure(width: 12cm, height: 6cm) = {
+  show: plot-style
   let (c-read, c-fail, c-inside, ..) = lq.color.map.okabe-ito
   let w = readings.bin_width_hz
   let xs = readings.bin_starts_hz.map(s => s + w / 2)

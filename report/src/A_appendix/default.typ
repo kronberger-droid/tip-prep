@@ -1,3 +1,4 @@
+#import "/theme.typ" as th
 #import "/report.typ": flex-caption
 #import "/lib.typ": code-refs, code-url, todo
 
@@ -73,7 +74,7 @@ The code reference gives, for each part of the framework this report names, the 
 // Connection, logging and console settings are left out: they do not change
 // what a run does to the tip.
 // The shaded row that opens a group in the tables of this appendix.
-#let group-row(body, cols: 3) = table.cell(colspan: cols, fill: luma(240), body)
+#let group-row(body, cols: 3) = table.cell(colspan: cols, fill: th.grey(240), body)
 #let section(name) = group-row(raw("[" + name + "]"))
 
 #show figure.where(kind: table): set block(breakable: true)
@@ -213,7 +214,7 @@ Each fragment is headed by its file and lines, which link to the repository; in 
 // scripts/code_refs.nu.
 #let fragment-head(f) = {
   let lines = str(f.first_line) + "-" + str(f.last_line)
-  text(size: 7.5pt, fill: luma(90), {
+  text(size: 7.5pt, fill: th.grey(90), {
     link(code-url(f.file, f.first_line, last: f.last_line), raw(f.file + ":" + lines))
     if f.abridged [, abridged]
   })
@@ -221,7 +222,7 @@ Each fragment is headed by its file and lines, which link to the repository; in 
 #let fragment-block(f) = block(
   width: 100%,
   breakable: false,
-  stroke: 0.5pt + luma(160),
+  stroke: 0.5pt + th.grey(160),
   inset: 6pt,
   align(left, {
     fragment-head(f)

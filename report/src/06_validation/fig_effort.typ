@@ -1,6 +1,8 @@
 // Pulses and duration of each pulsed completed run, one dot per run. Data:
 // data/run_effort.json, written by scripts/run_effort.nu. Runs completed
 // without a pulse cannot sit on a log axis and are counted in the caption.
+#import "/theme.typ" as th
+#import "/plot.typ": plot-style
 #import "@preview/lilaq:0.6.0" as lq
 
 #let effort = json("/data/run_effort.json")
@@ -9,12 +11,13 @@
 #let shown = "tip_prep_20260925_104637.jsonl"
 
 #let effort-figure(width: 10cm, height: 6cm) = {
+  show: plot-style
   let (c-run, ..) = lq.color.map.okabe-ito
   let pulsed = effort.runs.filter(r => r.pulses > 0)
   let xs = pulsed.map(r => r.pulses)
   let ys = pulsed.map(r => r.minutes)
   let ring = pulsed.find(r => r.log == shown)
-  let guide = (paint: luma(150), thickness: 0.5pt, dash: "dashed")
+  let guide = (paint: th.grey(150), thickness: 0.5pt, dash: "dashed")
 
   set text(size: 8pt)
   lq.diagram(
@@ -35,8 +38,8 @@
       (ring.pulses,),
       (ring.minutes,),
       size: 18pt,
-      color: black.transparentize(100%),
-      stroke: 0.8pt + black,
+      color: th.ink.transparentize(100%),
+      stroke: 0.8pt + th.ink,
     ),
     lq.place(
       ring.pulses * 1.3,
@@ -45,10 +48,10 @@
       [@fig:run],
     ),
     lq.place(effort.median_pulses * 1.08, 50, align: left + top, text(
-      fill: luma(90),
+      fill: th.grey(90),
     )[median]),
     lq.place(300, effort.median_minutes * 1.08, align: right + bottom, text(
-      fill: luma(90),
+      fill: th.grey(90),
     )[median]),
   )
 }

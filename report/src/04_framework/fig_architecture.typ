@@ -4,18 +4,19 @@
 // and backends implement the interface. Ported from
 // poster/figures/architecture.typ, which still shows the machine-state model
 // removed in f76a991.
+#import "/theme.typ" as th
 #import "@preview/fletcher:0.5.8" as fletcher: diagram, edge, node
 #import fletcher.shapes: rect
 
-#let architecture-diagram(accent: rgb("0267A5"), scale: 1.0) = {
+#let architecture-diagram(accent: th.accent, scale: 1.0) = {
   set text(size: 8pt * scale)
   set par(justify: false)
 
   // Two fills: the software, and the hardware it drives. Dashed and grey is
   // what tip preparation does not use.
-  let soft-fill = accent.lighten(85%)
-  let hard-fill = accent.lighten(65%)
-  let unused-fill = luma(242)
+  let soft-fill = th.tint(accent, 85%)
+  let hard-fill = th.tint(accent, 65%)
+  let unused-fill = th.grey(242)
 
   let nd(pos, name, body, fill: soft-fill, w: 25mm, dashed: false) = node(
     pos,
@@ -26,7 +27,7 @@
     width: w * scale,
     fill: fill,
     stroke: if dashed {
-      (paint: luma(140), thickness: 0.7pt, dash: "dashed")
+      (paint: th.grey(140), thickness: 0.7pt, dash: "dashed")
     } else {
       0.7pt + accent
     },
@@ -34,12 +35,12 @@
   )
 
   let tag = body => text(size: 0.85em, body)
-  let lbl = (label-fill: white, label-size: 0.85em)
+  let lbl = (label-fill: th.paper, label-size: 0.85em)
 
   diagram(
     spacing: (5mm * scale, 8mm * scale),
     node-stroke: 0.7pt + accent,
-    edge-stroke: 0.7pt + accent.darken(10%),
+    edge-stroke: 0.7pt + th.shade(accent, 10%),
 
     nd((0, 0), <session>, [*Session* \ #tag[one connection, \ many jobs]]),
     nd((1, 0), <harness>, [*Harness* \ #tag[setup, cleanup, \ exit policy]]),
@@ -92,7 +93,7 @@
     edge(<routine>, <events>, "--|>"),
     edge(<handles>, <events>, "--|>"),
     edge(<routine>, <analyzers>, "<|-|>", stroke: (
-      paint: luma(140),
+      paint: th.grey(140),
       dash: "dashed",
     )),
   )

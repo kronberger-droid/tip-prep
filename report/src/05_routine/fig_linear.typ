@@ -3,6 +3,8 @@
 // Stepping arm of `update_voltage`. Example values: the linear clamp and
 // voltages most linear runs used; stepping on the same 4 to 8 V, illustrative
 // since no run used it.
+#import "/theme.typ" as th
+#import "/plot.typ": plot-style
 #import "@preview/lilaq:0.6.0" as lq
 
 #let clamp = (-5.0, -1.5)
@@ -69,8 +71,9 @@
 }
 
 #let strategies-figure(width: 5.6cm, height: 4.2cm) = {
+  show: plot-style
   let (c-read, c-pulse, c-inside, ..) = lq.color.map.okabe-ito
-  let guide = (paint: luma(150), thickness: 0.5pt, dash: "dashed")
+  let guide = (paint: th.grey(150), thickness: 0.5pt, dash: "dashed")
   set text(size: 8pt)
 
   // (a) Inside the window the tip counts as sharp and is not pulsed, so the
@@ -110,7 +113,7 @@
     lq.place(-0.75, 6, align: center + horizon, text(size: 7pt)[sharp]),
     lq.place(-5.15, 3.6, align: right + horizon, text(
       size: 7pt,
-      fill: luma(90),
+      fill: th.grey(90),
     )[clamp]),
   )
 

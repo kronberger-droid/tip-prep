@@ -1,5 +1,6 @@
 # Compiled output
 *.pdf
+*.html
 # ...but figures live next to the chapter that uses them, as in the thesis
 !assets/*.pdf
 !src/**/*.pdf

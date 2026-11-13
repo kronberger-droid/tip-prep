@@ -1,5 +1,5 @@
 #import "/report.typ": flex-caption
-#import "/lib.typ": code, todo
+#import "/lib.typ": code, drawn, todo
 #import "/theme.typ" as th
 #import "fig_architecture.typ": architecture-diagram
 
@@ -22,7 +22,7 @@ Separating the two is meant to make a routine reproducible, shareable, extendabl
 @tab:code lists where each of them is declared in the code.
 
 #figure(
-  architecture-diagram(),
+  drawn(architecture-diagram()),
   caption: flex-caption(
     [
       Structure of the framework.

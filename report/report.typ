@@ -54,6 +54,45 @@
   subsection: (above: 21.3pt, below: 13.1pt),
 )
 
+// The stylesheet of the HTML export, in the colours of theme.typ, so
+// `--input theme=dark` gives a dark page as it gives a dark PDF. It styles
+// the title header below and the `.fragment` blocks of the code listings.
+#let html-style() = {
+  let c(x) = x.to-hex()
+  html.elem("style", "
+    :root { color-scheme: " + if th.dark { "dark" } else { "light" } + "; }
+    body { background: " + c(th.paper) + "; color: " + c(th.ink) + ";
+      font-family: 'New Computer Modern', 'Latin Modern Roman', Georgia, serif;
+      font-size: 1.05rem; line-height: 1.5; max-width: 46rem; margin: 2rem auto; padding: 0 1.2rem; }
+    h2 { margin-top: 2.6rem; border-bottom: 1px solid " + c(th.grey(200)) + "; padding-bottom: .2rem; }
+    h3, h4 { margin-top: 1.8rem; }
+    a { color: " + c(th.accent) + "; text-decoration: none; } a:hover { text-decoration: underline; }
+    figure { margin: 1.8rem 0; text-align: center; overflow-x: auto; }
+    figure svg, figure img { max-width: 100%; height: auto; }
+    figcaption { font-size: .88rem; text-align: left; margin-top: .6rem; color: " + c(th.grey(60)) + "; }
+    table { border-collapse: collapse; margin: 0 auto; font-size: .88rem; text-align: left; }
+    td, th { border: 1px solid " + c(th.grey(150)) + "; padding: .25rem .55rem; vertical-align: top; }
+    code { font-family: 'DejaVu Sans Mono', ui-monospace, monospace; font-size: .86em; }
+    pre { text-align: left; overflow-x: auto; margin: .2rem 0 0; font-size: .8rem; line-height: 1.35; }
+    .fragment { border: 1px solid " + c(th.grey(160)) + "; padding: .5rem .7rem; margin: .4rem 0; text-align: left; }
+    .fragment-head { font-size: .78rem; color: " + c(th.grey(90)) + "; }
+    nav ol, nav ul { list-style: none; padding-left: 1.2rem; }
+    header.title { text-align: center; margin: 1rem 0 3rem; padding-bottom: 1.6rem; border-bottom: 2px solid " + c(th.ink) + "; }
+    header.title img { display: block; width: 15rem; max-width: 60%; height: auto; margin: 0 0 2.5rem; border-radius: 3px; }
+    header.title .name, header.title .matr { display: inline-block; }
+    header.title .name + .name::before { content: ', '; white-space: pre; }
+    header.title .matr { margin-left: .4em; }
+    header.title .matr::before { content: '('; } header.title .matr::after { content: ')'; }
+    header.title .doctype { font-size: 1.1rem; letter-spacing: .08em; text-transform: uppercase; margin: 0; color: " + c(th.grey(90)) + "; }
+    header.title h1 { font-size: 2.1rem; line-height: 1.2; margin: .5rem 0 1rem; }
+    header.title .institution { font-variant: small-caps; font-size: 1.15rem; margin: 0 0 1.6rem; }
+    header.title .people { margin: .25rem 0; }
+    header.title .label { color: " + c(th.grey(90)) + "; margin-right: .6em; }
+    header.title .label::after { content: ':'; }
+    header.title .date { margin: 1.4rem 0 0; color: " + c(th.grey(90)) + "; }
+  ")
+}
+
 #let report(
   // --- Inside the rules ---------------------------------------------------
   // `document-type` is the large bold line, `title` the smaller line below it.
@@ -146,7 +185,9 @@
   // \titleformat: \large\bfseries for sections, \normalsize\bfseries for
   // subsections, number and title separated by 0.5em. Spacing is the article
   // class default that titlesec leaves alone, in ex at 11pt.
-  show heading: it => {
+  show heading: it => context {
+    // HTML has headings of its own; the print styling below is for paper.
+    if target() == "html" { return it }
     let numbered = it.level <= 3 and it.numbering != none
     if it.level == 1 {
       counter(math.equation).update(0)
@@ -176,7 +217,11 @@
   // One block per entry, or consecutive entries join into a single paragraph
   // and wrap into each other. The indent is the entry's own, so the body's
   // \parindent has to be switched off here.
-  let toc-entry(it, indent, numwidth, dots: true, prefix: auto) = block(
+  let toc-entry(it, indent, numwidth, dots: true, prefix: auto) = context if target() == "html" {
+    // No leaders or page numbers in HTML: the number, a space and the title.
+    let p = if prefix == auto { it.prefix() } else { prefix }
+    link(it.element.location())[#if p != none [#p~]#it.body()]
+  } else { block(
     width: 100%,
     spacing: leading-for(sz.normal, baselineskip.normal),
     {
@@ -199,7 +244,7 @@
         box(width: pnumwidth, align(right, it.page()))
       })
     },
-  )
+  ) }
 
   show outline.entry.where(level: 1): it => {
     if it.element.func() == figure {
@@ -233,8 +278,9 @@
   show bibliography: set text(size: sz.small)
 
   // \captionsetup{font=footnotesize, labelfont=bf, labelsep=period}
-  set figure.caption(separator: [.#h(0.5em)])
-  show figure.caption: it => block(width: 100%)[
+  // A plain space in HTML, where `h` has no meaning.
+  set figure.caption(separator: context if target() == "html" [. ] else [.#h(0.5em)])
+  show figure.caption: it => context if target() == "html" { it } else { block(width: 100%)[
     #set text(size: sz.footnotesize)
     #set par(
       justify: true,
@@ -245,7 +291,7 @@
     #text(weight: "bold")[
       #it.supplement #context it.counter.display(it.numbering)#it.separator
     ]#it.body
-  ]
+  ] }
 
   // A bold name per line, as used for both the advisor and author lists.
   let name-list(names) = names
@@ -269,7 +315,7 @@
 
   // A bare code block, not a `block()` element: set rules are scoped to it,
   // while the content still joins into the page flow so `v(1fr)` can expand.
-  {
+  let print-title = {
     // Every gap on this page is an explicit `v()`, so the automatic spacing
     // between paragraphs would otherwise be added on top of each one.
     set par(spacing: 0pt, leading: leading-for(sz.normal, baselineskip.normal))
@@ -371,6 +417,39 @@
     // signature-and-date group rises instead of the space being dropped.
     v(12pt)
   }
+
+  // The same facts as a page header for the HTML export, where the spacing
+  // and rules of the printed title page mean nothing. Styled by the
+  // stylesheet in lib.typ (`header.title`).
+  let html-title() = {
+    let line-of(label, names) = html.elem("div", attrs: (class: "people"), {
+      html.elem("span", attrs: (class: "label"), label)
+      names.map(n => html.elem("span", attrs: (class: "name"), n)).join()
+    })
+    html-style()
+    html.elem("header", attrs: (class: "title"), {
+      if logo != none { image(logo) }
+      if document-type != none {
+        html.elem("p", attrs: (class: "doctype"), document-type)
+      }
+      html.elem("h1", title)
+      html.elem("p", attrs: (class: "institution"), {
+        (institution, faculty, institute).filter(x => x != none).join[ · ]
+      })
+      if authors.len() > 0 {
+        line-of(authors-label, authors.map(a => {
+          a
+          if matriculation != none { html.elem("span", attrs: (class: "matr"), matriculation) }
+        }))
+      }
+      if advisors.len() > 0 { line-of(advisors-label, advisors) }
+      html.elem("p", attrs: (class: "date"), if type(date) == datetime {
+        date.display(date-format)
+      } else { date })
+    })
+  }
+
+  context if target() == "html" { html-title() } else { print-title }
 
   // The thesis puts a \blankpage verso after the title page, which is also
   // what keeps the printed page numbers in step with the physical ones: Typst
@@ -527,7 +606,12 @@
   // \vspace*{1cm}, plus the offset \topskip puts before the first line of a
   // page. Measured against the thesis PDF, which puts the title top at 121.8pt.
   v(1cm + 24.6pt)
-  align(center, text(size: sz.LARGE, weight: "bold")[#title])
+  // A real heading in HTML, kept out of the contents as on paper.
+  context if target() == "html" {
+    heading(level: 1, numbering: none, outlined: false)[#title]
+  } else {
+    align(center, text(size: sz.LARGE, weight: "bold")[#title])
+  }
   v(2cm)
 
   if author != none {

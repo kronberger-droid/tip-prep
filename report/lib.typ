@@ -132,3 +132,15 @@
   let entry = hits.first()
   link(code-url(entry.file, entry.line), shown.pos().at(0, default: raw(item)))
 }
+
+// --- HTML export -----------------------------------------------------------
+//
+// `typst compile --features html --format html main.typ main.html` writes the
+// report as one HTML page. Text, tables, math and bitmaps export as they are.
+// What is drawn (diagrams, plots, anything laid out with `grid` or `place`)
+// has no HTML form, so a figure wraps it in `drawn`, which sets it as an
+// inline SVG there and leaves it alone on paper. The width is the print text
+// width of main.typ's one-sided page (21 cm less the 3 cm and 2.5 cm margins).
+#let drawn(body) = context {
+  if target() == "html" { html.frame(block(width: 15.5cm, body)) } else { body }
+}

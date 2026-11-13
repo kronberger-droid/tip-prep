@@ -1,5 +1,5 @@
 #import "/report.typ": flex-caption
-#import "/lib.typ": todo
+#import "/lib.typ": drawn, todo
 #import "fig_frame.typ": frame-diagram
 
 // Describes nanonis-rs 0.5.0 with the protocol fixes of the branch
@@ -39,7 +39,7 @@ Strings are length-prefixed, and an array usually takes its length from the argu
 A body can therefore be decoded only with the command's signature.
 
 #figure(
-  frame-diagram(),
+  drawn(frame-diagram()),
   kind: image,
   caption: flex-caption(
     [

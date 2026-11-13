@@ -24,6 +24,16 @@ typst compile --input theme=dark main.typ main-dark.pdf
 
 The printed report is the default and does not change with the palette.
 
+An HTML page, through Typst's experimental HTML export (add
+`--input theme=dark` for the dark one):
+
+```sh
+typst compile --features html --format html main.typ main.html
+```
+
+Text, tables, math and listings export as HTML; a figure that is drawn goes
+in as an inline SVG, which is what `drawn(..)` around its body is for.
+
 Requires Typst 0.15 or later and the `New Computer Modern` font. Packages
 (`lilaq`, `unify`) are fetched on first compile.
 

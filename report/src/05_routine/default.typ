@@ -1,5 +1,5 @@
 #import "/report.typ": flex-caption
-#import "/lib.typ": todo
+#import "/lib.typ": drawn, todo
 #import "fig_state-machine.typ": tip-prep-fsm
 #import "fig_cycle.typ": cycle-timeline
 #import "fig_linear.typ": strategies-figure
@@ -25,7 +25,7 @@ It either passes as stable, which ends the run, or returns to blunt.
 A run starts with one reading after the first approach, so an already sharp tip goes straight to these checks.
 
 #figure(
-  tip-prep-fsm(),
+  drawn(tip-prep-fsm()),
   caption: flex-caption(
     [
       State machine of the routine.
@@ -42,7 +42,7 @@ The tip leaves the pulse site as fast as possible, since further interaction wit
 The coarse steps leave the material of the pulse behind while adding little piezo creep to the next landing.
 
 #figure(
-  cycle-timeline(),
+  drawn(cycle-timeline()),
   caption: flex-caption(
     [
       One cycle of the routine, from the pulse to the $Delta f$ reading, with the configured pulse and settling time and otherwise the median durations of the counted runs (@sec:hardware-results); $tilde.op$ marks a phase whose length a gate decides.
@@ -74,7 +74,7 @@ A large pulse reshapes the apex unpredictably and often strongly, while a small 
   A tip close to the window thus receives only gentle pulses.
 
 #figure(
-  strategies-figure(),
+  drawn(strategies-figure()),
   caption: flex-caption(
     [
       Pulse voltage of two strategies, both between $4$ and $8$ V.

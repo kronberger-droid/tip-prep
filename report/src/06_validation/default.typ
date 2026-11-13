@@ -1,5 +1,5 @@
 #import "/report.typ": flex-caption
-#import "/lib.typ": todo
+#import "/lib.typ": drawn, todo
 #import "/theme.typ" as th
 #import "fig_effort.typ": effort-figure
 #import "fig_readings.typ": readings-figure
@@ -29,7 +29,7 @@ The three images were taken at different bias and current.
 // Reading of the images: Martin, 2026-10-27.
 
 #figure(
-  {
+  drawn({
     set text(size: 10pt)
     grid(
       columns: 3,
@@ -43,7 +43,7 @@ The three images were taken at different bias and current.
       [(b) $Delta f = -1.0$ Hz],
       [(c) $Delta f = -0.6$ Hz],
     )
-  },
+  }),
   caption: flex-caption(
     [
       Constant-current STM images of partially oxidized Cu(110), $30 times 30$ nm, taken with three apexes on three separate days.
@@ -68,7 +68,7 @@ For 46 pulses, $Delta f$ scattered between a few hertz and the edge of the range
 Then a single pulse brought the tip inside it, and all three confirmation readings held.
 
 #figure(
-  effort-figure(),
+  drawn(effort-figure()),
   caption: flex-caption(
     [
       Pulses and duration of the 41 completed runs that needed a pulse, one dot per run, on logarithmic axes; dashed lines mark the medians.
@@ -81,7 +81,7 @@ Then a single pulse brought the tip inside it, and all three confirmation readin
 
 #figure(
   // The dark output has its own copy; figures/report-export.typ writes both.
-  image(th.variant("fig_run.pdf"), width: 85%),
+  drawn(image(th.variant("fig_run.pdf"), width: 85%)),
   caption: flex-caption(
     [
       Run of 25 September 2026, with $plus.minus 8$ V pulses whose polarity reverses on every third pulse, and a sharp window from $-1.5$ to $0$ Hz.
@@ -152,7 +152,7 @@ A further 290 readings failed the measurement gates on every retry and were used
 // stable); 14 from 76.3 to 152.6 Hz (5 stable). 509 stable in all.
 
 #figure(
-  readings-figure(),
+  drawn(readings-figure()),
   caption: flex-caption(
     [
       The 4430 accepted readings of the counted runs in $2$ Hz bins, split into those that passed the noise and drift gates and those that failed them on every retry.

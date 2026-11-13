@@ -237,7 +237,15 @@ Each fragment is headed by its file and lines, which link to the repository; in 
   [#figure(
     kind: raw,
     supplement: [Listing],
-    stack(spacing: 4pt, ..l.fragments.map(fragment-block)),
+    context if target() == "html" {
+      // No stack in HTML: each fragment is a bordered div holding a `pre`.
+      l.fragments.map(f => html.elem("div", attrs: (class: "fragment"), {
+        html.elem("div", attrs: (class: "fragment-head"), fragment-head(f))
+        raw(f.source, lang: "rust", block: true)
+      })).join()
+    } else {
+      stack(spacing: 4pt, ..l.fragments.map(fragment-block))
+    },
     caption: flex-caption(
       [#caption.],
       caption,

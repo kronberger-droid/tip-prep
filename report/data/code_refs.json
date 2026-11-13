@@ -1,7 +1,7 @@
 {
   "repo": "https://github.com/kronberger-droid/rusty-tip",
   "rev": "main",
-  "commit": "b6f6c2bb2ec4c5e87ad43a8c4d64b10faf59166f",
+  "commit": "a24d9587f2ae836e5aee1bc175c53b3487f5c280",
   "items": [
     {
       "group": "Hardware abstraction",
@@ -106,35 +106,35 @@
       "term": "subsystem handle, bias",
       "item": "Rt::bias",
       "file": "src/routine/rt.rs",
-      "line": 55
+      "line": 53
     },
     {
       "group": "Routine harness",
       "term": "subsystem handle, Z-controller",
       "item": "Rt::z",
       "file": "src/routine/rt.rs",
-      "line": 61
+      "line": 59
     },
     {
       "group": "Routine harness",
       "term": "subsystem handle, scan",
       "item": "Rt::scan",
       "file": "src/routine/rt.rs",
-      "line": 79
+      "line": 77
     },
     {
       "group": "Routine harness",
       "term": "cleanup",
       "item": "Rt::guarded",
       "file": "src/routine/rt.rs",
-      "line": 176
+      "line": 174
     },
     {
       "group": "Routine harness",
       "term": "cycle driver",
       "item": "Cycles",
       "file": "src/routine/rt.rs",
-      "line": 271
+      "line": 268
     },
     {
       "group": "Routine harness",
@@ -274,7 +274,7 @@
       "term": "analyzer",
       "item": "Analyzer",
       "file": "src/analyzer/mod.rs",
-      "line": 80
+      "line": 78
     }
   ],
   "listings": [
@@ -297,8 +297,8 @@
       "fragments": [
         {
           "file": "src/routine/rt.rs",
-          "first_line": 54,
-          "last_line": 58,
+          "first_line": 52,
+          "last_line": 56,
           "abridged": false,
           "source": "/// Bias voltage control. Errors if the controller lacks [`Capability::Bias`].\npub fn bias(&mut self) -> Result<Bias<'_, 'a>, SpmError> {\n    self.require(Capability::Bias)?;\n    Ok(Bias { rt: self })\n}"
         },
@@ -318,8 +318,8 @@
         },
         {
           "file": "src/action/mod.rs",
-          "first_line": 63,
-          "last_line": 100,
+          "first_line": 61,
+          "last_line": 98,
           "abridged": false,
           "source": "/// Run `action` in `ctx`: check its capabilities, emit started, execute,\n/// emit completed or failed. The params logged are the action's own fields,\n/// and the depth is the context's, so every execution path writes the same\n/// shape to the log whether a routine or a parent action started it.\npub fn run_action<A: Action + serde::Serialize>(\n    ctx: &mut ActionContext,\n    action: &A,\n) -> Result<ActionOutput> {\n    let name = action.name().to_string();\n    let depth = ctx.depth;\n    let params = serde_json::to_value(action).unwrap_or(serde_json::Value::Null);\n    let start = Instant::now();\n    ctx.events.emit(Event::action_started(&name, params, depth));\n    let result = match check_capabilities(action, ctx.controller) {\n        Ok(()) => action.execute(ctx),\n        Err(e) => Err(e),\n    };\n    match result {\n        Ok(output) => {\n            ctx.events.emit(Event::action_completed(\n                &name,\n                &output,\n                depth,\n                start.elapsed(),\n            ));\n            Ok(output)\n        }\n        Err(e) => {\n            ctx.events.emit(Event::action_failed(\n                &name,\n                &e.to_string(),\n                depth,\n                start.elapsed(),\n            ));\n            Err(e)\n        }\n    }\n}"
         }

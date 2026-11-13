@@ -5,8 +5,8 @@
 
 // Describes the rusty-tip 0.5 development line as main plus the
 // feat/frame-classifier stack (PRs #12 to #17), written as if that stack
-// were rebased onto main. The removal of `DataStore` (8752ef5) and
-// `src/classifier/` exist only on that branch so far. Names set with
+// were rebased onto main. `src/classifier/` exists only on that branch so
+// far; the `DataStore` went from main in 518148b (#67). Names set with
 // `#code(..)` link to the revision pinned in data/code_refs.json and are
 // listed in @tab:code.
 // Sources: src/routine/mod.rs, src/routine/rt.rs, src/session.rs,
@@ -50,7 +50,7 @@ The question the model answered remains: a routine's author now answers it in th
 // against it: rusty-tip src/machine_state.rs before its deletion in f76a991.
 
 Measurements went into a shared store as JSON under string keys, which made every consumer a parser and every schema change a silent breakage.
-Once grabbed scan frames, the last thing written to it, became a typed value, the store had no job left.
+Once routines handed results on as return values, nothing read it any more, and the store had no job left.
 
 The resulting rule is that a configuration file holds a run's parameters, not its control flow.
 The reproducible artifact this report's abstract promises is then twofold: the run's log, which embeds its configuration (@sec:events), and the routine itself, which is written against the controller interface and not against one instrument (@sec:controller-interface).

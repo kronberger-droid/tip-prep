@@ -28,7 +28,8 @@ separately and never collide.
 ```
 main.typ                            template options + #include list
 report.typ                          title page, page style, LaTeX metrics
-lib.typ                             mean, standard deviation, linear fit, todo
+lib.typ                             mean, standard deviation, linear fit, todo,
+                                    code references (data/code_refs.json)
 src/00_intro/                       declaration, abstract, introduction
 src/02_foundations/                 one directory per chapter, each with a
 src/03_instrument-interface/        default.typ; split a long chapter across

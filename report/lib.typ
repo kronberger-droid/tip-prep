@@ -108,3 +108,26 @@
     }
   }
 }
+
+// --- Code references ------------------------------------------------------
+//
+// `data/code_refs.json` holds where each code item the report names is
+// declared in rusty-tip at one pinned revision (`scripts/code_refs.nu` writes
+// it). `#code("Rt")` sets the name in raw text and links it to that line;
+// `#code("Rt::bias")[`rt.bias()`]` links other wording to the same place. An
+// item the file does not list fails the build, as a dangling label does. The
+// table in the appendix (`tab:code`) is built from the same file.
+#let code-refs = json("/data/code_refs.json")
+
+// The permalink of a line, or of the lines up to `last`.
+#let code-url(file, line, last: none) = (
+  code-refs.repo + "/blob/" + code-refs.commit + "/" + file + "#L" + str(line)
+    + if last != none { "-L" + str(last) } else { "" }
+)
+
+#let code(item, ..shown) = {
+  let hits = code-refs.items.filter(e => e.item == item)
+  assert(hits.len() == 1, message: "no code reference for `" + item + "`; see scripts/code_refs.nu")
+  let entry = hits.first()
+  link(code-url(entry.file, entry.line), shown.pos().at(0, default: raw(item)))
+}

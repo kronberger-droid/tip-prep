@@ -37,7 +37,7 @@ this table is the short form to edit against. The reader-facing glossary is
 | protocol header + body | message; "request and response messages" | frame (in chapter 3 and its figure caption) |
 | one sample set on the data-logging port | record | frame |
 | one item in a run's log | log entry | record |
-| a grabbed scan image | frame (`Frame`) | |
+| a grabbed scan image | frame | |
 | continuous samples on the logging port | data stream | data logging channel; bare "stream" at the first mention in a section |
 | the publish/subscribe mechanism | event bus | event stream |
 | the file written for one run | the log, the run's log | event stream |

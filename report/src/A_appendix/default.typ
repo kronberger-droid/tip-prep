@@ -1,10 +1,11 @@
 #import "/report.typ": flex-caption
-#import "/lib.typ": todo
+#import "/lib.typ": code-refs, code-url, todo
 
 = Reference tables <apx:reference>
 
-The three tables of this appendix are collected here because they are consulted, not read in sequence.
+The four tables of this appendix are collected here because they are consulted, not read in sequence.
 The configuration table lists every field that shapes a run, with its default, so that a run in @sec:validation can be reproduced from the configuration its log records.
+The code reference gives, for each part of the framework this report names, the file and line that declare it at one fixed revision of rusty-tip, and is followed by listings of selected code.
 
 == Data types of the message format <apx:data-types>
 
@@ -71,9 +72,9 @@ The configuration table lists every field that shapes a run, with its default, s
 // PulseMethod) and src/action/z_controller.rs (DEFAULT_APPROACH_TIMEOUT_MS).
 // Connection, logging and console settings are left out: they do not change
 // what a run does to the tip.
-#let section(name) = table.cell(colspan: 3, fill: luma(240), raw(
-  "[" + name + "]",
-))
+// The shaded row that opens a group in the tables of this appendix.
+#let group-row(body, cols: 3) = table.cell(colspan: cols, fill: luma(240), body)
+#let section(name) = group-row(raw("[" + name + "]"))
 
 #show figure.where(kind: table): set block(breakable: true)
 #figure(
@@ -169,6 +170,80 @@ The configuration table lists every field that shapes a run, with its default, s
   ),
 ) <tab:config>
 
+== Code reference <apx:code>
+
+// Generated: scripts/code_refs.nu resolves every line at the pinned revision
+// and writes data/code_refs.json, which `code()` in lib.typ reads as well.
+#let code-rows = {
+  let rows = ()
+  let group = none
+  for entry in code-refs.items {
+    if entry.group != group {
+      group = entry.group
+      rows.push(group-row(group))
+    }
+    rows.push([#entry.term])
+    rows.push(raw(entry.item))
+    rows.push(link(code-url(entry.file, entry.line), raw(entry.file + ":" + str(entry.line))))
+  }
+  rows
+}
+
+#figure(
+  table(
+    columns: (1fr, auto, auto),
+    align: (left, left, left),
+    table.header[Term in this report][Item][File and line],
+    ..code-rows,
+  ),
+  caption: flex-caption(
+    [
+      Where the parts of the framework and of the routine are declared in rusty-tip, on #raw(code-refs.rev) at commit #raw(code-refs.commit.slice(0, 7)).
+      Each location links to that line in the repository at #link(code-refs.repo).
+    ],
+    [Code reference],
+  ),
+) <tab:code>
+
+#let lst-ref(l) = ref(label("lst:" + l.label), supplement: none)
+Listings #lst-ref(code-refs.listings.first()) to #lst-ref(code-refs.listings.last()) print code from that commit, chosen to show how what chapters @sec:framework[] and @sec:routine[] describe is modelled, not to document the library.
+Each fragment is headed by its file and lines, which link to the repository; in an abridged one a `// ...` line stands for omitted lines, logging in the cycle and the other operations in the interface.
+
+// Which code is printed, and what is cut from it, is the LISTINGS list in
+// scripts/code_refs.nu.
+#let fragment-head(f) = {
+  let lines = str(f.first_line) + "-" + str(f.last_line)
+  text(size: 7.5pt, fill: luma(90), {
+    link(code-url(f.file, f.first_line, last: f.last_line), raw(f.file + ":" + lines))
+    if f.abridged [, abridged]
+  })
+}
+#let fragment-block(f) = block(
+  width: 100%,
+  breakable: false,
+  stroke: 0.5pt + luma(160),
+  inset: 6pt,
+  align(left, {
+    fragment-head(f)
+    v(-0.3em)
+    set par(leading: 0.45em)
+    text(size: 7.5pt, raw(f.source, lang: "rust", block: true))
+  }),
+)
+#show figure.where(kind: raw): set block(breakable: true)
+#for l in code-refs.listings {
+  let caption = eval(l.caption, mode: "markup")
+  [#figure(
+    kind: raw,
+    supplement: [Listing],
+    stack(spacing: 4pt, ..l.fragments.map(fragment-block)),
+    caption: flex-caption(
+      [#caption.],
+      caption,
+    ),
+  ) #label("lst:" + l.label)]
+}
+
 == Terms and abbreviations <apx:glossary>
 
 #figure(
@@ -181,7 +256,7 @@ The configuration table lists every field that shapes a run, with its default, s
     // binnig1982; the Safe Tip feature and the Z-controller from the Nanonis
     // specification, nanonis-rs docs/tcp-protocol.md (SafeTip.*, ZCtrl.*).
     table.header[Term][Meaning],
-    table.cell(colspan: 2, fill: luma(240))[Instrument and tip],
+    group-row(cols: 2)[Instrument and tip],
     [SPM],
     [scanning probe microscopy: the family of techniques that image a surface by scanning it with a sharp tip at a distance small enough for the two to interact (@sec:foundations)],
     [STM],
@@ -206,7 +281,7 @@ The configuration table lists every field that shapes a run, with its default, s
     [the end of the tip that faces the sample; its foremost atoms carry the short-range part of the tip-sample force, and its geometry and composition determine what the tip resolves (@sec:apex)],
     [blunt, sharp, stable],
     [the three apex states: sharp when $Delta f$ lies inside the sharp window, blunt otherwise, stable when a sharp tip keeps its $Delta f$ through the stability test],
-    table.cell(colspan: 2, fill: luma(240))[Routine],
+    group-row(cols: 2)[Routine],
     [sharp window],
     [configured interval of $Delta f$, bounds included, inside which a tip counts as sharp (@sec:criteria-applied)],
     [bias pulse],
@@ -246,7 +321,7 @@ The configuration table lists every field that shapes a run, with its default, s
     [one execution of the routine; barring an error, it ends in one of four outcomes: completed, cycle budget reached, time budget exhausted, or stopped by the operator (@sec:outcomes)],
     [cycle budget, time budget],
     [limits on the number of cycles and on the duration of a run, either of which can be left unset; an approach is bounded separately by the approach timeout],
-    table.cell(colspan: 2, fill: luma(240))[Framework],
+    group-row(cols: 2)[Framework],
     [routine],
     [the automation code for one task, here tip preparation: a Rust type that implements the `Routine` interface and owns the control flow (@sec:harness)],
     [controller interface],

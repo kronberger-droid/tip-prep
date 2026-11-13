@@ -1,11 +1,13 @@
 #import "/report.typ": flex-caption
-#import "/lib.typ": todo
+#import "/lib.typ": code, todo
 #import "fig_architecture.typ": architecture-diagram
 
 // Describes the rusty-tip 0.5 development line as main plus the
 // feat/frame-classifier stack (PRs #12 to #17), written as if that stack
-// were rebased onto main. Typed `Frame`, the removal of `DataStore`
-// (8752ef5) and `src/classifier/` exist only on that branch so far.
+// were rebased onto main. The removal of `DataStore` (8752ef5) and
+// `src/classifier/` exist only on that branch so far. Names set with
+// `#code(..)` link to the revision pinned in data/code_refs.json and are
+// listed in @tab:code.
 // Sources: src/routine/mod.rs, src/routine/rt.rs, src/session.rs,
 // src/action/mod.rs, src/spm_controller.rs, src/mock_controller.rs,
 // src/event/, src/experiment_log/, docs/experiment-log.md, CHANGELOG.md
@@ -16,6 +18,7 @@
 The framework is the general foundation a routine runs on; the routine itself is the subject of @sec:routine.
 Separating the two is meant to make a routine reproducible, shareable, extendable and portable across instruments; @sec:architecture-eval assesses how far that holds.
 @fig:architecture shows the parts and how a routine reaches the instrument through them.
+@tab:code lists where each of them is declared in the code.
 
 #figure(
   architecture-diagram(),
@@ -46,22 +49,19 @@ The question the model answered remains: a routine's author now answers it in th
 // against it: rusty-tip src/machine_state.rs before its deletion in f76a991.
 
 Measurements went into a shared store as JSON under string keys, which made every consumer a parser and every schema change a silent breakage.
-Once grabbed scan frames, the last thing written to it, became a typed value (@sec:controller-interface), the store had no job left.
+Once grabbed scan frames, the last thing written to it, became a typed value, the store had no job left.
 
 The resulting rule is that a configuration file holds a run's parameters, not its control flow.
 The reproducible artifact this report's abstract promises is then twofold: the run's log, which embeds its configuration (@sec:events), and the routine itself, which is written against the controller interface and not against one instrument (@sec:controller-interface).
 
 == Hardware abstraction <sec:controller-interface>
 
-A routine targets one interface to the instrument, the controller interface `SpmController`, not a TCP protocol.
+A routine targets one interface to the instrument, the controller interface #code("SpmController"), not a TCP protocol.
 Each implementation of the interface, a backend, reports its capabilities, such as bias control, the Z-controller, the coarse motors, scanning, the phase-locked loop (PLL) or a data stream.
-An operation that needs a missing capability fails with an `Unsupported` error before any command reaches the instrument.
+An operation that needs a missing capability fails with an #code("SpmError::Unsupported")[`Unsupported`] error before any command reaches the instrument.
 A routine therefore fails with a clear error on an instrument that cannot run it.
 The Nanonis backend, built on the client of @sec:interface, is the only hardware backend today.
 The interface is where further backends attach.
-
-Results are typed too.
-A grabbed scan image is a `Frame`, not the untyped JSON of @sec:poc-lessons.
 
 A mock backend implements the same interface without an instrument.
 Its frequency shift follows a scriptable model of the tip's response to pulses, and its Z-controller is simulated too.
@@ -71,18 +71,18 @@ Routines are developed and tested against the mock; @sec:mock-results reports wh
 
 == Routine harness <sec:harness>
 
-A routine is a plain Rust struct implementing the `Routine` interface.
-Its `run` method receives a runtime, `Rt`.
+A routine is a plain Rust struct implementing the #code("Routine") interface.
+Its #code("Routine::run")[`run`] method receives a runtime, #code("Rt").
 The runtime absorbs the scaffolding every routine would otherwise reimplement, so the body contains only the measurement logic:
 
 - *Subsystem handles.*
-  `rt.bias()`, `rt.z()`, `rt.scan()` and their siblings check the backend's capabilities when obtained and report every operation through them to the event bus.
+  #code("Rt::bias")[`rt.bias()`], #code("Rt::z")[`rt.z()`], #code("Rt::scan")[`rt.scan()`] and their siblings check the backend's capabilities when obtained and report every operation through them to the event bus.
 - *Cancellation.*
   Waits are interruptible, and a stop request surfaces as the outcome "stopped by the operator", not as an error.
 - *Budgets.*
   A cycle driver turns cycle and time budgets into outcomes instead of hand-written checks.
 - *Cleanup.*
-  `rt.guarded` pairs a body with a cleanup that runs however the body ends, restoring hardware such as a running scan or a changed scan speed.
+  #code("Rt::guarded")[`rt.guarded`] pairs a body with a cleanup that runs however the body ends, restoring hardware such as a running scan or a changed scan speed.
 
 Around the routine, the harness owns the run.
 It prepares the backend and sets what the routine declares it needs (for tip preparation, the Z home position and the safe-tip protection).

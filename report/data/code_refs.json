@@ -1,0 +1,395 @@
+{
+  "repo": "https://github.com/kronberger-droid/rusty-tip",
+  "rev": "main",
+  "commit": "b6f6c2bb2ec4c5e87ad43a8c4d64b10faf59166f",
+  "items": [
+    {
+      "group": "Hardware abstraction",
+      "term": "controller interface",
+      "item": "SpmController",
+      "file": "src/spm_controller.rs",
+      "line": 159
+    },
+    {
+      "group": "Hardware abstraction",
+      "term": "capability",
+      "item": "Capability",
+      "file": "src/spm_controller.rs",
+      "line": 80
+    },
+    {
+      "group": "Hardware abstraction",
+      "term": "error on a missing capability",
+      "item": "SpmError::Unsupported",
+      "file": "src/spm_error.rs",
+      "line": 26
+    },
+    {
+      "group": "Hardware abstraction",
+      "term": "Nanonis backend",
+      "item": "NanonisController",
+      "file": "src/nanonis_controller.rs",
+      "line": 156
+    },
+    {
+      "group": "Hardware abstraction",
+      "term": "mock backend",
+      "item": "MockController",
+      "file": "src/mock_controller.rs",
+      "line": 330
+    },
+    {
+      "group": "Hardware abstraction",
+      "term": "injected fault",
+      "item": "FaultKind",
+      "file": "src/mock_controller.rs",
+      "line": 98
+    },
+    {
+      "group": "Hardware abstraction",
+      "term": "recorded calls",
+      "item": "MockObservations",
+      "file": "src/mock_controller.rs",
+      "line": 136
+    },
+    {
+      "group": "Routine harness",
+      "term": "routine",
+      "item": "Routine",
+      "file": "src/routine/mod.rs",
+      "line": 207
+    },
+    {
+      "group": "Routine harness",
+      "term": "a routine's body",
+      "item": "Routine::run",
+      "file": "src/routine/mod.rs",
+      "line": 216
+    },
+    {
+      "group": "Routine harness",
+      "term": "what a routine declares it needs",
+      "item": "RunSetup",
+      "file": "src/routine/mod.rs",
+      "line": 165
+    },
+    {
+      "group": "Routine harness",
+      "term": "exit policy",
+      "item": "ExitPolicy",
+      "file": "src/routine/mod.rs",
+      "line": 103
+    },
+    {
+      "group": "Routine harness",
+      "term": "outcome",
+      "item": "Outcome",
+      "file": "src/routine/mod.rs",
+      "line": 90
+    },
+    {
+      "group": "Routine harness",
+      "term": "harness",
+      "item": "run_routine",
+      "file": "src/routine/mod.rs",
+      "line": 250
+    },
+    {
+      "group": "Routine harness",
+      "term": "runtime",
+      "item": "Rt",
+      "file": "src/routine/rt.rs",
+      "line": 31
+    },
+    {
+      "group": "Routine harness",
+      "term": "subsystem handle, bias",
+      "item": "Rt::bias",
+      "file": "src/routine/rt.rs",
+      "line": 55
+    },
+    {
+      "group": "Routine harness",
+      "term": "subsystem handle, Z-controller",
+      "item": "Rt::z",
+      "file": "src/routine/rt.rs",
+      "line": 61
+    },
+    {
+      "group": "Routine harness",
+      "term": "subsystem handle, scan",
+      "item": "Rt::scan",
+      "file": "src/routine/rt.rs",
+      "line": 79
+    },
+    {
+      "group": "Routine harness",
+      "term": "cleanup",
+      "item": "Rt::guarded",
+      "file": "src/routine/rt.rs",
+      "line": 176
+    },
+    {
+      "group": "Routine harness",
+      "term": "cycle driver",
+      "item": "Cycles",
+      "file": "src/routine/rt.rs",
+      "line": 271
+    },
+    {
+      "group": "Routine harness",
+      "term": "cancellation",
+      "item": "ShutdownFlag",
+      "file": "src/shutdown.rs",
+      "line": 19
+    },
+    {
+      "group": "Routine harness",
+      "term": "session",
+      "item": "Session",
+      "file": "src/session.rs",
+      "line": 359
+    },
+    {
+      "group": "Routine harness",
+      "term": "job",
+      "item": "Job",
+      "file": "src/session.rs",
+      "line": 326
+    },
+    {
+      "group": "Routine harness",
+      "term": "operating point",
+      "item": "OperatingPoint",
+      "file": "src/operating_point.rs",
+      "line": 122
+    },
+    {
+      "group": "Event system",
+      "term": "event bus",
+      "item": "EventBus",
+      "file": "src/event/mod.rs",
+      "line": 178
+    },
+    {
+      "group": "Event system",
+      "term": "event",
+      "item": "Event",
+      "file": "src/event/mod.rs",
+      "line": 19
+    },
+    {
+      "group": "Event system",
+      "term": "observer",
+      "item": "Observer",
+      "file": "src/event/observer.rs",
+      "line": 13
+    },
+    {
+      "group": "Event system",
+      "term": "observer writing the log",
+      "item": "FileLogger",
+      "file": "src/event/observer.rs",
+      "line": 23
+    },
+    {
+      "group": "Event system",
+      "term": "observer printing to the console",
+      "item": "ConsoleLogger",
+      "file": "src/event/observer.rs",
+      "line": 192
+    },
+    {
+      "group": "Event system",
+      "term": "observer feeding the workbench",
+      "item": "ChannelForwarder",
+      "file": "src/event/observer.rs",
+      "line": 90
+    },
+    {
+      "group": "Event system",
+      "term": "log header",
+      "item": "RunHeader",
+      "file": "src/experiment_log/mod.rs",
+      "line": 98
+    },
+    {
+      "group": "Event system",
+      "term": "schema of an event type",
+      "item": "EventKindSchema",
+      "file": "src/experiment_log/mod.rs",
+      "line": 56
+    },
+    {
+      "group": "Tip preparation",
+      "term": "the routine",
+      "item": "TipPrep",
+      "file": "src/tip_prep/runner.rs",
+      "line": 102
+    },
+    {
+      "group": "Tip preparation",
+      "term": "configuration",
+      "item": "TipPrepConfig",
+      "file": "src/config.rs",
+      "line": 426
+    },
+    {
+      "group": "Tip preparation",
+      "term": "voltage strategies",
+      "item": "PulseState",
+      "file": "src/tip_prep/pulse_state.rs",
+      "line": 6
+    },
+    {
+      "group": "Tip preparation",
+      "term": "cycle event",
+      "item": "CycleEvent",
+      "file": "src/tip_prep/events.rs",
+      "line": 19
+    },
+    {
+      "group": "Tip preparation",
+      "term": "phase change",
+      "item": "PhaseEvent",
+      "file": "src/tip_prep/events.rs",
+      "line": 40
+    },
+    {
+      "group": "Tip preparation",
+      "term": "maximum-voltage pulse",
+      "item": "MaxPulseEvent",
+      "file": "src/tip_prep/events.rs",
+      "line": 70
+    },
+    {
+      "group": "Tip preparation",
+      "term": "configuration change",
+      "item": "ConfigReloadedEvent",
+      "file": "src/tip_prep/events.rs",
+      "line": 82
+    },
+    {
+      "group": "Analyzers",
+      "term": "analyzer",
+      "item": "Analyzer",
+      "file": "src/analyzer/mod.rs",
+      "line": 80
+    }
+  ],
+  "listings": [
+    {
+      "label": "routine",
+      "caption": "The interface a routine implements",
+      "fragments": [
+        {
+          "file": "src/routine/mod.rs",
+          "first_line": 203,
+          "last_line": 230,
+          "abridged": false,
+          "source": "/// An automation routine, runnable via [`run_routine`].\n///\n/// Implementations hold their own configuration and mutable state; all\n/// hardware access goes through the [`Rt`] passed to `run`.\npub trait Routine {\n    /// Short identifier used in logs and events.\n    fn name(&self) -> &str;\n\n    /// Execute the routine to one of its endings.\n    ///\n    /// Return `Err(SpmError::ShutdownRequested)` freely from anywhere inside\n    /// (it is what `rt.settle` and `rt.check_shutdown` produce); the harness\n    /// converts it to `Ok(Outcome::StoppedByUser)`.\n    fn run(&mut self, rt: &mut Rt) -> Result<Outcome, SpmError>;\n\n    /// What the harness sets on the controller before `run`, and restores\n    /// afterwards. The default sets a relative 50 nm Z home and leaves\n    /// safe-tip alone; [`RunSetup::NONE`] touches nothing.\n    fn run_setup(&self) -> RunSetup {\n        RunSetup::default()\n    }\n\n    /// How the harness leaves the tip once `run` returns. The default\n    /// withdraws without a coarse retract.\n    fn exit_policy(&self) -> ExitPolicy {\n        ExitPolicy::default()\n    }\n}"
+        }
+      ]
+    },
+    {
+      "label": "operation",
+      "caption": "The path of one operation, here a bias pulse. Obtaining the handle checks the capability, the handle's method names an action, and the executor the handle passes it to reports its start and its end to the event bus",
+      "fragments": [
+        {
+          "file": "src/routine/rt.rs",
+          "first_line": 54,
+          "last_line": 58,
+          "abridged": false,
+          "source": "/// Bias voltage control. Errors if the controller lacks [`Capability::Bias`].\npub fn bias(&mut self) -> Result<Bias<'_, 'a>, SpmError> {\n    self.require(Capability::Bias)?;\n    Ok(Bias { rt: self })\n}"
+        },
+        {
+          "file": "src/routine/rt.rs",
+          "first_line": 14,
+          "last_line": 22,
+          "abridged": false,
+          "source": "pub(crate) fn require(controller: &dyn SpmController, cap: Capability) -> Result<(), SpmError> {\n    if controller.capabilities().contains(&cap) {\n        Ok(())\n    } else {\n        Err(SpmError::Unsupported(format!(\n            \"controller does not support the {cap:?} subsystem\"\n        )))\n    }\n}"
+        },
+        {
+          "file": "src/routine/subsystems.rs",
+          "first_line": 67,
+          "last_line": 76,
+          "abridged": false,
+          "source": "/// Fire a bias pulse to an absolute signed voltage for `width_ms`, with\n/// the z-controller held. The bias returns to its previous value after.\npub fn pulse(&mut self, voltage: f64, width_ms: u64) -> Result<()> {\n    self.rt.exec(&BiasPulse {\n        voltage,\n        duration_ms: width_ms,\n        ..Default::default()\n    })?;\n    Ok(())\n}"
+        },
+        {
+          "file": "src/action/mod.rs",
+          "first_line": 63,
+          "last_line": 100,
+          "abridged": false,
+          "source": "/// Run `action` in `ctx`: check its capabilities, emit started, execute,\n/// emit completed or failed. The params logged are the action's own fields,\n/// and the depth is the context's, so every execution path writes the same\n/// shape to the log whether a routine or a parent action started it.\npub fn run_action<A: Action + serde::Serialize>(\n    ctx: &mut ActionContext,\n    action: &A,\n) -> Result<ActionOutput> {\n    let name = action.name().to_string();\n    let depth = ctx.depth;\n    let params = serde_json::to_value(action).unwrap_or(serde_json::Value::Null);\n    let start = Instant::now();\n    ctx.events.emit(Event::action_started(&name, params, depth));\n    let result = match check_capabilities(action, ctx.controller) {\n        Ok(()) => action.execute(ctx),\n        Err(e) => Err(e),\n    };\n    match result {\n        Ok(output) => {\n            ctx.events.emit(Event::action_completed(\n                &name,\n                &output,\n                depth,\n                start.elapsed(),\n            ));\n            Ok(output)\n        }\n        Err(e) => {\n            ctx.events.emit(Event::action_failed(\n                &name,\n                &e.to_string(),\n                depth,\n                start.elapsed(),\n            ));\n            Err(e)\n        }\n    }\n}"
+        }
+      ]
+    },
+    {
+      "label": "backends",
+      "caption": "The same operation behind the controller interface. The interface asks a backend for its capabilities, gives an optional operation a default that reports it unsupported and leaves a required one without a body; the Nanonis backend translates the bias pulse into a call of the protocol client, and the mock backend records it",
+      "fragments": [
+        {
+          "file": "src/spm_controller.rs",
+          "first_line": 159,
+          "last_line": 250,
+          "abridged": true,
+          "source": "pub trait SpmController: Send {\n    /// Report which capabilities this controller supports.\n    fn capabilities(&self) -> HashSet<Capability>;\n\n    // ...\n\n    // -- Presets --\n\n    /// Load a settings file into the controller. Requires\n    /// [`Capability::Presets`]; the default reports it unsupported.\n    ///\n    /// The path is resolved on *this* machine and handed to the controller\n    /// as an absolute path, so it has to be somewhere the controller's PC\n    /// can read too. A load persists for the rest of the session and cannot\n    /// be undone from here, which is what makes it a first-class operation:\n    /// some module settings can only be set over TCP this way.\n    fn load_settings(&mut self, _path: &Path) -> Result<()> {\n        Err(SpmError::Unsupported(\n            \"this controller cannot load settings files\".into(),\n        ))\n    }\n\n    // ...\n\n    // -- Bias --\n    fn get_bias(&mut self) -> Result<f64>;\n    fn set_bias(&mut self, voltage: f64) -> Result<()>;\n    fn bias_pulse(\n        &mut self,\n        voltage: f64,\n        width: Duration,\n        z_hold: bool,\n        absolute: bool,\n    ) -> Result<()>;"
+        },
+        {
+          "file": "src/nanonis_controller.rs",
+          "first_line": 802,
+          "last_line": 827,
+          "abridged": false,
+          "source": "fn bias_pulse(\n    &mut self,\n    voltage: f64,\n    width: Duration,\n    z_hold: bool,\n    absolute: bool,\n) -> Result<()> {\n    let z_controller_hold = if z_hold {\n        nanonis_rs::z_ctrl::ZControllerHold::Hold\n    } else {\n        nanonis_rs::z_ctrl::ZControllerHold::NoChange\n    };\n    let pulse_mode = if absolute {\n        nanonis_rs::bias::PulseMode::Absolute\n    } else {\n        nanonis_rs::bias::PulseMode::Relative\n    };\n    let v = validate_f32(voltage, \"pulse voltage\")?;\n    Ok(self.client.bias_pulse(\n        true, // always wait for pulse to complete\n        width.as_secs_f32(),\n        v,\n        z_controller_hold,\n        pulse_mode,\n    )?)\n}"
+        },
+        {
+          "file": "src/mock_controller.rs",
+          "first_line": 775,
+          "last_line": 785,
+          "abridged": false,
+          "source": "fn bias_pulse(\n    &mut self,\n    voltage: f64,\n    _width: Duration,\n    _z_hold: bool,\n    _absolute: bool,\n) -> Result<()> {\n    self.enter(\"bias_pulse\")?;\n    self.obs.lock().pulses.push(voltage);\n    Ok(())\n}"
+        }
+      ]
+    },
+    {
+      "label": "tip-prep-setup",
+      "caption": "What tip preparation declares to the harness: the settings it needs in place for the run and how the tip is left afterwards",
+      "fragments": [
+        {
+          "file": "src/tip_prep/runner.rs",
+          "first_line": 691,
+          "last_line": 719,
+          "abridged": false,
+          "source": "impl Routine for TipPrep<'_> {\n    fn name(&self) -> &str {\n        \"tip_prep\"\n    }\n\n    fn run_setup(&self) -> RunSetup {\n        RunSetup {\n            // Spelled out rather than defaulted: the home step of every\n            // calibrated approach is \"back off 50 nm from wherever the tip\n            // is\". Absolute mode would make it \"go to Z = +50 nm\", surface\n            // or not.\n            z_home: Some(ZHome {\n                mode: ZHomeMode::Relative,\n                position_m: 50e-9,\n            }),\n            // Off for the run, restored on exit. A pulse is a current spike\n            // by design, and safe-tip would retract on every one.\n            safe_tip: Some(SafeTipSetup {\n                threshold_a: self.config.tip_prep.safe_tip_threshold,\n                disable: true,\n            }),\n        }\n    }\n\n    fn exit_policy(&self) -> ExitPolicy {\n        ExitPolicy::Withdraw {\n            retract_steps: self.config.tip_prep.timing.exit_retract_steps,\n        }\n    }"
+        }
+      ]
+    },
+    {
+      "label": "tip-prep-loop",
+      "caption": "The cycle of tip preparation, the main loop of its `run` method",
+      "fragments": [
+        {
+          "file": "src/tip_prep/runner.rs",
+          "first_line": 794,
+          "last_line": 869,
+          "abridged": true,
+          "source": "// Main loop: pulse -> settle -> reposition -> measure -> check sharp\n// Matches V1 ordering: minimize time at pulsed position to avoid\n// unintended tip changes from continued surface interaction.\nlet mut last_cycle = 0;\nloop {\n    // A config sent while running lands here, between cycles and\n    // before the budgets are checked, so a lowered limit holds.\n    self.take_reload(rt, last_cycle, &mut cycles);\n    let Some(cycle) = cycles.next() else { break };\n    last_cycle = cycle;\n    let timing = self.config.tip_prep.timing.clone();\n\n    // ...\n\n    // Pulse with current voltage (determined by previous cycle's update)\n    let pulse_voltage = self.pulse.signed_voltage();\n    // ...\n    rt.bias()?.pulse(pulse_voltage, timing.pulse_width_ms)?;\n    rt.settle(timing.post_pulse_settle_ms)?;\n\n    // Reposition immediately: get away from pulse site\n    self.reposition(rt)?;\n\n    // Measure at new position (after reposition)\n    let mut freq_shift = self.read_stable(rt)?;\n    let is_sharp = self.is_sharp(freq_shift);\n\n    rt.emit(Event::typed(&CycleEvent {\n        cycle,\n        elapsed_secs: cycles.elapsed().as_secs_f64(),\n        freq_shift,\n        // The voltage that was fired, sign included. The pulse\n        // state's `current_voltage` is a magnitude, and reporting\n        // it hid every polarity switch from the GUI.\n        pulse_voltage,\n        is_sharp,\n    }));\n\n    if is_sharp {\n        // ...\n        match self.handle_stability(rt)? {\n            None => return Ok(Outcome::Completed),\n            // The check moved the tip, and the next pulse fires\n            // where it left it.\n            Some(fs) => freq_shift = fs,\n        }\n    }\n\n    // Update voltage strategy for next cycle (uses post-reposition measurement)\n    self.pulse\n        .update_voltage(&self.config.pulse_method, Some(freq_shift));\n}\n\nOk(cycles.outcome())"
+        }
+      ]
+    },
+    {
+      "label": "linear",
+      "caption": "The linear voltage strategy",
+      "fragments": [
+        {
+          "file": "src/tip_prep/pulse_state.rs",
+          "first_line": 235,
+          "last_line": 253,
+          "abridged": false,
+          "source": "/// The Linear strategy's pulse magnitude for a frequency-shift reading.\n///\n/// A blunter tip reads further below zero, so the clamp's upper end is the one\n/// nearest the sharp window. The gentlest pulse (`voltage_bounds.0`) falls\n/// there and rises linearly to the hardest (`voltage_bounds.1`) at the clamp's\n/// lower end; outside the clamp the hardest applies. Large pulses reshape the\n/// apex unpredictably, so a tip close to sharp is only nudged.\npub fn linear_voltage(\n    freq_shift: f64,\n    voltage_bounds: (f64, f64),\n    linear_clamp: (f64, f64),\n) -> f64 {\n    let (gentle, hard) = voltage_bounds;\n    let (far, near) = linear_clamp;\n    if !(far..=near).contains(&freq_shift) {\n        return hard;\n    }\n    gentle + (near - freq_shift) / (near - far) * (hard - gentle)\n}"
+        }
+      ]
+    }
+  ]
+}

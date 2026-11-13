@@ -3,16 +3,15 @@
 #import "/theme.typ" as th
 #import "fig_architecture.typ": architecture-diagram
 
-// Describes the rusty-tip 0.5 development line as main plus the
-// feat/frame-classifier stack (PRs #12 to #17), written as if that stack
-// were rebased onto main. `src/classifier/` exists only on that branch so
-// far; the `DataStore` went from main in 518148b (#67). Names set with
-// `#code(..)` link to the revision pinned in data/code_refs.json and are
-// listed in @tab:code.
+// Describes rusty-tip main at the revision pinned in data/code_refs.json.
+// Names set with `#code(..)` link to that revision and are listed in
+// @tab:code. The typed `Frame` and the classifier of PR #15 (August 2026)
+// never reached main and are not described here; @sec:outlook names the
+// classifier as planned.
 // Sources: src/routine/mod.rs, src/routine/rt.rs, src/session.rs,
 // src/action/mod.rs, src/spm_controller.rs, src/mock_controller.rs,
 // src/event/, src/experiment_log/, docs/experiment-log.md, CHANGELOG.md
-// [Unreleased]; on the branch src/frame.rs and src/classifier/.
+// [Unreleased], src/analyzer/mod.rs, bin/cuox-finder/main.rs.
 
 = The automation framework <sec:framework>
 
@@ -145,13 +144,14 @@ A terminal reader lists, inspects and exports archived logs.
   ),
 ) <fig:workbench>
 
-== Analyzers and classifiers <sec:analyzers>
+== Analyzers <sec:analyzers>
 
-// Classifiers generalize what analyzers do; expect analyzers to fold in.
+// The one analyzer, the CuOx-row detector (src/analyzer/cuox_rows.rs), is
+// called by bin/cuox-finder on image files; no routine consults it. The
+// classifier is planned: @sec:outlook.
 
-The framework has two ways to turn a measurement into a decision.
-An analyzer is a pure function over a frame, so the same code runs live, over archived data and in a test.
-A classifier is a model, reached across a boundary that passes the pixels as an npy array and the metadata as JSON, since models are written in Python and the control path is not.
-An unreachable model and one that answers wrongly are distinct errors, because only the first justifies falling back to a simpler criterion.
-Model, version, latency and verdict enter the log like any other decision.
-The classifier boundary is infrastructure so far: no trained model is attached, and tip preparation decides on thresholds of $Delta f$ (@sec:criteria-applied) without consulting either kind.
+An analyzer turns a scan image into a decision.
+It is a pure function over a frame and its pixel size, with no access to the instrument, so the same code can run on a live frame, over archived data and in a test.
+The CuO#sub[x]-row detector is the one analyzer so far, and it has been applied to archived images only.
+A classifier, a trained model consulted in the same place, is planned (@sec:outlook).
+Tip preparation decides on thresholds of $Delta f$ (@sec:criteria-applied) and consults no analyzer.

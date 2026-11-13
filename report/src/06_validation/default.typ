@@ -198,9 +198,8 @@ Each test checks that the tip ends withdrawn and that the run reports the right 
     [I/O fault mid-run], [–],
     [fault during cleanup], [–],
     [panic in the routine], [–],
-    table.cell(rowspan: 2)[Other],
+    [Other],
     [live configuration reload], [1],
-    [classifier boundary], [–],
   ),
   caption: flex-caption(
     [
@@ -211,8 +210,6 @@ Each test checks that the tip ends withdrawn and that the run reports the right 
   ),
 ) <tab:coverage>
 
-Both protocol boundaries were tested against real servers, not stubs.
+The protocol boundary was tested against real servers, not stubs.
 The Nanonis client of @sec:interface ran against the vendor's simulator as well as the instrument.
 Without either, its tests cover encoding and decoding of every data type and the typed parameter sets of its larger subsystems.
-The classifier boundary of @sec:analyzers is tested against an HTTP server on a local socket.
-This test checks that an unreachable model and a wrongly answering model surface as different errors.

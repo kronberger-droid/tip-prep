@@ -33,10 +33,17 @@ A second backend remains the test of whether a routine written here runs elsewhe
 
 The criterion is the next thing to change.
 Defined terminations such as CO @gross2009 or CuO#sub[x] @wiesener2024 require judging a structure in an image, not a single value, and so does STM, where no frequency shift is available.
-The classifier boundary of @sec:analyzers already carries frames to a model and its verdict back; what is missing is a trained model and the labelled frames to fit it.
+Such a judgement needs a classifier: a trained model that a routine consults where it would consult an analyzer (@sec:analyzers).
+// The prototype: rusty-tip PR #15 (commit e88dfe5, 2026-08-12), src/frame.rs
+// and src/classifier/; merged into its stack but never into main.
+A prototype of the boundary to such a model exists outside the released code.
+It passes the pixels as an npy array and the metadata as JSON, since models are written in Python and the control path is not.
+It treats an unreachable model and one that answers wrongly as distinct errors, because only the first justifies falling back to a simpler criterion.
+Model, version, latency and verdict are meant to enter the log like any other decision.
+Still missing are that boundary in the released framework, a trained model and the labelled frames to fit it.
 A classifier that depends less on the patterns of a particular surface can use what is known about it instead: step heights, lattice spacings, the agreement of forward and backward pass, the contrast.
 Operators judge this way from a few scan lines, and a classifier over a rolling window of scan lines has identified the tip state from a small fraction of an image @gordon2020.
 Judging line by line is hard, but it is the way towards a criterion that runs while scanning and reports a confidence rather than a verdict per frame.
 A CuO#sub[x] termination, which our laboratory needs, would be judged two ways: from the contrast of its rows in a line, and from the image, as Auto-CO-AFM does for CO tips @alldritt2022 and as the chemically selective contrast of @wiesener2024 allows.
 Beyond judging the tip, the same logs are the dataset from which pulse amplitude, polarity and timing can be optimized offline and ultimately learned @alldritt2022 @rashidi2018.
-All of this builds on the harness, the log and the classifier boundary, and should integrate into an operator's workflow more reliably than standalone scripts would.
+All of this builds on the harness and the log, and should integrate into an operator's workflow more reliably than standalone scripts would.

@@ -63,7 +63,7 @@
     nd(
       (0, 2),
       <analyzers>,
-      [*Analyzers, classifiers* \ #tag[not used by \ tip preparation]],
+      [*Analyzers* \ #tag[not used by \ tip preparation]],
       fill: unused-fill,
       dashed: true,
     ),

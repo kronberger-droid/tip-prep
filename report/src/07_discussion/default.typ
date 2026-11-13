@@ -18,7 +18,7 @@ It also marks where the results stop being trustworthy.
 
 Whether the interfaces and boundaries of @sec:framework justify their cost must be judged against the shortcomings of @sec:poc-lessons and against what they delivered.
 The deletions recorded there make the first case on their own.
-For the second, three results of @sec:validation rest on the structure: every number in that chapter was computed from the run logs alone, across thirteen source revisions (@sec:events); the paths of @tab:coverage that no counted run took are tested all the same, through the mock backend; and a configuration change mid-run, a second routine and the classifier boundary (@sec:analyzers) arrived without changes to the routine's control flow.
+For the second, three results of @sec:validation rest on the structure: every number in that chapter was computed from the run logs alone, across thirteen source revisions (@sec:events); the paths of @tab:coverage that no counted run took are tested all the same, through the mock backend; and a configuration change mid-run and a second routine arrived without changes to the routine's control flow.
 
 The structure also opens three routes a script could not.
 Guards can move into the harness as policy, refusing unsafe sequences before they reach the instrument; the limits file of the control server is a first piece (@sec:outlook).
